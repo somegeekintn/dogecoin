@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="3401" systemVersion="12F45" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
+    <entity name="BlockInfo" representedClassName="DCBlockInfo" syncable="YES">
+        <attribute name="blockHash" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="difficulty" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="fees" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="height" optional="YES" attributeType="Integer 32" defaultValueString="0" indexed="YES" syncable="YES"/>
+        <attribute name="merkleRoot" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="minted" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="nBits" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="nonce" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="size" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="time" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="txCount" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <relationship name="info" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Info" inverseName="blockInfo" inverseEntity="Info" syncable="YES"/>
+    </entity>
+    <entity name="Info" representedClassName="DCInfo" syncable="YES">
+        <attribute name="difficulty" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="lastBlockTime" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="networkHashRate" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="numConnections" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="totalMinted" optional="YES" attributeType="Decimal" defaultValueString="0" syncable="YES"/>
+        <attribute name="totalTransactions" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
+        <relationship name="blockInfo" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="BlockInfo" inverseName="info" inverseEntity="BlockInfo" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="BlockInfo" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="Info" positionX="0" positionY="0" width="0" height="0"/>
+    </elements>
+</model>

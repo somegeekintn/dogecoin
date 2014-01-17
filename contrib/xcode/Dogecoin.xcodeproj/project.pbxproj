@@ -38,6 +38,50 @@
 		C99B957C18832B93001DB181 /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C99B957618832B93001DB181 /* libcrypto.a */; };
 		C99B957D18832B93001DB181 /* libssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C99B957718832B93001DB181 /* libssl.a */; };
 		C99B958918834436001DB181 /* libdb_cxx-5.3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C99B958818834436001DB181 /* libdb_cxx-5.3.a */; };
+		C99B9591188408B8001DB181 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C99B9590188408B8001DB181 /* Cocoa.framework */; };
+		C99B959B188408B8001DB181 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = C99B9599188408B8001DB181 /* InfoPlist.strings */; };
+		C99B959D188408B8001DB181 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = C99B959C188408B8001DB181 /* main.m */; };
+		C99B95A1188408B8001DB181 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = C99B959F188408B8001DB181 /* Credits.rtf */; };
+		C99B95A4188408B8001DB181 /* DCAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = C99B95A3188408B8001DB181 /* DCAppDelegate.m */; };
+		C99B95A7188408B8001DB181 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = C99B95A5188408B8001DB181 /* MainMenu.xib */; };
+		C99B95AA188408B9001DB181 /* Moon.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = C99B95A8188408B8001DB181 /* Moon.xcdatamodeld */; };
+		C99B95AC188408B9001DB181 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C99B95AB188408B9001DB181 /* Images.xcassets */; };
+		C99B95C518840AB3001DB181 /* addrman.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C99B952318832956001DB181 /* addrman.cpp */; };
+		C99B95C618840AB3001DB181 /* bitcoinrpc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C99B952818832956001DB181 /* bitcoinrpc.cpp */; };
+		C99B95C718840AB3001DB181 /* checkpoints.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C99B952A18832956001DB181 /* checkpoints.cpp */; };
+		C99B95C818840AB3001DB181 /* crypter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C99B952D18832956001DB181 /* crypter.cpp */; };
+		C99B95C918840AB3001DB181 /* db.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C99B952F18832956001DB181 /* db.cpp */; };
+		C99B95CA18840AB3001DB181 /* init.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C99B953118832956001DB181 /* init.cpp */; };
+		C99B95CB18840AB3001DB181 /* irc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C99B953318832956001DB181 /* irc.cpp */; };
+		C99B95CC18840AB3001DB181 /* key.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C99B953C18832995001DB181 /* key.cpp */; };
+		C99B95CD18840AB3001DB181 /* keystore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C99B953E18832995001DB181 /* keystore.cpp */; };
+		C99B95CE18840AB3001DB181 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C99B954018832995001DB181 /* main.cpp */; };
+		C99B95CF18840AB3001DB181 /* net.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C99B954318832995001DB181 /* net.cpp */; };
+		C99B95D018840AB3001DB181 /* netbase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C99B954518832995001DB181 /* netbase.cpp */; };
+		C99B95D118840AB3001DB181 /* noui.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C99B954718832995001DB181 /* noui.cpp */; };
+		C99B95D218840AB3001DB181 /* protocol.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C99B954818832995001DB181 /* protocol.cpp */; };
+		C99B95D318840AB3001DB181 /* rpcdump.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C99B954A18832995001DB181 /* rpcdump.cpp */; };
+		C99B95D418840AB3001DB181 /* rpcnet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C99B954B18832995001DB181 /* rpcnet.cpp */; };
+		C99B95D518840AB3001DB181 /* rpcrawtransaction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C99B954C18832995001DB181 /* rpcrawtransaction.cpp */; };
+		C99B95D618840AB3001DB181 /* script.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C99B954D18832995001DB181 /* script.cpp */; };
+		C99B95D718840AB3001DB181 /* sync.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C99B955318832995001DB181 /* sync.cpp */; };
+		C99B95D818840AB3001DB181 /* version.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C99B955918832995001DB181 /* version.cpp */; };
+		C99B95D918840AB3001DB181 /* wallet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C99B955B18832995001DB181 /* wallet.cpp */; };
+		C99B95DA18840AB3001DB181 /* walletdb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C99B955D18832995001DB181 /* walletdb.cpp */; };
+		C99B95DB18840ACE001DB181 /* scrypt.c in Sources */ = {isa = PBXBuildFile; fileRef = C99B954F18832995001DB181 /* scrypt.c */; };
+		C99B95DC18840AD8001DB181 /* util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C99B955718832995001DB181 /* util.cpp */; };
+		C99B95DD18840BF7001DB181 /* libdb_cxx-5.3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C99B958818834436001DB181 /* libdb_cxx-5.3.a */; };
+		C99B95DE18840C34001DB181 /* libboost_filesystem-mt.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C99B957218832B93001DB181 /* libboost_filesystem-mt.a */; };
+		C99B95DF18840C34001DB181 /* libboost_program_options-mt.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C99B957318832B93001DB181 /* libboost_program_options-mt.a */; };
+		C99B95E018840C34001DB181 /* libboost_system-mt.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C99B957418832B93001DB181 /* libboost_system-mt.a */; };
+		C99B95E118840C34001DB181 /* libboost_thread-mt.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C99B957518832B93001DB181 /* libboost_thread-mt.a */; };
+		C99B95E218840C34001DB181 /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C99B957618832B93001DB181 /* libcrypto.a */; };
+		C99B95E318840C34001DB181 /* libssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C99B957718832B93001DB181 /* libssl.a */; };
+		C99B95E71884127F001DB181 /* DCBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = C99B95E61884127F001DB181 /* DCBridge.m */; };
+		C9BC00C218854BF200356D7F /* DCDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = C9BC00C118854BF200356D7F /* DCDataManager.m */; };
+		C9BC00C5188555D100356D7F /* DCInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = C9BC00C4188555D100356D7F /* DCInfo.m */; };
+		C9BC00C9188565FB00356D7F /* DCBlockInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = C9BC00C8188565FB00356D7F /* DCBlockInfo.m */; };
+		C9C9D31F1884A059008A2FBD /* bridgehelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C9C9D31E1884A059008A2FBD /* bridgehelper.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -114,6 +158,32 @@
 		C99B957618832B93001DB181 /* libcrypto.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcrypto.a; path = /opt/local/lib/libcrypto.a; sourceTree = "<absolute>"; };
 		C99B957718832B93001DB181 /* libssl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssl.a; path = /opt/local/lib/libssl.a; sourceTree = "<absolute>"; };
 		C99B958818834436001DB181 /* libdb_cxx-5.3.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libdb_cxx-5.3.a"; path = "/opt/local/lib/db53/libdb_cxx-5.3.a"; sourceTree = "<absolute>"; };
+		C99B958E188408B8001DB181 /* Moon.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Moon.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C99B9590188408B8001DB181 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		C99B9593188408B8001DB181 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		C99B9594188408B8001DB181 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		C99B9595188408B8001DB181 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		C99B9598188408B8001DB181 /* Moon-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Moon-Info.plist"; sourceTree = "<group>"; };
+		C99B959A188408B8001DB181 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		C99B959C188408B8001DB181 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		C99B959E188408B8001DB181 /* Moon-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Moon-Prefix.pch"; sourceTree = "<group>"; };
+		C99B95A0188408B8001DB181 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
+		C99B95A2188408B8001DB181 /* DCAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DCAppDelegate.h; sourceTree = "<group>"; };
+		C99B95A3188408B8001DB181 /* DCAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DCAppDelegate.m; sourceTree = "<group>"; };
+		C99B95A6188408B8001DB181 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		C99B95A9188408B9001DB181 /* Moon.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Moon.xcdatamodel; sourceTree = "<group>"; };
+		C99B95AB188408B9001DB181 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		C99B95B2188408B9001DB181 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		C99B95E51884127F001DB181 /* DCBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DCBridge.h; sourceTree = "<group>"; };
+		C99B95E61884127F001DB181 /* DCBridge.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = DCBridge.m; sourceTree = "<group>"; };
+		C9BC00C018854BF200356D7F /* DCDataManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DCDataManager.h; sourceTree = "<group>"; };
+		C9BC00C118854BF200356D7F /* DCDataManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DCDataManager.m; sourceTree = "<group>"; };
+		C9BC00C3188555D100356D7F /* DCInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DCInfo.h; sourceTree = "<group>"; };
+		C9BC00C4188555D100356D7F /* DCInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DCInfo.m; sourceTree = "<group>"; };
+		C9BC00C7188565FB00356D7F /* DCBlockInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DCBlockInfo.h; sourceTree = "<group>"; };
+		C9BC00C8188565FB00356D7F /* DCBlockInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DCBlockInfo.m; sourceTree = "<group>"; };
+		C9C9D31E1884A059008A2FBD /* bridgehelper.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; path = bridgehelper.cpp; sourceTree = "<group>"; };
+		C9C9D3201884A0A6008A2FBD /* bridgehelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = bridgehelper.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -131,14 +201,31 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C99B958B188408B8001DB181 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C99B95DD18840BF7001DB181 /* libdb_cxx-5.3.a in Frameworks */,
+				C99B95DE18840C34001DB181 /* libboost_filesystem-mt.a in Frameworks */,
+				C99B95DF18840C34001DB181 /* libboost_program_options-mt.a in Frameworks */,
+				C99B95E018840C34001DB181 /* libboost_system-mt.a in Frameworks */,
+				C99B95E118840C34001DB181 /* libboost_thread-mt.a in Frameworks */,
+				C99B95E218840C34001DB181 /* libcrypto.a in Frameworks */,
+				C99B95E318840C34001DB181 /* libssl.a in Frameworks */,
+				C99B9591188408B8001DB181 /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		C99B950D18832890001DB181 = {
 			isa = PBXGroup;
 			children = (
+				C99B9596188408B8001DB181 /* Moon */,
 				C99B95221883291C001DB181 /* src */,
 				C99B957E18832ECD001DB181 /* libs */,
+				C99B958F188408B8001DB181 /* Frameworks */,
 				C99B951718832890001DB181 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -147,6 +234,7 @@
 			isa = PBXGroup;
 			children = (
 				C99B951618832890001DB181 /* dogecoind */,
+				C99B958E188408B8001DB181 /* Moon.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -227,6 +315,70 @@
 			path = ../../src;
 			sourceTree = "<group>";
 		};
+		C99B958F188408B8001DB181 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				C99B9590188408B8001DB181 /* Cocoa.framework */,
+				C99B95B2188408B9001DB181 /* XCTest.framework */,
+				C99B9592188408B8001DB181 /* Other Frameworks */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		C99B9592188408B8001DB181 /* Other Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				C99B9593188408B8001DB181 /* AppKit.framework */,
+				C99B9594188408B8001DB181 /* CoreData.framework */,
+				C99B9595188408B8001DB181 /* Foundation.framework */,
+			);
+			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		C99B9596188408B8001DB181 /* Moon */ = {
+			isa = PBXGroup;
+			children = (
+				C99B95E418841253001DB181 /* classes */,
+				C99B95A2188408B8001DB181 /* DCAppDelegate.h */,
+				C99B95A3188408B8001DB181 /* DCAppDelegate.m */,
+				C99B95A5188408B8001DB181 /* MainMenu.xib */,
+				C99B95AB188408B9001DB181 /* Images.xcassets */,
+				C99B95A8188408B8001DB181 /* Moon.xcdatamodeld */,
+				C99B9597188408B8001DB181 /* Supporting Files */,
+			);
+			path = Moon;
+			sourceTree = "<group>";
+		};
+		C99B9597188408B8001DB181 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				C99B9598188408B8001DB181 /* Moon-Info.plist */,
+				C99B9599188408B8001DB181 /* InfoPlist.strings */,
+				C99B959C188408B8001DB181 /* main.m */,
+				C99B959E188408B8001DB181 /* Moon-Prefix.pch */,
+				C99B959F188408B8001DB181 /* Credits.rtf */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		C99B95E418841253001DB181 /* classes */ = {
+			isa = PBXGroup;
+			children = (
+				C9C9D3201884A0A6008A2FBD /* bridgehelper.h */,
+				C9C9D31E1884A059008A2FBD /* bridgehelper.cpp */,
+				C99B95E51884127F001DB181 /* DCBridge.h */,
+				C99B95E61884127F001DB181 /* DCBridge.m */,
+				C9BC00C018854BF200356D7F /* DCDataManager.h */,
+				C9BC00C118854BF200356D7F /* DCDataManager.m */,
+				C9BC00C7188565FB00356D7F /* DCBlockInfo.h */,
+				C9BC00C8188565FB00356D7F /* DCBlockInfo.m */,
+				C9BC00C3188555D100356D7F /* DCInfo.h */,
+				C9BC00C4188555D100356D7F /* DCInfo.m */,
+			);
+			name = classes;
+			path = Classes;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -247,6 +399,23 @@
 			productReference = C99B951618832890001DB181 /* dogecoind */;
 			productType = "com.apple.product-type.tool";
 		};
+		C99B958D188408B8001DB181 /* Moon */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C99B95C3188408B9001DB181 /* Build configuration list for PBXNativeTarget "Moon" */;
+			buildPhases = (
+				C99B958A188408B8001DB181 /* Sources */,
+				C99B958B188408B8001DB181 /* Frameworks */,
+				C99B958C188408B8001DB181 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Moon;
+			productName = Moon;
+			productReference = C99B958E188408B8001DB181 /* Moon.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -254,7 +423,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0500;
-				ORGANIZATIONNAME = "Dogecion Developers";
+				ORGANIZATIONNAME = "Dogecoin Developers";
 			};
 			buildConfigurationList = C99B951118832890001DB181 /* Build configuration list for PBXProject "Dogecoin" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -262,16 +431,32 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
 			);
 			mainGroup = C99B950D18832890001DB181;
 			productRefGroup = C99B951718832890001DB181 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
+				C99B958D188408B8001DB181 /* Moon */,
 				C99B951518832890001DB181 /* dogecoind */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		C99B958C188408B8001DB181 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C99B959B188408B8001DB181 /* InfoPlist.strings in Resources */,
+				C99B95AC188408B9001DB181 /* Images.xcassets in Resources */,
+				C99B95A1188408B8001DB181 /* Credits.rtf in Resources */,
+				C99B95A7188408B8001DB181 /* MainMenu.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		C99B951218832890001DB181 /* Sources */ = {
@@ -305,14 +490,80 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C99B958A188408B8001DB181 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C99B959D188408B8001DB181 /* main.m in Sources */,
+				C99B95A4188408B8001DB181 /* DCAppDelegate.m in Sources */,
+				C9BC00C5188555D100356D7F /* DCInfo.m in Sources */,
+				C99B95AA188408B9001DB181 /* Moon.xcdatamodeld in Sources */,
+				C99B95C518840AB3001DB181 /* addrman.cpp in Sources */,
+				C9BC00C218854BF200356D7F /* DCDataManager.m in Sources */,
+				C9BC00C9188565FB00356D7F /* DCBlockInfo.m in Sources */,
+				C99B95C618840AB3001DB181 /* bitcoinrpc.cpp in Sources */,
+				C9C9D31F1884A059008A2FBD /* bridgehelper.cpp in Sources */,
+				C99B95C718840AB3001DB181 /* checkpoints.cpp in Sources */,
+				C99B95C818840AB3001DB181 /* crypter.cpp in Sources */,
+				C99B95C918840AB3001DB181 /* db.cpp in Sources */,
+				C99B95CA18840AB3001DB181 /* init.cpp in Sources */,
+				C99B95CB18840AB3001DB181 /* irc.cpp in Sources */,
+				C99B95CC18840AB3001DB181 /* key.cpp in Sources */,
+				C99B95CD18840AB3001DB181 /* keystore.cpp in Sources */,
+				C99B95CE18840AB3001DB181 /* main.cpp in Sources */,
+				C99B95CF18840AB3001DB181 /* net.cpp in Sources */,
+				C99B95D018840AB3001DB181 /* netbase.cpp in Sources */,
+				C99B95D118840AB3001DB181 /* noui.cpp in Sources */,
+				C99B95D218840AB3001DB181 /* protocol.cpp in Sources */,
+				C99B95E71884127F001DB181 /* DCBridge.m in Sources */,
+				C99B95D318840AB3001DB181 /* rpcdump.cpp in Sources */,
+				C99B95D418840AB3001DB181 /* rpcnet.cpp in Sources */,
+				C99B95D518840AB3001DB181 /* rpcrawtransaction.cpp in Sources */,
+				C99B95D618840AB3001DB181 /* script.cpp in Sources */,
+				C99B95DB18840ACE001DB181 /* scrypt.c in Sources */,
+				C99B95D718840AB3001DB181 /* sync.cpp in Sources */,
+				C99B95DC18840AD8001DB181 /* util.cpp in Sources */,
+				C99B95D818840AB3001DB181 /* version.cpp in Sources */,
+				C99B95D918840AB3001DB181 /* wallet.cpp in Sources */,
+				C99B95DA18840AB3001DB181 /* walletdb.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		C99B9599188408B8001DB181 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				C99B959A188408B8001DB181 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		C99B959F188408B8001DB181 /* Credits.rtf */ = {
+			isa = PBXVariantGroup;
+			children = (
+				C99B95A0188408B8001DB181 /* en */,
+			);
+			name = Credits.rtf;
+			sourceTree = "<group>";
+		};
+		C99B95A5188408B8001DB181 /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				C99B95A6188408B8001DB181 /* Base */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		C99B951D18832890001DB181 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD)";
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
@@ -418,6 +669,59 @@
 			};
 			name = Release;
 		};
+		C99B95BF188408B9001DB181 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Moon/Moon-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					MAC_OSX,
+					"MSG_NOSIGNAL=0",
+					BOOST_SPIRIT_THREADSAFE,
+					USE_IPV6,
+					"DEBUG=1",
+					QT_GUI,
+				);
+				INFOPLIST_FILE = "Moon/Moon-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/opt/local/lib/db53,
+					/opt/local/lib,
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		C99B95C0188408B9001DB181 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Moon/Moon-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					MAC_OSX,
+					"MSG_NOSIGNAL=0",
+					BOOST_SPIRIT_THREADSAFE,
+					USE_IPV6,
+					QT_GUI,
+				);
+				INFOPLIST_FILE = "Moon/Moon-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/opt/local/lib/db53,
+					/opt/local/lib,
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -439,7 +743,29 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		C99B95C3188408B9001DB181 /* Build configuration list for PBXNativeTarget "Moon" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C99B95BF188408B9001DB181 /* Debug */,
+				C99B95C0188408B9001DB181 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		C99B95A8188408B8001DB181 /* Moon.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				C99B95A9188408B9001DB181 /* Moon.xcdatamodel */,
+			);
+			currentVersion = C99B95A9188408B9001DB181 /* Moon.xcdatamodel */;
+			path = Moon.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = C99B950E18832890001DB181 /* Project object */;
 }
