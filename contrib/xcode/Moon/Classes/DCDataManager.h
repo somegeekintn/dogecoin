@@ -3,12 +3,13 @@
 //  Dogecoin
 //
 //  Created by Casey Fleser on 1/14/14.
-//  Copyright (c) 2014 Dogecoin Developers. All rights reserved.
+//  Copyright (c) 2014 Casey Fleser / @somegeekintn. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 
 @class DCInfo;
+@class DCWallet;
 
 @interface DCDataManager : NSObject
 
@@ -16,10 +17,13 @@
 
 - (void)				startMonitor;
 - (BOOL)				prepareToQuit: (NSApplication *) inSender;
+- (void)				clientInitializationComplete;
 - (void)				updateBlockInfo: (NSInteger) inReconcileDepth;
+- (void)				setConnectionCount: (NSInteger) inNumConnections;
 
 @property (nonatomic, readonly) NSManagedObjectContext		*defaultContext;
 @property (nonatomic, readonly) NSManagedObjectContext		*editContext;
 @property (nonatomic, readonly) DCInfo						*info;
+@property (nonatomic, readonly) DCWallet					*defaultWallet;
 
 @end

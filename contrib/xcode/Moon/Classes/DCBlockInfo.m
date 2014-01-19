@@ -3,20 +3,18 @@
 //  Dogecoin
 //
 //  Created by Casey Fleser on 1/14/14.
-//  Copyright (c) 2014 Dogecoin Developers. All rights reserved.
+//  Copyright (c) 2014 Casey Fleser / @somegeekintn. All rights reserved.
 //
 
 #import "DCBlockInfo.h"
 #import "DCBridge.h"
 #import "DCInfo.h"
-
-#define kCoinExp		-8
+#import "DCConsts.h"
 
 @implementation DCBlockInfo
 
 @dynamic blockHash;
 @dynamic difficulty;
-@dynamic fees;
 @dynamic height;
 @dynamic merkleRoot;
 @dynamic minted;
@@ -31,13 +29,13 @@
 + (DCBlockInfo *) blockInfoAtHeight: (NSInteger) inHeight
 	inContext: (NSManagedObjectContext *) inContext
 {
-	NSFetchRequest			*fetchRequest = [NSFetchRequest fetchRequestWithEntityName: @"BlockInfo"];
+	NSFetchRequest			*request = [NSFetchRequest fetchRequestWithEntityName: @"BlockInfo"];
 	NSArray					*results = nil;
 	DCBlockInfo				*blockInfo = nil;
 	
-	fetchRequest.predicate = [NSPredicate predicateWithFormat: @"height == %@", @(inHeight)];
-	fetchRequest.fetchLimit = 1;
-	results = [inContext executeFetchRequest: fetchRequest error: nil];
+	request.predicate = [NSPredicate predicateWithFormat: @"height == %@", @(inHeight)];
+	request.fetchLimit = 1;
+	results = [inContext executeFetchRequest: request error: nil];
 	blockInfo = [results lastObject];
 	if (blockInfo == nil) {
 		blockInfo = [NSEntityDescription insertNewObjectForEntityForName: @"BlockInfo" inManagedObjectContext: inContext];
@@ -58,7 +56,7 @@
 	else {
 		NSString	*testHash = [[DCBridge sharedBridge] getBlockHashAtHeight: [self.height integerValue]];
 		
-		isValid = [self.blockHash isEqualToString: testHash];
+		isValid = (testHash != nil && [self.blockHash isEqualToString: testHash]) ? YES : NO;
 	}
 
 NSLog(@"validate %@: %@", self.height, isValid ? @"OK" : @"FAIL");
@@ -75,7 +73,6 @@ NSLog(@"validate %@: %@", self.height, isValid ? @"OK" : @"FAIL");
 
 		self.blockHash = blockHash;
 		self.difficulty = [NSNumber numberWithDouble: [rawBlock[@"difficulty"] doubleValue]];
-		self.fees = [NSDecimalNumber decimalNumberWithMantissa: [rawBlock[@"fees"] longLongValue] exponent: kCoinExp isNegative: NO];
 		self.nBits = rawBlock[@"bits"];
 		self.merkleRoot = rawBlock[@"merkleroot"];
 		self.minted = [NSDecimalNumber decimalNumberWithMantissa: [rawBlock[@"minted"] longLongValue] exponent: kCoinExp isNegative: NO];

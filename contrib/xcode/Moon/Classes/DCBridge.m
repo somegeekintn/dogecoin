@@ -3,7 +3,7 @@
 //  Dogecoin
 //
 //  Created by Casey Fleser on 1/13/14.
-//  Copyright (c) 2014 Dogecoin Developers. All rights reserved.
+//  Copyright (c) 2014 Casey Fleser / @somegeekintn. All rights reserved.
 //
 
 
@@ -29,7 +29,13 @@ void bridge_sig_BlocksChanged()
 void bridge_sig_NumConnectionsChanged(
 	int		inNewNumConnections)
 {
-	NSLog(@"%s: %d", __PRETTY_FUNCTION__, inNewNumConnections);
+	[[DCDataManager sharedManager] setConnectionCount: inNewNumConnections];
+}
+
+void bridge_sig_InitMessage(
+	const char			*inMessage)
+{
+	NSLog(@"Init: %s", inMessage);
 }
 
 @implementation DCBridge
@@ -55,7 +61,7 @@ void bridge_sig_NumConnectionsChanged(
 		if (bridge_Initialize()) {						// probably want to dispatch this so we don't hang
 			self.connected = YES;
 
-			[[DCDataManager sharedManager] updateBlockInfo: 1000];		// validate the last N blocks upon connect
+			[[DCDataManager sharedManager] clientInitializationComplete];
 		}
 		else {
 			NSLog(@"Error: Failed to initialize client");
@@ -72,6 +78,10 @@ void bridge_sig_NumConnectionsChanged(
 	bridge_Shutdown();
 }
 
+- (void) runTests
+{
+}
+
 - (NSInteger) getBlockHeight
 {
 	return bridge_getBlockHeight();
@@ -79,27 +89,23 @@ void bridge_sig_NumConnectionsChanged(
 
 - (NSString *) getBlockHashAtHeight: (NSInteger) inHeight
 {
-	NSString		*blockHash = nil;
-	std::string		hashStr = bridge_getBlockHashAtHeight(inHeight);
-	
-	if (!hashStr.empty())
-		blockHash = [NSString stringWithUTF8String: hashStr.c_str()];
-	
-	return blockHash;
+	return (__bridge_transfer NSString *)bridge_getBlockHashAtHeight(inHeight);
 }
 
 - (NSDictionary *) getBlockWithHash: (NSString *) inHash
 {
-	NSMutableDictionary	*rawBlock = nil;
-	NSData				*responseData;
-	NSError				*jsonError;
-	std::string			response;
-	
-	response = bridge_getBlockWithHash([inHash UTF8String]);
-	responseData = [NSData dataWithBytes: response.c_str() length: response.length()];
-	rawBlock = [NSJSONSerialization JSONObjectWithData: responseData options: NSJSONReadingMutableContainers error: &jsonError];
-
-	return rawBlock;
+	return (__bridge_transfer NSDictionary *)bridge_getBlockWithHash([inHash UTF8String]);
 }
+
+- (NSArray *) getWalletTransactions
+{
+	return (__bridge_transfer NSArray *)bridge_getWalletTransactions();
+}
+
+- (NSDictionary *) getMiscInfo
+{
+	return (__bridge_transfer NSDictionary *)bridge_getMiscInfo();
+}
+
 
 @end

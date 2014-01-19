@@ -3,13 +3,14 @@
 //  Dogecoin
 //
 //  Created by Casey Fleser on 1/14/14.
-//  Copyright (c) 2014 Dogecoin Developers. All rights reserved.
+//  Copyright (c) 2014 Casey Fleser / @somegeekintn. All rights reserved.
 //
 
 #import "DCDataManager.h"
 #import "DCBlockInfo.h"
 #import "DCBridge.h"
 #import "DCInfo.h"
+#import "DCWallet.h"
 
 
 static DCDataManager		*sSharedManager = nil;
@@ -32,6 +33,7 @@ static DCDataManager		*sSharedManager = nil;
 @synthesize defaultContext = _defaultContext;
 @synthesize editContext = _editContext;
 @synthesize info = _info;
+@synthesize defaultWallet = _defaultWallet;
 
 + (DCDataManager *) sharedManager
 {
@@ -44,6 +46,14 @@ static DCDataManager		*sSharedManager = nil;
 		_info = [DCInfo infoInContext: self.defaultContext];
 
     return _info;
+}
+
+- (DCWallet *) defaultWallet
+{
+	if (_defaultWallet == nil)
+		_defaultWallet = [DCWallet walletNamed: @"default" inContext: self.defaultContext];
+
+    return _defaultWallet;
 }
 
 - (void) startMonitor
@@ -156,7 +166,6 @@ static DCDataManager		*sSharedManager = nil;
 				NSError			*childError = nil;
 				void			(^saveBlock)(void);
 				
-NSLog(@"--->%s", __PRETTY_FUNCTION__);
 				if (![managedObjectContext save: &childError]) {
 					[self handleCoreDataError: childError withMessage: @"Error saving default context"];
 				}
@@ -166,10 +175,6 @@ NSLog(@"--->%s", __PRETTY_FUNCTION__);
 						
 						if (![self.rootContext save: &rootError]) {
 							[self handleCoreDataError: rootError withMessage: @"Error saving root context"];
-						}
-						else {
-							// root context is only for saving so it can safely reset after save
-							[self.rootContext reset];
 						}
 					};
 					
@@ -195,8 +200,13 @@ NSLog(@"--->%s", __PRETTY_FUNCTION__);
 		case NSManagedObjectValidationError: {
 				NSString			*validationObject = [errorInfo objectForKey: NSValidationObjectErrorKey];
 				NSString			*validationKey = [errorInfo objectForKey: NSValidationKeyErrorKey];
+				NSString			*validationValue = [errorInfo objectForKey: NSValidationValueErrorKey];
 
 				NSLog(@"%@ failed validation for %@", NSStringFromClass([validationObject class]), validationKey);
+				NSLog(@"---------------------------");
+				NSLog(@"obj: %@", validationObject);
+				NSLog(@"val: %@", validationValue);
+				NSLog(@"---------------------------");
 			}
 			break;
 		
@@ -280,7 +290,14 @@ NSLog(@"--->%s", __PRETTY_FUNCTION__);
     return shouldQuit;
 }
 
-#pragma mark - Data Gathering
+#pragma mark - Client Interaction
+
+- (void) clientInitializationComplete
+{
+	[[DCBridge sharedBridge] runTests];
+	[self updateBlockInfo: 1000];		// validate the last N blocks upon connect
+	[self reconcileWallet];
+}
 
 - (void) reconcileBlockInfoWithDepth: (NSInteger) inReconcileDepth
 	withInfoObjectID: (NSManagedObjectID *) inInfoObjectID
@@ -319,7 +336,7 @@ NSLog(@"--->%s", __PRETTY_FUNCTION__);
 	}];
 }
 
-- (NSInteger) updateBlockInfoUntil: (NSDate *) inEndDate
+- (NSInteger) updateBlockInfoFor: (NSTimeInterval) inUpdateTime
 	withInfoObjectID: (NSManagedObjectID *) inInfoObjectID
 {
 	NSManagedObjectContext	*updateContext = [[NSManagedObjectContext alloc] initWithConcurrencyType: NSPrivateQueueConcurrencyType];
@@ -330,9 +347,11 @@ NSLog(@"--->%s", __PRETTY_FUNCTION__);
 	[updateContext performBlockAndWait: ^{
 		DCInfo				*info = (DCInfo *)[updateContext objectWithID: inInfoObjectID];
 		DCBlockInfo			*blockInfo;
-
-		blockInfoCount = [info.blockInfo count];
-		while ([inEndDate timeIntervalSinceNow] > 0.0 && blockInfoCount < [[DCBridge sharedBridge] getBlockHeight] && self.blocksCanUpdate) {
+		NSDate				*endTime;
+		
+		blockInfoCount = [info.blockInfo count];	// count should equal height + 1
+		endTime = [NSDate dateWithTimeIntervalSinceNow: inUpdateTime];
+		while ([endTime timeIntervalSinceNow] > 0.0 && blockInfoCount <= [[DCBridge sharedBridge] getBlockHeight] && self.blocksCanUpdate) {
 			blockInfo = [DCBlockInfo blockInfoAtHeight: blockInfoCount inContext: updateContext];
 			[info addBlockInfoObject: blockInfo];
 			[info addToCumulatives: blockInfo];
@@ -356,32 +375,58 @@ NSLog(@"--->%s", __PRETTY_FUNCTION__);
 {
 	@synchronized(self) {
 		if (!self.blocksUpdating) {
-			NSManagedObjectID		*infoID = [self.info objectID];
-			NSInteger				startBlockInfoCount = [self.info.blockInfo count];
+			@autoreleasepool {
+				NSManagedObjectID		*infoID = [self.info objectID];
+				NSInteger				startBlockInfoCount = [self.info.blockInfo count];
 
-			self.blocksUpdating = YES;
-			dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
-				NSInteger		blockInfoCount = startBlockInfoCount;
-				
-				if (inReconcileDepth)
-					[self reconcileBlockInfoWithDepth: inReconcileDepth withInfoObjectID: infoID];
+				self.blocksUpdating = YES;
+				dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+					NSInteger				blockInfoCount = startBlockInfoCount;
+					
+					if (inReconcileDepth)
+						[self reconcileBlockInfoWithDepth: inReconcileDepth withInfoObjectID: infoID];
 
-				while (blockInfoCount < [[DCBridge sharedBridge] getBlockHeight] && self.blocksCanUpdate) {
-					// the less time we allow to update the less efficient this is
-					//	50mS: ~90 seconds per 1000 blocks
-					//	100mS: ~60 seconds per 1000 blocks
-					//	250mS: ~30 seconds per 1000 blocks
-					//	400mS: ~25 seconds per 1000 blocks
-					// chose 250mS to balance between updating and allowing the interface to update
-					blockInfoCount = [self updateBlockInfoUntil: [NSDate dateWithTimeIntervalSinceNow: 0.25] withInfoObjectID: infoID];
+					while (blockInfoCount <= [[DCBridge sharedBridge] getBlockHeight] && self.blocksCanUpdate) {
+						blockInfoCount = [self updateBlockInfoFor: 0.10 withInfoObjectID: infoID];
 NSLog(@"update %ld (best %ld)", blockInfoCount, [[DCBridge sharedBridge] getBlockHeight]);
-				}
-				
-				self.blocksUpdating = NO;
-NSLog(@"finished updating blocks");
-			});
+					}
+					
+					self.blocksUpdating = NO;
+				});
+			}
 		}
 	}
+	
+	[self updateMiscInfo];
+}
+
+- (void) reconcileWallet
+{
+	[self.defaultContext performBlock:^{
+		[self.defaultWallet reconcile];
+	}];
+}
+
+- (void) updateMiscInfo
+{
+	NSDictionary		*miscInfo = [[DCBridge sharedBridge] getMiscInfo];
+	NSNumber			*networkHPS = miscInfo[@"networkhps"];
+	NSString			*warnings = miscInfo[@"warnings"];
+	
+	if (warnings == nil || ![warnings length])
+		warnings = @"- none -";
+	
+	[self.defaultContext performBlock:^{
+		self.info.networkMHS = @([networkHPS doubleValue] / 1000000.0);
+		self.info.warnings = warnings;
+	}];
+}
+
+- (void) setConnectionCount: (NSInteger) inNumConnections
+{
+	[self.defaultContext performBlock:^{
+		self.info.numConnections = @(inNumConnections);
+	}];
 }
 
 @end

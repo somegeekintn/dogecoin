@@ -3,7 +3,7 @@
 //  Dogecoin
 //
 //  Created by Casey Fleser on 1/14/14.
-//  Copyright (c) 2014 Dogecoin Developers. All rights reserved.
+//  Copyright (c) 2014 Casey Fleser / @somegeekintn. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -21,7 +21,6 @@
 
 @property (nonatomic, strong) NSString			*blockHash;
 @property (nonatomic, strong) NSNumber			*difficulty;
-@property (nonatomic, strong) NSDecimalNumber	*fees;
 @property (nonatomic, strong) NSNumber			*height;
 @property (nonatomic, strong) NSString			*merkleRoot;
 @property (nonatomic, strong) NSDecimalNumber	*minted;

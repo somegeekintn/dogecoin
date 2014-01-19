@@ -3,7 +3,7 @@
 //  Dogecoin
 //
 //  Created by Casey Fleser on 1/14/14.
-//  Copyright (c) 2014 Dogecoin Developers. All rights reserved.
+//  Copyright (c) 2014 Casey Fleser / @somegeekintn. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -22,10 +22,11 @@
 
 @property (nonatomic, strong) NSNumber			*difficulty;
 @property (nonatomic, strong) NSDate			*lastBlockTime;
-@property (nonatomic, strong) NSNumber			*networkHashRate;
+@property (nonatomic, strong) NSNumber			*networkMHS;
 @property (nonatomic, strong) NSNumber			*numConnections;
 @property (nonatomic, strong) NSDecimalNumber	*totalMinted;
 @property (nonatomic, strong) NSNumber			*totalTransactions;
+@property (nonatomic, strong) NSString			*warnings;
 
 @property (nonatomic, strong) NSSet				*blockInfo;
 

@@ -647,7 +647,7 @@
                 </menuItem>
             </items>
         </menu>
-        <window title="Moon" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" animationBehavior="default" id="371">
+        <window title="Moon" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" frameAutosaveName="moon_window" animationBehavior="default" id="371">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="335" y="390" width="800" height="500"/>
@@ -657,7 +657,7 @@
                 <rect key="frame" x="0.0" y="0.0" width="800" height="500"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="lFv-0G-OuV" userLabel="Background">
+                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="lFv-0G-OuV" userLabel="Background" customClass="DCBackgroundView">
                         <rect key="frame" x="0.0" y="0.0" width="800" height="500"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     </customView>
@@ -670,34 +670,34 @@
                                 <autoresizingMask key="autoresizingMask"/>
                                 <subviews>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="eko-Bc-63c">
-                                        <rect key="frame" x="3" y="473" width="65" height="21"/>
+                                        <rect key="frame" x="3" y="471" width="72" height="27"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" title="Technical" id="wZS-8H-9Ih">
-                                            <font key="font" size="14" name="HelveticaNeue-Medium"/>
+                                            <font key="font" size="16" name="AvenirNext-Medium"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="F5Z-ai-0rf">
-                                        <rect key="frame" x="9" y="337" width="69" height="20"/>
+                                        <rect key="frame" x="3" y="301" width="69" height="20"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" title="Circulation:" id="bck-QM-x5J">
-                                            <font key="font" size="12" name="HelveticaNeue-Medium"/>
+                                            <font key="font" size="12" name="AvenirNext-Medium"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Wzk-bb-zpR">
-                                        <rect key="frame" x="15" y="311" width="128" height="20"/>
+                                        <rect key="frame" x="9" y="281" width="134" height="20"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" title="100,000,000,000" id="kZL-ah-Sql">
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" allowsUndo="NO" sendsActionOnEndEditing="YES" placeholderString="circulation" id="kZL-ah-Sql">
                                             <numberFormatter key="formatter" formatterBehavior="custom10_4" positiveFormat="¤ #,##0" negativeFormat="¤ #,##0" numberStyle="currency" minimumIntegerDigits="1" maximumIntegerDigits="309" minimumFractionDigits="0" maximumFractionDigits="0" currencySymbol="Ɖ" positivePrefix="Ɖ " negativePrefix="-Ɖ " id="E4Z-jk-xEj">
                                                 <real key="roundingIncrement" value="0.0"/>
                                                 <metadata>
                                                     <bool key="localizesFormat" value="YES"/>
                                                 </metadata>
                                             </numberFormatter>
-                                            <font key="font" size="12" name="HelveticaNeue"/>
+                                            <font key="font" size="12" name="AvenirNext-Regular"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
@@ -706,19 +706,19 @@
                                         </connections>
                                     </textField>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3QL-JL-CBR">
-                                        <rect key="frame" x="9" y="391" width="69" height="20"/>
+                                        <rect key="frame" x="3" y="349" width="69" height="20"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" title="Blocks:" id="Uut-5Z-5HB">
-                                            <font key="font" size="12" name="HelveticaNeue-Medium"/>
+                                            <font key="font" size="12" name="AvenirNext-Medium"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pB7-MY-pan">
-                                        <rect key="frame" x="15" y="365" width="128" height="20"/>
+                                        <rect key="frame" x="9" y="329" width="134" height="20"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" title="100,000,000,000" id="e2g-Zu-5Uu">
-                                            <font key="font" size="12" name="HelveticaNeue"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" allowsUndo="NO" sendsActionOnEndEditing="YES" placeholderString="block count" id="e2g-Zu-5Uu">
+                                            <font key="font" size="12" name="AvenirNext-Regular"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
@@ -727,20 +727,20 @@
                                         </connections>
                                     </textField>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="buE-cN-lnb">
-                                        <rect key="frame" x="9" y="445" width="74" height="20"/>
+                                        <rect key="frame" x="3" y="445" width="74" height="20"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" title="Last update:" id="I1f-bl-ufo">
-                                            <font key="font" size="12" name="HelveticaNeue-Medium"/>
+                                            <font key="font" size="12" name="AvenirNext-Medium"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="agz-Fz-Xib">
-                                        <rect key="frame" x="15" y="419" width="128" height="20"/>
+                                        <rect key="frame" x="9" y="425" width="134" height="20"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" title="Oct 11, 1984 2:05 PM" id="5X6-y6-3ec">
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" placeholderString="last update" id="5X6-y6-3ec">
                                             <dateFormatter key="formatter" dateStyle="medium" timeStyle="short" id="iX4-zD-pte"/>
-                                            <font key="font" size="12" name="HelveticaNeue"/>
+                                            <font key="font" size="12" name="AvenirNext-Regular"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
@@ -748,29 +748,50 @@
                                             <binding destination="k4D-D8-fme" name="value" keyPath="selection.lastBlockTime" id="Ve4-aA-w8M"/>
                                         </connections>
                                     </textField>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bsT-SC-DeY">
+                                        <rect key="frame" x="3" y="397" width="77" height="20"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" title="Connections:" id="4at-NG-fqg">
+                                            <font key="font" size="12" name="AvenirNext-Medium"/>
+                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="C7d-qR-jYu">
+                                        <rect key="frame" x="9" y="377" width="134" height="20"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" placeholderString="connections" id="Xc6-pR-vmV">
+                                            <font key="font" size="12" name="AvenirNext-Regular"/>
+                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                        <connections>
+                                            <binding destination="k4D-D8-fme" name="value" keyPath="selection.numConnections" id="Dly-Z6-Tsh"/>
+                                        </connections>
+                                    </textField>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="8g3-RQ-AnJ">
-                                        <rect key="frame" x="9" y="234" width="74" height="20"/>
+                                        <rect key="frame" x="6" y="205" width="74" height="20"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" title="Difficulty:" id="yLi-Xo-nra">
-                                            <font key="font" size="12" name="HelveticaNeue-Medium"/>
+                                            <font key="font" size="12" name="AvenirNext-Medium"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="mG8-EE-tLz">
-                                        <rect key="frame" x="9" y="283" width="78" height="20"/>
+                                        <rect key="frame" x="3" y="253" width="78" height="20"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" title="Transactions:" id="aiv-jp-eJg">
-                                            <font key="font" size="12" name="HelveticaNeue-Medium"/>
+                                            <font key="font" size="12" name="AvenirNext-Medium"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ltj-gX-tWj">
-                                        <rect key="frame" x="15" y="257" width="128" height="20"/>
+                                        <rect key="frame" x="9" y="233" width="134" height="20"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" title="100,000,000,000" id="4ml-hl-Up9">
-                                            <font key="font" size="12" name="HelveticaNeue"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" allowsUndo="NO" sendsActionOnEndEditing="YES" placeholderString="transactions" id="4ml-hl-Up9">
+                                            <font key="font" size="12" name="AvenirNext-Regular"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
@@ -779,15 +800,69 @@
                                         </connections>
                                     </textField>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jUS-Fy-z1e">
-                                        <rect key="frame" x="15" y="206" width="128" height="20"/>
+                                        <rect key="frame" x="12" y="185" width="131" height="20"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" title="100,000,000,000" id="gfP-G5-yf5">
-                                            <font key="font" size="12" name="HelveticaNeue"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" allowsUndo="NO" sendsActionOnEndEditing="YES" placeholderString="current difficulty" id="gfP-G5-yf5">
+                                            <numberFormatter key="formatter" formatterBehavior="default10_4" positiveFormat="#,##0.###" negativeFormat="#,##0.###" numberStyle="decimal" minimumIntegerDigits="1" maximumIntegerDigits="309" minimumFractionDigits="0" maximumFractionDigits="3" id="ZTo-85-Wsx">
+                                                <real key="roundingIncrement" value="0.0"/>
+                                                <metadata>
+                                                    <bool key="localizesFormat" value="YES"/>
+                                                </metadata>
+                                            </numberFormatter>
+                                            <font key="font" size="12" name="AvenirNext-Regular"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                         <connections>
                                             <binding destination="k4D-D8-fme" name="value" keyPath="selection.difficulty" id="lyf-jp-lrc"/>
+                                        </connections>
+                                    </textField>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="GjO-k0-JFd">
+                                        <rect key="frame" x="6" y="157" width="93" height="20"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" title="Network Power:" id="4Jg-Mx-rau">
+                                            <font key="font" size="12" name="AvenirNext-Medium"/>
+                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Qm2-Xg-Qhz">
+                                        <rect key="frame" x="12" y="137" width="131" height="20"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" allowsUndo="NO" sendsActionOnEndEditing="YES" placeholderString="network hash power" id="6AK-94-xSv">
+                                            <numberFormatter key="formatter" formatterBehavior="custom10_4" positiveFormat="#,##0.## MH/s" negativeFormat="#,##0.## MH/s" numberStyle="decimal" minimumIntegerDigits="1" maximumIntegerDigits="309" minimumFractionDigits="0" maximumFractionDigits="2" positiveSuffix=" MH/s" negativeSuffix=" MH/s" id="eFg-uB-pBX">
+                                                <real key="roundingIncrement" value="0.0"/>
+                                                <metadata>
+                                                    <bool key="localizesFormat" value="YES"/>
+                                                </metadata>
+                                            </numberFormatter>
+                                            <font key="font" size="12" name="AvenirNext-Regular"/>
+                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                        <connections>
+                                            <binding destination="k4D-D8-fme" name="value" keyPath="selection.networkMHS" id="jCy-AO-Zhn"/>
+                                        </connections>
+                                    </textField>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3dP-fO-YHN">
+                                        <rect key="frame" x="6" y="109" width="60" height="20"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" title="Warnings:" id="y1T-UB-F8B">
+                                            <font key="font" size="12" name="AvenirNext-Medium"/>
+                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="NKW-51-nI6">
+                                        <rect key="frame" x="12" y="19" width="131" height="90"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <textFieldCell key="cell" allowsUndo="NO" sendsActionOnEndEditing="YES" title="WARNING: Displayed transactions may not be correct!  You may need to upgrade, or other nodes may need to upgrade." id="bJa-vw-7xQ">
+                                            <font key="font" size="10" name="AvenirNext-Regular"/>
+                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                        <connections>
+                                            <binding destination="k4D-D8-fme" name="value" keyPath="selection.warnings" id="IWD-58-5kT"/>
                                         </connections>
                                     </textField>
                                 </subviews>
@@ -803,13 +878,202 @@
                                         <rect key="frame" x="0.0" y="0.0" width="639" height="500"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <subviews>
-                                            <customView fixedFrame="YES" id="AIp-M0-cRX">
+                                            <customView id="AIp-M0-cRX">
                                                 <rect key="frame" x="0.0" y="0.0" width="478" height="500"/>
                                                 <autoresizingMask key="autoresizingMask"/>
+                                                <subviews>
+                                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="khL-V7-mB7">
+                                                        <rect key="frame" x="193" y="439" width="92" height="41"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Balance" id="9vw-p4-CCX">
+                                                            <numberFormatter key="formatter" formatterBehavior="custom10_4" positiveFormat="¤ #,##0.00######" negativeFormat="¤ #,##0.00######" numberStyle="currency" minimumIntegerDigits="1" maximumIntegerDigits="309" minimumFractionDigits="2" maximumFractionDigits="8" positivePrefix="Ɖ " negativePrefix="Ɖ " id="kMU-zs-1gt">
+                                                                <real key="roundingIncrement" value="0.0"/>
+                                                                <metadata>
+                                                                    <bool key="localizesFormat" value="YES"/>
+                                                                </metadata>
+                                                            </numberFormatter>
+                                                            <font key="font" size="24" name="AvenirNext-Medium"/>
+                                                            <color key="textColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                        <connections>
+                                                            <binding destination="w5m-oW-Moo" name="value" keyPath="defaultWallet.balance" id="YvS-vR-3Pp"/>
+                                                        </connections>
+                                                    </textField>
+                                                    <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="22" horizontalPageScroll="10" verticalLineScroll="22" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="96q-jE-fyH">
+                                                        <rect key="frame" x="0.0" y="0.0" width="478" height="400"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <clipView key="contentView" focusRingType="none" drawsBackground="NO" copiesOnScroll="NO" id="9Dz-KV-F6p">
+                                                            <rect key="frame" x="0.0" y="17" width="478" height="383"/>
+                                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                            <subviews>
+                                                                <tableView focusRingType="none" verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="sequential" selectionHighlightStyle="sourceList" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" rowHeight="20" headerView="KAY-SJ-3l1" id="tBZ-ed-esb">
+                                                                    <rect key="frame" x="0.0" y="0.0" width="478" height="383"/>
+                                                                    <autoresizingMask key="autoresizingMask"/>
+                                                                    <size key="intercellSpacing" width="3" height="2"/>
+                                                                    <color key="backgroundColor" white="1" alpha="0.80000000000000004" colorSpace="calibratedWhite"/>
+                                                                    <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
+                                                                    <tableColumns>
+                                                                        <tableColumn editable="NO" width="20" minWidth="20" maxWidth="20" id="Uki-QK-XOb">
+                                                                            <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left">
+                                                                                <font key="font" size="11" name="AvenirNext-Medium"/>
+                                                                                <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
+                                                                                <color key="backgroundColor" white="0.33333298560000002" alpha="1" colorSpace="calibratedWhite"/>
+                                                                            </tableHeaderCell>
+                                                                            <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" alignment="left" title="Text Cell" id="dok-YV-Wdo">
+                                                                                <font key="font" size="12" name="AvenirNext-Regular"/>
+                                                                                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                                                <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                                            </textFieldCell>
+                                                                            <connections>
+                                                                                <binding destination="Rbo-Ov-nrc" name="value" keyPath="arrangedObjects.category" id="pzb-yi-wGw"/>
+                                                                            </connections>
+                                                                        </tableColumn>
+                                                                        <tableColumn editable="NO" width="128" minWidth="128" maxWidth="128" id="K0z-VH-c31">
+                                                                            <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Date">
+                                                                                <font key="font" size="11" name="AvenirNext-Medium"/>
+                                                                                <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
+                                                                                <color key="backgroundColor" white="0.33333298560000002" alpha="1" colorSpace="calibratedWhite"/>
+                                                                            </tableHeaderCell>
+                                                                            <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" alignment="left" title="Text Cell" id="2kP-wB-bb3">
+                                                                                <dateFormatter key="formatter" dateStyle="medium" timeStyle="short" id="amK-tV-0Hw"/>
+                                                                                <font key="font" size="12" name="AvenirNext-Regular"/>
+                                                                                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                                                <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                                            </textFieldCell>
+                                                                            <tableColumnResizingMask key="resizingMask" userResizable="YES"/>
+                                                                            <connections>
+                                                                                <binding destination="Rbo-Ov-nrc" name="value" keyPath="arrangedObjects.time" id="gSN-O6-hTY">
+                                                                                    <dictionary key="options">
+                                                                                        <bool key="NSConditionallySetsEditable" value="YES"/>
+                                                                                    </dictionary>
+                                                                                </binding>
+                                                                            </connections>
+                                                                        </tableColumn>
+                                                                        <tableColumn editable="NO" width="135" minWidth="100" maxWidth="1000" id="4dj-ac-DSH">
+                                                                            <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Address">
+                                                                                <font key="font" size="11" name="AvenirNext-Medium"/>
+                                                                                <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
+                                                                                <color key="backgroundColor" white="0.33333298560000002" alpha="1" colorSpace="calibratedWhite"/>
+                                                                            </tableHeaderCell>
+                                                                            <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" alignment="left" title="Text Cell" id="q56-GX-4CR">
+                                                                                <font key="font" size="12" name="AvenirNext-Regular"/>
+                                                                                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                                                <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                                            </textFieldCell>
+                                                                            <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
+                                                                            <connections>
+                                                                                <binding destination="Rbo-Ov-nrc" name="value" keyPath="arrangedObjects.label" id="laX-3U-xD1">
+                                                                                    <dictionary key="options">
+                                                                                        <bool key="NSConditionallySetsEditable" value="YES"/>
+                                                                                    </dictionary>
+                                                                                </binding>
+                                                                            </connections>
+                                                                        </tableColumn>
+                                                                        <tableColumn editable="NO" width="80" minWidth="80" maxWidth="128" id="qNt-Xs-Gw5">
+                                                                            <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Fee">
+                                                                                <font key="font" size="11" name="AvenirNext-Medium"/>
+                                                                                <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
+                                                                                <color key="backgroundColor" white="0.33333298560000002" alpha="1" colorSpace="calibratedWhite"/>
+                                                                            </tableHeaderCell>
+                                                                            <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" alignment="left" title="Text Cell" id="nao-Vk-yNy">
+                                                                                <numberFormatter key="formatter" formatterBehavior="custom10_4" positiveFormat="#,##0.00######" negativeFormat="#,##0.00######" numberStyle="currency" minimumIntegerDigits="1" maximumIntegerDigits="309" minimumFractionDigits="2" maximumFractionDigits="8" id="HeG-17-rFK">
+                                                                                    <real key="roundingIncrement" value="0.0"/>
+                                                                                    <metadata>
+                                                                                        <bool key="localizesFormat" value="YES"/>
+                                                                                    </metadata>
+                                                                                </numberFormatter>
+                                                                                <font key="font" size="12" name="AvenirNext-Regular"/>
+                                                                                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                                                <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                                            </textFieldCell>
+                                                                            <tableColumnResizingMask key="resizingMask" userResizable="YES"/>
+                                                                            <connections>
+                                                                                <binding destination="Rbo-Ov-nrc" name="textColor" keyPath="arrangedObjects.fee" id="t0F-9z-oxN">
+                                                                                    <dictionary key="options">
+                                                                                        <string key="NSValueTransformerName">DCTransformer_NumberToColor</string>
+                                                                                    </dictionary>
+                                                                                </binding>
+                                                                                <binding destination="Rbo-Ov-nrc" name="value" keyPath="arrangedObjects.fee" id="Ud6-uh-Y1v">
+                                                                                    <dictionary key="options">
+                                                                                        <bool key="NSConditionallySetsEditable" value="YES"/>
+                                                                                    </dictionary>
+                                                                                </binding>
+                                                                            </connections>
+                                                                        </tableColumn>
+                                                                        <tableColumn editable="NO" width="100" minWidth="100" maxWidth="192" id="rCb-3x-nvK">
+                                                                            <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Amount">
+                                                                                <font key="font" size="11" name="AvenirNext-Medium"/>
+                                                                                <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
+                                                                                <color key="backgroundColor" white="0.33333298560000002" alpha="1" colorSpace="calibratedWhite"/>
+                                                                            </tableHeaderCell>
+                                                                            <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" alignment="left" title="Text Cell" id="q8K-ah-yfz">
+                                                                                <numberFormatter key="formatter" formatterBehavior="custom10_4" positiveFormat="#,##0.00######" negativeFormat="#,##0.00######" numberStyle="currency" minimumIntegerDigits="1" maximumIntegerDigits="309" minimumFractionDigits="2" maximumFractionDigits="8" id="I2O-fF-T1G">
+                                                                                    <real key="roundingIncrement" value="0.0"/>
+                                                                                    <metadata>
+                                                                                        <bool key="localizesFormat" value="YES"/>
+                                                                                    </metadata>
+                                                                                </numberFormatter>
+                                                                                <font key="font" size="12" name="AvenirNext-Regular"/>
+                                                                                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                                                <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                                            </textFieldCell>
+                                                                            <tableColumnResizingMask key="resizingMask" userResizable="YES"/>
+                                                                            <connections>
+                                                                                <binding destination="Rbo-Ov-nrc" name="textColor" keyPath="arrangedObjects.amount" id="PkK-aj-e3z">
+                                                                                    <dictionary key="options">
+                                                                                        <string key="NSValueTransformerName">DCTransformer_NumberToColor</string>
+                                                                                    </dictionary>
+                                                                                </binding>
+                                                                                <binding destination="Rbo-Ov-nrc" name="value" keyPath="arrangedObjects.amount" id="ftx-0X-wF2">
+                                                                                    <dictionary key="options">
+                                                                                        <bool key="NSConditionallySetsEditable" value="YES"/>
+                                                                                    </dictionary>
+                                                                                </binding>
+                                                                            </connections>
+                                                                        </tableColumn>
+                                                                    </tableColumns>
+                                                                </tableView>
+                                                            </subviews>
+                                                            <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                        </clipView>
+                                                        <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="Tq9-kg-9eG">
+                                                            <rect key="frame" x="1" y="384" width="476" height="15"/>
+                                                            <autoresizingMask key="autoresizingMask"/>
+                                                        </scroller>
+                                                        <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="NBt-oa-flC">
+                                                            <rect key="frame" x="-14" y="9" width="15" height="0.0"/>
+                                                            <autoresizingMask key="autoresizingMask"/>
+                                                        </scroller>
+                                                        <tableHeaderView key="headerView" id="KAY-SJ-3l1">
+                                                            <rect key="frame" x="0.0" y="0.0" width="478" height="17"/>
+                                                            <autoresizingMask key="autoresizingMask"/>
+                                                        </tableHeaderView>
+                                                    </scrollView>
+                                                </subviews>
+                                                <constraints>
+                                                    <constraint firstAttribute="centerX" secondItem="khL-V7-mB7" secondAttribute="centerX" id="4Jh-a9-BNL"/>
+                                                    <constraint firstAttribute="bottom" secondItem="96q-jE-fyH" secondAttribute="bottom" id="CB0-uM-RgL"/>
+                                                    <constraint firstItem="96q-jE-fyH" firstAttribute="leading" secondItem="AIp-M0-cRX" secondAttribute="leading" id="IfL-JG-AtQ"/>
+                                                    <constraint firstAttribute="trailing" secondItem="96q-jE-fyH" secondAttribute="trailing" id="NWC-LJ-7TG"/>
+                                                    <constraint firstItem="khL-V7-mB7" firstAttribute="top" secondItem="AIp-M0-cRX" secondAttribute="top" constant="20" symbolic="YES" id="b6f-IT-wq6"/>
+                                                    <constraint firstItem="96q-jE-fyH" firstAttribute="top" secondItem="AIp-M0-cRX" secondAttribute="top" constant="100" id="f59-XS-ak2"/>
+                                                </constraints>
                                             </customView>
                                             <customView id="Psd-aJ-XbO">
                                                 <rect key="frame" x="479" y="0.0" width="160" height="500"/>
                                                 <autoresizingMask key="autoresizingMask"/>
+                                                <subviews>
+                                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="qeS-qg-vhf">
+                                                        <rect key="frame" x="3" y="471" width="72" height="27"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" title="News" id="KcQ-cW-2t1">
+                                                            <font key="font" size="16" name="AvenirNext-Medium"/>
+                                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                    </textField>
+                                                </subviews>
                                                 <constraints>
                                                     <constraint firstAttribute="width" relation="lessThanOrEqual" constant="160" id="2I2-LG-Tc9"/>
                                                 </constraints>
@@ -852,6 +1116,11 @@
                 <binding destination="w5m-oW-Moo" name="managedObjectContext" keyPath="defaultContext" id="EAQ-XL-nND"/>
             </connections>
         </objectController>
+        <arrayController mode="entity" entityName="WalletTX" editable="NO" automaticallyPreparesContent="YES" preservesSelection="NO" selectsInsertedObjects="NO" avoidsEmptySelection="NO" clearsFilterPredicateOnInsertion="NO" automaticallyRearrangesObjects="YES" id="Rbo-Ov-nrc" userLabel="WalletTX Controller" customClass="DCWalletTXController">
+            <connections>
+                <binding destination="w5m-oW-Moo" name="contentSet" keyPath="defaultWallet.transactions" id="QdA-xg-l1f"/>
+            </connections>
+        </arrayController>
         <customObject id="494" customClass="DCAppDelegate">
             <connections>
                 <outlet property="window" destination="371" id="532"/>

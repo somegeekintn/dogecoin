@@ -3,7 +3,7 @@
 //  Dogecoin
 //
 //  Created by Casey Fleser on 1/14/14.
-//  Copyright (c) 2014 Dogecoin Developers. All rights reserved.
+//  Copyright (c) 2014 Casey Fleser / @somegeekintn. All rights reserved.
 //
 
 #import "DCInfo.h"
@@ -14,10 +14,11 @@
 
 @dynamic difficulty;
 @dynamic lastBlockTime;
-@dynamic networkHashRate;
+@dynamic networkMHS;
 @dynamic numConnections;
 @dynamic totalMinted;
 @dynamic totalTransactions;
+@dynamic warnings;
 
 @dynamic blockInfo;
 

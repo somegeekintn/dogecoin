@@ -3,68 +3,123 @@
 //  Dogecoin
 //
 //  Created by Casey Fleser on 1/13/14.
-//  Copyright (c) 2014 Dogecoin Developers. All rights reserved.
+//  Copyright (c) 2014 Casey Fleser / @somegeekintn. All rights reserved.
 //
 //	Obj-C gets a bit stabby about some of the redefinitions in the client
 //	code like YES, NO, etc. This collection of functions mostly just
 //	forwards function calls on their counterparts in the client
 
 #include "bitcoinrpc.h"
+#include "base58.h"
 #include "init.h"
 #include "main.h"
 #include "ui_interface.h"
+#include "DCConsts.h"
 #include <map>
+#include <boost/random/mersenne_twister.hpp>
+#include <boost/random/uniform_int_distribution.hpp>
+#include <CoreFoundation/CoreFoundation.h>
+
+#undef printf
 
 extern void		bridge_sig_BlocksChanged();
-extern void		bridge_sig_NumConnectionsChanged(int newNumConnections);
+extern void		bridge_sig_NumConnectionsChanged(int inNewNumConnections);
+extern void		bridge_sig_InitMessage(const char *inMessage);
 
-void bridge_EstablishConnections();
+void bridge_EstablishPrimaryConnections();
+void bridge_EstablishSecondaryConnections();
 void bridge_DestroyConnections();
+
+
+#pragma mark - Notifications
+
+static void NotifyTransactionChanged(
+	CWallet					*inWallet,
+	const uint256			&inHash,
+	ChangeType				inStatus)
+{
+// hash + address (or lack thereof) should be enough to uniquely identify
+// still don't have a solid handle on how many inputs / outputs one might
+// expect to find in a single transaction. 
+//    OutputDebugStringF("NotifyTransactionChanged %s status=%i\n", hash.GetHex().c_str(), status);
+}
+
+static void NotifyAddressBookChanged(
+	CWallet					*inWallet,
+	const CTxDestination	&inAddress,
+	const std::string		&inLabel,
+	bool					inIsMine,
+	ChangeType				inStatus)
+{
+//    OutputDebugStringF("NotifyAddressBookChanged %s %s isMine=%i status=%i\n", CBitcoinAddress(address).ToString().c_str(), label.c_str(), isMine, status);
+}
+
+// NotifyKeyStoreStatusChanged: Called when wallet is locked / unlocked
+static void NotifyKeyStoreStatusChanged(
+	CCryptoKeyStore			*inWallet)
+{
+//    OutputDebugStringF("NotifyKeyStoreStatusChanged\n");
+}
 
 static void NotifyBlocksChanged()
 {
 	bridge_sig_BlocksChanged();
 }
 
-static void NotifyNumConnectionsChanged(int newNumConnections)
+static void NotifyNumConnectionsChanged(
+	int						inNewNumConnections)
 {
-	bridge_sig_NumConnectionsChanged(newNumConnections);
+	bridge_sig_NumConnectionsChanged(inNewNumConnections);
 }
 
-static void NotifyAlertChanged(const uint256 &hash, ChangeType status)
+// NotifyAlertChanged: alert presented, deleted, expired. inHash is alert identifier
+static void NotifyAlertChanged(
+	const uint256			&inHash,
+	ChangeType				inStatus)
 {
 //	bridgesig_NumConnectionsChanged(newNumConnections);
 }
 
-static void ThreadSafeMessageBox(const std::string& message, const std::string& caption, int style)
+static void ThreadSafeMessageBox(
+	const std::string		&inMessage,
+	const std::string		&inCaption,
+	int						inStyle)
 {
-	printf("%s: %s\n", caption.c_str(), message.c_str());
+	printf("%s: %s\n", inCaption.c_str(), inMessage.c_str());
 }
 
-static bool ThreadSafeAskFee(int64 nFeeRequired, const std::string& strCaption)
+static bool ThreadSafeAskFee(
+	int64					inFeeRequired,
+	const std::string		&inStrCaption)
 {
 	return false;
 }
 
-static void ThreadSafeHandleURI(const std::string& strURI)
+static void ThreadSafeHandleURI(
+	const std::string		&inStrURI)
 {
 }
 
-static void InitMessage(const std::string &message)
+static void InitMessage(
+	const std::string		&inMessage)
 {
-	printf("--->>> InitMessage %s: %s\n", message.c_str());
+	bridge_sig_InitMessage(inMessage.c_str());
 }
 
 static void QueueShutdown()
 {
 }
 
+#pragma mark - Client Lifecycle
+
 bool bridge_Initialize()
 {
-	bool	didInit = AppInit2();
+	bool	didInit;
 	
+	bridge_EstablishPrimaryConnections();
+	didInit = AppInit2();
 	if (didInit)
-		bridge_EstablishConnections();
+		bridge_EstablishSecondaryConnections();
 
 	return didInit;
 }
@@ -76,8 +131,10 @@ void bridge_Shutdown()
 	Shutdown(NULL);
 }
 
-void bridge_EstablishConnections()
+void bridge_EstablishPrimaryConnections()
 {
+	// connect to all boost::signals2::signal
+
     uiInterface.NotifyBlocksChanged.connect(boost::bind(NotifyBlocksChanged));
     uiInterface.NotifyNumConnectionsChanged.connect(boost::bind(NotifyNumConnectionsChanged, _1));
     uiInterface.NotifyAlertChanged.connect(boost::bind(NotifyAlertChanged, _1, _2));
@@ -88,6 +145,13 @@ void bridge_EstablishConnections()
     uiInterface.InitMessage.connect(InitMessage);
     uiInterface.QueueShutdown.connect(QueueShutdown);
 //    uiInterface.Translate.connect(Translate);
+}
+
+void bridge_EstablishSecondaryConnections()
+{
+    pwalletMain->NotifyTransactionChanged.connect(boost::bind(NotifyTransactionChanged, _1, _2, _3));
+    pwalletMain->NotifyStatusChanged.connect(boost::bind(NotifyKeyStoreStatusChanged, _1));
+    pwalletMain->NotifyAddressBookChanged.connect(boost::bind(NotifyAddressBookChanged, _1, _2, _3, _4, _5));
 }
 
 void bridge_DestroyConnections()
@@ -102,13 +166,18 @@ void bridge_DestroyConnections()
     uiInterface.NotifyNumConnectionsChanged.disconnect(boost::bind(NotifyNumConnectionsChanged, _1));
     uiInterface.NotifyAlertChanged.disconnect(boost::bind(NotifyAlertChanged, _1, _2));
 
+    pwalletMain->NotifyTransactionChanged.disconnect(boost::bind(NotifyTransactionChanged, _1, _2, _3));
+    pwalletMain->NotifyStatusChanged.disconnect(boost::bind(NotifyKeyStoreStatusChanged, _1));
+    pwalletMain->NotifyAddressBookChanged.disconnect(boost::bind(NotifyAddressBookChanged, _1, _2, _3, _4, _5));
 }
 
-double bridge_nBitsToDifficulty(
-	unsigned int		inNBits)
+#pragma mark - Utility
+
+double bridge_getDifficultyForBlockIndex(
+	const CBlockIndex		*inBlockindex)
 {
-	int		nShift = (inNBits >> 24) & 0xff;
-	double	dDiff = (double)0x0000ffff / (double)(inNBits & 0x00ffffff);
+	int		nShift = (inBlockindex->nBits >> 24) & 0xff;
+	double	dDiff = (double)0x0000ffff / (double)(inBlockindex->nBits & 0x00ffffff);
 
 	while (nShift < 29) {
 		dDiff *= 256.0;
@@ -122,17 +191,147 @@ double bridge_nBitsToDifficulty(
 	return dDiff;
 }
 
-#pragma mark -
+double bridge_getNetworkHashesPerSecond()
+{
+	double		hashesPerSec = 0.0;
+	
+	if (pindexBest != NULL) {
+		CBlockIndex		*pindexPrev = pindexBest;
+		double			timeDiff;
+		double			timePerBlock;
+		int32_t			lookup = 120;
+		
+		if (lookup > pindexBest->nHeight)
+			lookup = pindexBest->nHeight;
+		for (int32_t idx=0; idx<lookup; idx++)
+			pindexPrev = pindexPrev->pprev;
+
+		timeDiff = pindexBest->GetBlockTime() - pindexPrev->GetBlockTime();
+		timePerBlock = timeDiff / lookup;
+		
+		hashesPerSec = bridge_getDifficultyForBlockIndex(pindexBest) * pow(2.0, 32) / timePerBlock;
+	}
+	
+    return hashesPerSec;
+}
+
+int bridge_generateMTRandom(
+	unsigned int		inSeed,
+	int					inRange)
+{
+	boost::random::mt19937						gen(inSeed);
+    boost::random::uniform_int_distribution<>	dist(1, inRange);
+	
+    return dist(gen);
+}
+
+// Note: This function should mirror GetBlockValue in main.cpp which I would
+// use directly but it's declared static and I don't want to alter the base
+// source in any way. In any case it's only used to total the number of minted
+// coins so it's not truly critical.
+
+int64 bridge_getBlockMintedValue(
+	int					inHeight,
+	uint256				inPrevHash)
+{
+	int64			nSubsidy = 10000 * COIN;
+	std::string		cseed_str = inPrevHash.ToString().substr(7,7);
+	const char		*cseed = cseed_str.c_str();
+	long			seed = hex2long(cseed);
+	int				rand = bridge_generateMTRandom(seed, 999999);
+
+	if (!inHeight) {			// the genesis block actual has a value of 88
+		nSubsidy = 88 * COIN;
+	}
+	else if (inHeight < 100000) {
+		nSubsidy = (1 + rand) * COIN;
+	}
+	else if (inHeight < 200000) {
+		rand = bridge_generateMTRandom(seed, 499999);
+		nSubsidy = (1 + rand) * COIN;
+	}
+	else if (inHeight < 300000) {
+		cseed_str = inPrevHash.ToString().substr(6,7);
+		cseed = cseed_str.c_str();
+		seed = hex2long(cseed);
+		rand = bridge_generateMTRandom(seed, 249999);
+		nSubsidy = (1 + rand) * COIN;
+	}
+	else if (inHeight < 400000) {
+		rand = bridge_generateMTRandom(seed, 124999);
+		nSubsidy = (1 + rand) * COIN;
+	}
+	else if (inHeight < 500000) {
+		rand = bridge_generateMTRandom(seed, 62499);
+		nSubsidy = (1 + rand) * COIN;
+	}
+	else if (inHeight < 600000) {
+		cseed_str = inPrevHash.ToString().substr(6,7);
+		cseed = cseed_str.c_str();
+		seed = hex2long(cseed);
+		rand = bridge_generateMTRandom(seed, 31249);
+		nSubsidy = (1 + rand) * COIN;
+	}
+
+	return nSubsidy;
+}
+
+void bridge_mintTest()
+{
+	// confirm block rewards actually go from 2 - N
+	uint256			hashCounter = 0;
+	uint256			testHash = 0;
+	std::string		testHashStr;
+	int64			minVal = 1000000;
+	int64			maxVal = 0;
+	int64			testVal = 0;
+	int64			count = 1;
+	
+	while (minVal > 1) {
+		testHashStr = hashCounter.ToString();
+		std::reverse(testHashStr.begin(), testHashStr.end());
+		testHash.SetHex(testHashStr);
+		testHash >>= (4 * 6);
+		
+		testVal = bridge_getBlockMintedValue(500000, testHash) / COIN;
+		if (testVal < minVal) {
+			minVal = testVal;
+			printf("min (%lld): %lld\n", count, minVal);
+		}
+		if (testVal > maxVal) {
+			maxVal = testVal;
+			printf("max (%lld): %lld\n", count, maxVal);
+		}
+		hashCounter++;
+		count++;
+	}
+}
+
+#pragma mark - Bridge functions
+
+#if 0	// grab addresses
+void bridge_testAddrBook()
+{
+	CBitcoinAddress		address;
+	
+    BOOST_FOREACH(const PAIRTYPE(CTxDestination, std::string)& entry, pwalletMain->mapAddressBook) {
+		address.Set(entry.first);
+printf("%s - %s: %s\n", entry.second.c_str(), address.ToString().c_str(), IsMine(*pwalletMain, entry.first)  ? "mine" : "theirs");
+//        if (IsMine(*pwalletMain, entry.first)) // This address belongs to me
+//            mapAccountBalances[entry.second] = 0;
+    }
+}
+#endif
 
 int32_t bridge_getBlockHeight()
 {
 	return nBestHeight;
 }
 
-std::string bridge_getBlockHashAtHeight(
+CFStringRef bridge_getBlockHashAtHeight(
 	int32_t		inHeight)
 {
-	std::string		hash;
+	CFStringRef		hash = NULL;
 	
     if (inHeight >= 0 && inHeight <= nBestHeight) {
 		CBlockIndex		*pblockindex = pindexBest;
@@ -140,63 +339,152 @@ std::string bridge_getBlockHashAtHeight(
 		while (pblockindex != NULL && pblockindex->nHeight > inHeight)
 			pblockindex = pblockindex->pprev;
 		
-		hash = pblockindex->phashBlock->GetHex();
+		if (pblockindex != NULL) {
+			hash = CFStringCreateWithCString(kCFAllocatorDefault, pblockindex->phashBlock->GetHex().c_str(), kCFStringEncodingASCII);
+		}
 	}
 	
     return hash;
 }
 
-std::string bridge_getBlockWithHash(
+CFDictionaryRef bridge_getBlockWithHash(
 	const char			*inHash)
 {
-    json_spirit::Object result;
-    json_spirit::Array	txs;
-	CTxDB				txdb("r");
-    CBlock				block;
-    CBlockIndex			*blockIndex;
-    std::string			strHash = inHash;
-	std::string			response;
-    uint256				blockHash(strHash);
-	int64_t				mintedValue = 0;
-	int64_t				txFees = 0;
+	CFMutableDictionaryRef	blockInfo = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
+	CFMutableArrayRef		txList = CFArrayCreateMutable(kCFAllocatorDefault, 0, NULL);
+	CTxDB					txdb("r");
+    std::string				strHash = inHash;
+    uint256					blockHash(strHash);
+    CBlock					block;
+    CBlockIndex				*blockIndex;
+	int64_t					mintedValue = 0;
+	int64_t					int64Val;
+	double					doubleVal;
+	uint256					prevHash = 0;
 	
 	// --- similar to getblock in bitcoinrpc.cpp
 	
 	blockIndex = mapBlockIndex[blockHash];
 	block.ReadFromDisk(blockIndex, true);
 
-    BOOST_FOREACH(CTransaction &transaction, block.vtx) {
-		int64_t		valueOut = transaction.GetValueOut();
-		
-		if (transaction.IsCoinBase()) {
-			mintedValue = valueOut;
-		}
-		else {
-			MapPrevTx					mapInputs;
-			std::map<uint256, CTxIndex>	mapUnused;
-			bool						fInvalid = false;
+	if (blockIndex->pprev)
+		prevHash = blockIndex->pprev->GetBlockHash();
+	mintedValue = bridge_getBlockMintedValue(blockIndex->nHeight, prevHash);
 
-			if (transaction.FetchInputs(txdb, mapUnused, false, false, mapInputs, fInvalid)) {
-				txFees += transaction.GetValueIn(mapInputs) - valueOut;
+	CFDictionaryAddValue(blockInfo, CFSTR("hash"), CFStringCreateWithCString(kCFAllocatorDefault, block.GetHash().GetHex().c_str(), kCFStringEncodingASCII));
+	
+	int64Val = ::GetSerializeSize(block, SER_NETWORK, PROTOCOL_VERSION);
+	CFDictionaryAddValue(blockInfo, CFSTR("size"), CFNumberCreate(kCFAllocatorDefault, kCFNumberLongLongType, &int64Val));
+	CFDictionaryAddValue(blockInfo, CFSTR("height"), CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &blockIndex->nHeight));
+	CFDictionaryAddValue(blockInfo, CFSTR("merkleroot"), CFStringCreateWithCString(kCFAllocatorDefault, block.hashMerkleRoot.GetHex().c_str(), kCFStringEncodingASCII));
+    BOOST_FOREACH(const CTransaction&tx, block.vtx) {
+		CFArrayAppendValue(txList, CFStringCreateWithCString(kCFAllocatorDefault, tx.GetHash().GetHex().c_str(), kCFStringEncodingASCII));
+	}
+	CFDictionaryAddValue(blockInfo, CFSTR("tx"), txList);
+
+	int64Val = block.GetBlockTime();
+	CFDictionaryAddValue(blockInfo, CFSTR("time"), CFNumberCreate(kCFAllocatorDefault, kCFNumberLongLongType, &int64Val));
+	CFDictionaryAddValue(blockInfo, CFSTR("nonce"), CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &block.nNonce));
+	CFDictionaryAddValue(blockInfo, CFSTR("bits"), CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &block.nBits));
+	
+	doubleVal = bridge_getDifficultyForBlockIndex(blockIndex);
+	CFDictionaryAddValue(blockInfo, CFSTR("difficulty"), CFNumberCreate(kCFAllocatorDefault, kCFNumberDoubleType, &doubleVal));
+	CFDictionaryAddValue(blockInfo, CFSTR("minted"), CFNumberCreate(kCFAllocatorDefault, kCFNumberLongLongType, &mintedValue));
+
+	return blockInfo;
+}
+
+CFArrayRef bridge_getWalletTransactions()	// See ListTransactions
+{
+	CFMutableArrayRef		walletTXList = CFArrayCreateMutable(kCFAllocatorDefault, 0, NULL);
+
+    for (std::map<uint256, CWalletTx>::iterator it = pwalletMain->mapWallet.begin(); it != pwalletMain->mapWallet.end(); ++it) {
+		const CWalletTx									&wtx = (*it).second;
+		std::string										walletTXHash = wtx.GetHash().GetHex();
+		int64_t											walletTXTime = wtx.GetTxTime();
+		int64_t											nGeneratedImmature, nGeneratedMature, nFee;
+		std::string										sentAccountStr;
+		std::list<std::pair<CTxDestination, int64> >	listReceived;
+		std::list<std::pair<CTxDestination, int64> >	listSent;
+		int												confirmed = wtx.IsConfirmed();
+
+		wtx.GetAmounts(nGeneratedImmature, nGeneratedMature, listReceived, listSent, nFee, sentAccountStr);
+		
+		if ((nGeneratedMature + nGeneratedImmature) != 0) {		// generated
+			CFMutableDictionaryRef	walletTX = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
+			int						walletCategory;
+			int64_t					amount;
+			
+			
+			if (nGeneratedImmature) {
+				walletCategory = wtx.GetDepthInMainChain() ? eCoinWalletCategory_Immature : eCoinWalletCategory_Orphan;
+				amount = nGeneratedImmature;
+			}
+			else {
+				walletCategory = eCoinWalletCategory_Generated;
+				amount = nGeneratedMature;
+			}
+
+			CFDictionaryAddValue(walletTX, CFSTR("account"), CFSTR(""));
+			CFDictionaryAddValue(walletTX, CFSTR("category"), CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &walletCategory));
+			CFDictionaryAddValue(walletTX, CFSTR("amount"), CFNumberCreate(kCFAllocatorDefault, kCFNumberLongLongType, &amount));
+			CFDictionaryAddValue(walletTX, CFSTR("txid"), CFStringCreateWithCString(kCFAllocatorDefault, walletTXHash.c_str(), kCFStringEncodingASCII));
+			CFDictionaryAddValue(walletTX, CFSTR("time"), CFNumberCreate(kCFAllocatorDefault, kCFNumberLongLongType, &walletTXTime));
+			CFDictionaryAddValue(walletTX, CFSTR("confirmed"), CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &confirmed));
+			CFArrayAppendValue(walletTXList, walletTX);
+		}
+		if (!listSent.empty() || nFee != 0) {					// sent
+			BOOST_FOREACH(const PAIRTYPE(CTxDestination, int64)& s, listSent) {
+				CFMutableDictionaryRef	walletTX = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
+				int						walletCategory = eCoinWalletCategory_Send;
+				int64_t					amount = s.second;
+
+				CFDictionaryAddValue(walletTX, CFSTR("account"), CFStringCreateWithCString(kCFAllocatorDefault, sentAccountStr.c_str(), kCFStringEncodingASCII));
+				CFDictionaryAddValue(walletTX, CFSTR("address"), CFStringCreateWithCString(kCFAllocatorDefault, CBitcoinAddress(s.first).ToString().c_str(), kCFStringEncodingASCII));
+				CFDictionaryAddValue(walletTX, CFSTR("category"), CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &walletCategory));
+				CFDictionaryAddValue(walletTX, CFSTR("amount"), CFNumberCreate(kCFAllocatorDefault, kCFNumberLongLongType, &amount));
+				CFDictionaryAddValue(walletTX, CFSTR("fee"), CFNumberCreate(kCFAllocatorDefault, kCFNumberLongLongType, &nFee));
+				CFDictionaryAddValue(walletTX, CFSTR("txid"), CFStringCreateWithCString(kCFAllocatorDefault, walletTXHash.c_str(), kCFStringEncodingASCII));
+				CFDictionaryAddValue(walletTX, CFSTR("time"), CFNumberCreate(kCFAllocatorDefault, kCFNumberLongLongType, &walletTXTime));
+				CFDictionaryAddValue(walletTX, CFSTR("confirmed"), CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &confirmed));
+				CFArrayAppendValue(walletTXList, walletTX);
 			}
 		}
-	}
-
-    result.push_back(json_spirit::Pair("hash", block.GetHash().GetHex()));
-    result.push_back(json_spirit::Pair("size", (int)::GetSerializeSize(block, SER_NETWORK, PROTOCOL_VERSION)));
-    result.push_back(json_spirit::Pair("height", blockIndex->nHeight));
-    result.push_back(json_spirit::Pair("merkleroot", block.hashMerkleRoot.GetHex()));
-    BOOST_FOREACH(const CTransaction&tx, block.vtx)
-        txs.push_back(tx.GetHash().GetHex());
-    result.push_back(json_spirit::Pair("tx", txs));
-    result.push_back(json_spirit::Pair("time", (boost::int64_t)block.GetBlockTime()));
-    result.push_back(json_spirit::Pair("nonce", (boost::uint64_t)block.nNonce));
-    result.push_back(json_spirit::Pair("bits", (boost::uint64_t)block.nBits));
-    result.push_back(json_spirit::Pair("difficulty", bridge_nBitsToDifficulty(block.nBits)));
-    result.push_back(json_spirit::Pair("minted", mintedValue));
-    result.push_back(json_spirit::Pair("fees", txFees));
-
-	response = write_string((json_spirit::Value)result, false);
-
-	return response;
+		if (listReceived.size() > 0) {							// received
+			BOOST_FOREACH(const PAIRTYPE(CTxDestination, int64)& r, listReceived) {
+				CFMutableDictionaryRef	walletTX = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
+				int						walletCategory = eCoinWalletCategory_Receive;
+				int64_t					amount = r.second;
+				std::string				receiveAccountStr;
+				
+				if (pwalletMain->mapAddressBook.count(r.first))
+					receiveAccountStr = pwalletMain->mapAddressBook[r.first];
+			
+				CFDictionaryAddValue(walletTX, CFSTR("account"), CFStringCreateWithCString(kCFAllocatorDefault, receiveAccountStr.c_str(), kCFStringEncodingASCII));
+				CFDictionaryAddValue(walletTX, CFSTR("address"), CFStringCreateWithCString(kCFAllocatorDefault, CBitcoinAddress(r.first).ToString().c_str(), kCFStringEncodingASCII));
+				CFDictionaryAddValue(walletTX, CFSTR("category"), CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &walletCategory));
+				CFDictionaryAddValue(walletTX, CFSTR("amount"), CFNumberCreate(kCFAllocatorDefault, kCFNumberLongLongType, &amount));
+				CFDictionaryAddValue(walletTX, CFSTR("txid"), CFStringCreateWithCString(kCFAllocatorDefault, walletTXHash.c_str(), kCFStringEncodingASCII));
+				CFDictionaryAddValue(walletTX, CFSTR("time"), CFNumberCreate(kCFAllocatorDefault, kCFNumberLongLongType, &walletTXTime));
+				CFDictionaryAddValue(walletTX, CFSTR("confirmed"), CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &confirmed));
+				CFArrayAppendValue(walletTXList, walletTX);
+			}
+		}
+    }
+	
+	return walletTXList;
 }
+
+CFDictionaryRef bridge_getMiscInfo()
+{
+	CFMutableDictionaryRef	miscInfo = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
+	std::string				warnings = GetWarnings("statusbar");
+	double					networkHPS = bridge_getNetworkHashesPerSecond();
+	
+	CFDictionaryAddValue(miscInfo, CFSTR("warnings"), CFStringCreateWithCString(kCFAllocatorDefault, warnings.c_str(), kCFStringEncodingASCII));
+	CFDictionaryAddValue(miscInfo, CFSTR("networkhps"), CFNumberCreate(kCFAllocatorDefault, kCFNumberDoubleType, &networkHPS));
+
+	return miscInfo;
+}
+
+
