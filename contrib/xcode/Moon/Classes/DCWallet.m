@@ -7,7 +7,6 @@
 //
 
 #import "DCWallet.h"
-#import "DCBridge.h"
 #import "DCWalletTX.h"
 #import "DCConsts.h"
 
@@ -62,16 +61,21 @@
 	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(handleDataModelChange:) name: NSManagedObjectContextObjectsDidChangeNotification object: self.managedObjectContext];
 }
 
-- (void) reconcile
+- (void) reconcileWalletTransactions: (NSArray *) inRawTransactions
 {
-	NSArray			*walletTransactions = [[DCBridge sharedBridge] getWalletTransactions];
-	DCWalletTX		*transaction;
-	
-	for (NSDictionary *rawTransaction in walletTransactions) {
-		transaction = [self findOrCreateTransactionFromRawTransaction: rawTransaction];
-		[transaction updateFromRawTransaction: rawTransaction];
+	for (NSDictionary *rawTransaction in inRawTransactions) {
+		[self updateFromRawTransaction: rawTransaction];
 	}
+}
+
+- (DCWalletTX *) updateFromRawTransaction: (NSDictionary *) inRawTransaction
+{
+	DCWalletTX		*transaction;
+		
+	transaction = [self findOrCreateTransactionFromRawTransaction: inRawTransaction];
+	[transaction updateFromRawTransaction: inRawTransaction];
 	
+	return transaction;
 }
 
 - (DCWalletTX *) findOrCreateTransactionFromRawTransaction: (NSDictionary *) inTransaction

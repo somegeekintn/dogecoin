@@ -19,7 +19,8 @@
 + (DCWallet *)				walletNamed: (NSString *) inName
 								inContext: (NSManagedObjectContext *) inContext;
 
-- (void)					reconcile;
+- (void)					reconcileWalletTransactions: (NSArray *) inRawTransactions;
+- (DCWalletTX *)			updateFromRawTransaction: (NSDictionary *) inRawTransaction;
 
 @property (nonatomic, strong) NSString				*name;
 @property (nonatomic, strong) NSSet					*transactions;

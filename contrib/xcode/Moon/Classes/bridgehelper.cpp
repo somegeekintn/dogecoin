@@ -22,6 +22,8 @@
 
 #undef printf
 
+extern void		bridge_sig_WalletTransactionChanged(CFStringRef inWalletTxHash);
+extern void		bridge_sig_WalletTransactionDeleted(CFStringRef inWalletTxHash);
 extern void		bridge_sig_BlocksChanged();
 extern void		bridge_sig_NumConnectionsChanged(int inNewNumConnections);
 extern void		bridge_sig_InitMessage(const char *inMessage);
@@ -38,10 +40,14 @@ static void NotifyTransactionChanged(
 	const uint256			&inHash,
 	ChangeType				inStatus)
 {
-// hash + address (or lack thereof) should be enough to uniquely identify
-// still don't have a solid handle on how many inputs / outputs one might
-// expect to find in a single transaction. 
-//    OutputDebugStringF("NotifyTransactionChanged %s status=%i\n", hash.GetHex().c_str(), status);
+	CFStringRef		walletTxHash = CFStringCreateWithCString(kCFAllocatorDefault, inHash.GetHex().c_str(), kCFStringEncodingASCII);
+	
+	if (inStatus != CT_DELETED) {
+		bridge_sig_WalletTransactionChanged(walletTxHash);
+	}
+	else {		// does this actually happen?
+		bridge_sig_WalletTransactionDeleted(walletTxHash);
+	}
 }
 
 static void NotifyAddressBookChanged(
@@ -77,7 +83,6 @@ static void NotifyAlertChanged(
 	const uint256			&inHash,
 	ChangeType				inStatus)
 {
-//	bridgesig_NumConnectionsChanged(newNumConnections);
 }
 
 static void ThreadSafeMessageBox(
@@ -276,34 +281,79 @@ int64 bridge_getBlockMintedValue(
 	return nSubsidy;
 }
 
-void bridge_mintTest()
+void bridge_populateWalletTXListWithWalletTX(
+	CFMutableArrayRef		ioWalletTXList,
+	const CWalletTx			&inWalletTX)
 {
-	// confirm block rewards actually go from 2 - N
-	uint256			hashCounter = 0;
-	uint256			testHash = 0;
-	std::string		testHashStr;
-	int64			minVal = 1000000;
-	int64			maxVal = 0;
-	int64			testVal = 0;
-	int64			count = 1;
+	std::string										walletTXHash = inWalletTX.GetHash().GetHex();
+	int64_t											walletTXTime = inWalletTX.GetTxTime();
+	int64_t											nGeneratedImmature, nGeneratedMature, nFee;
+	std::string										sentAccountStr;
+	std::list<std::pair<CTxDestination, int64> >	listReceived;
+	std::list<std::pair<CTxDestination, int64> >	listSent;
+	int												confirmed = inWalletTX.IsConfirmed();
+
+	inWalletTX.GetAmounts(nGeneratedImmature, nGeneratedMature, listReceived, listSent, nFee, sentAccountStr);
 	
-	while (minVal > 1) {
-		testHashStr = hashCounter.ToString();
-		std::reverse(testHashStr.begin(), testHashStr.end());
-		testHash.SetHex(testHashStr);
-		testHash >>= (4 * 6);
+	if ((nGeneratedMature + nGeneratedImmature) != 0) {		// generated
+		CFMutableDictionaryRef	walletTX = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
+		int						walletCategory;
+		int64_t					amount;
 		
-		testVal = bridge_getBlockMintedValue(500000, testHash) / COIN;
-		if (testVal < minVal) {
-			minVal = testVal;
-			printf("min (%lld): %lld\n", count, minVal);
+		
+		if (nGeneratedImmature) {
+			walletCategory = inWalletTX.GetDepthInMainChain() ? eCoinWalletCategory_Immature : eCoinWalletCategory_Orphan;
+			amount = nGeneratedImmature;
 		}
-		if (testVal > maxVal) {
-			maxVal = testVal;
-			printf("max (%lld): %lld\n", count, maxVal);
+		else {
+			walletCategory = eCoinWalletCategory_Generated;
+			amount = nGeneratedMature;
 		}
-		hashCounter++;
-		count++;
+
+		CFDictionaryAddValue(walletTX, CFSTR("account"), CFSTR(""));
+		CFDictionaryAddValue(walletTX, CFSTR("category"), CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &walletCategory));
+		CFDictionaryAddValue(walletTX, CFSTR("amount"), CFNumberCreate(kCFAllocatorDefault, kCFNumberLongLongType, &amount));
+		CFDictionaryAddValue(walletTX, CFSTR("txid"), CFStringCreateWithCString(kCFAllocatorDefault, walletTXHash.c_str(), kCFStringEncodingASCII));
+		CFDictionaryAddValue(walletTX, CFSTR("time"), CFNumberCreate(kCFAllocatorDefault, kCFNumberLongLongType, &walletTXTime));
+		CFDictionaryAddValue(walletTX, CFSTR("confirmed"), CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &confirmed));
+		CFArrayAppendValue(ioWalletTXList, walletTX);
+	}
+	if (!listSent.empty() || nFee != 0) {					// sent
+		BOOST_FOREACH(const PAIRTYPE(CTxDestination, int64)& s, listSent) {
+			CFMutableDictionaryRef	walletTX = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
+			int						walletCategory = eCoinWalletCategory_Send;
+			int64_t					amount = s.second;
+
+			CFDictionaryAddValue(walletTX, CFSTR("account"), CFStringCreateWithCString(kCFAllocatorDefault, sentAccountStr.c_str(), kCFStringEncodingASCII));
+			CFDictionaryAddValue(walletTX, CFSTR("address"), CFStringCreateWithCString(kCFAllocatorDefault, CBitcoinAddress(s.first).ToString().c_str(), kCFStringEncodingASCII));
+			CFDictionaryAddValue(walletTX, CFSTR("category"), CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &walletCategory));
+			CFDictionaryAddValue(walletTX, CFSTR("amount"), CFNumberCreate(kCFAllocatorDefault, kCFNumberLongLongType, &amount));
+			CFDictionaryAddValue(walletTX, CFSTR("fee"), CFNumberCreate(kCFAllocatorDefault, kCFNumberLongLongType, &nFee));
+			CFDictionaryAddValue(walletTX, CFSTR("txid"), CFStringCreateWithCString(kCFAllocatorDefault, walletTXHash.c_str(), kCFStringEncodingASCII));
+			CFDictionaryAddValue(walletTX, CFSTR("time"), CFNumberCreate(kCFAllocatorDefault, kCFNumberLongLongType, &walletTXTime));
+			CFDictionaryAddValue(walletTX, CFSTR("confirmed"), CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &confirmed));
+			CFArrayAppendValue(ioWalletTXList, walletTX);
+		}
+	}
+	if (listReceived.size() > 0) {							// received
+		BOOST_FOREACH(const PAIRTYPE(CTxDestination, int64)& r, listReceived) {
+			CFMutableDictionaryRef	walletTX = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
+			int						walletCategory = eCoinWalletCategory_Receive;
+			int64_t					amount = r.second;
+			std::string				receiveAccountStr;
+			
+			if (pwalletMain->mapAddressBook.count(r.first))
+				receiveAccountStr = pwalletMain->mapAddressBook[r.first];
+		
+			CFDictionaryAddValue(walletTX, CFSTR("account"), CFStringCreateWithCString(kCFAllocatorDefault, receiveAccountStr.c_str(), kCFStringEncodingASCII));
+			CFDictionaryAddValue(walletTX, CFSTR("address"), CFStringCreateWithCString(kCFAllocatorDefault, CBitcoinAddress(r.first).ToString().c_str(), kCFStringEncodingASCII));
+			CFDictionaryAddValue(walletTX, CFSTR("category"), CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &walletCategory));
+			CFDictionaryAddValue(walletTX, CFSTR("amount"), CFNumberCreate(kCFAllocatorDefault, kCFNumberLongLongType, &amount));
+			CFDictionaryAddValue(walletTX, CFSTR("txid"), CFStringCreateWithCString(kCFAllocatorDefault, walletTXHash.c_str(), kCFStringEncodingASCII));
+			CFDictionaryAddValue(walletTX, CFSTR("time"), CFNumberCreate(kCFAllocatorDefault, kCFNumberLongLongType, &walletTXTime));
+			CFDictionaryAddValue(walletTX, CFSTR("confirmed"), CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &confirmed));
+			CFArrayAppendValue(ioWalletTXList, walletTX);
+		}
 	}
 }
 
@@ -394,82 +444,26 @@ CFDictionaryRef bridge_getBlockWithHash(
 	return blockInfo;
 }
 
+CFArrayRef bridge_getWalletTransactionsWithHash(
+	const char				*inTransactionHash)
+{
+	CFMutableArrayRef		walletTXList = CFArrayCreateMutable(kCFAllocatorDefault, 0, NULL);
+	uint256					txHash(inTransactionHash);
+	const CWalletTx			&wtx = pwalletMain->mapWallet[txHash];
+
+	bridge_populateWalletTXListWithWalletTX(walletTXList, wtx);
+
+	return walletTXList;
+}
+
 CFArrayRef bridge_getWalletTransactions()	// See ListTransactions
 {
 	CFMutableArrayRef		walletTXList = CFArrayCreateMutable(kCFAllocatorDefault, 0, NULL);
 
     for (std::map<uint256, CWalletTx>::iterator it = pwalletMain->mapWallet.begin(); it != pwalletMain->mapWallet.end(); ++it) {
 		const CWalletTx									&wtx = (*it).second;
-		std::string										walletTXHash = wtx.GetHash().GetHex();
-		int64_t											walletTXTime = wtx.GetTxTime();
-		int64_t											nGeneratedImmature, nGeneratedMature, nFee;
-		std::string										sentAccountStr;
-		std::list<std::pair<CTxDestination, int64> >	listReceived;
-		std::list<std::pair<CTxDestination, int64> >	listSent;
-		int												confirmed = wtx.IsConfirmed();
 
-		wtx.GetAmounts(nGeneratedImmature, nGeneratedMature, listReceived, listSent, nFee, sentAccountStr);
-		
-		if ((nGeneratedMature + nGeneratedImmature) != 0) {		// generated
-			CFMutableDictionaryRef	walletTX = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
-			int						walletCategory;
-			int64_t					amount;
-			
-			
-			if (nGeneratedImmature) {
-				walletCategory = wtx.GetDepthInMainChain() ? eCoinWalletCategory_Immature : eCoinWalletCategory_Orphan;
-				amount = nGeneratedImmature;
-			}
-			else {
-				walletCategory = eCoinWalletCategory_Generated;
-				amount = nGeneratedMature;
-			}
-
-			CFDictionaryAddValue(walletTX, CFSTR("account"), CFSTR(""));
-			CFDictionaryAddValue(walletTX, CFSTR("category"), CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &walletCategory));
-			CFDictionaryAddValue(walletTX, CFSTR("amount"), CFNumberCreate(kCFAllocatorDefault, kCFNumberLongLongType, &amount));
-			CFDictionaryAddValue(walletTX, CFSTR("txid"), CFStringCreateWithCString(kCFAllocatorDefault, walletTXHash.c_str(), kCFStringEncodingASCII));
-			CFDictionaryAddValue(walletTX, CFSTR("time"), CFNumberCreate(kCFAllocatorDefault, kCFNumberLongLongType, &walletTXTime));
-			CFDictionaryAddValue(walletTX, CFSTR("confirmed"), CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &confirmed));
-			CFArrayAppendValue(walletTXList, walletTX);
-		}
-		if (!listSent.empty() || nFee != 0) {					// sent
-			BOOST_FOREACH(const PAIRTYPE(CTxDestination, int64)& s, listSent) {
-				CFMutableDictionaryRef	walletTX = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
-				int						walletCategory = eCoinWalletCategory_Send;
-				int64_t					amount = s.second;
-
-				CFDictionaryAddValue(walletTX, CFSTR("account"), CFStringCreateWithCString(kCFAllocatorDefault, sentAccountStr.c_str(), kCFStringEncodingASCII));
-				CFDictionaryAddValue(walletTX, CFSTR("address"), CFStringCreateWithCString(kCFAllocatorDefault, CBitcoinAddress(s.first).ToString().c_str(), kCFStringEncodingASCII));
-				CFDictionaryAddValue(walletTX, CFSTR("category"), CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &walletCategory));
-				CFDictionaryAddValue(walletTX, CFSTR("amount"), CFNumberCreate(kCFAllocatorDefault, kCFNumberLongLongType, &amount));
-				CFDictionaryAddValue(walletTX, CFSTR("fee"), CFNumberCreate(kCFAllocatorDefault, kCFNumberLongLongType, &nFee));
-				CFDictionaryAddValue(walletTX, CFSTR("txid"), CFStringCreateWithCString(kCFAllocatorDefault, walletTXHash.c_str(), kCFStringEncodingASCII));
-				CFDictionaryAddValue(walletTX, CFSTR("time"), CFNumberCreate(kCFAllocatorDefault, kCFNumberLongLongType, &walletTXTime));
-				CFDictionaryAddValue(walletTX, CFSTR("confirmed"), CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &confirmed));
-				CFArrayAppendValue(walletTXList, walletTX);
-			}
-		}
-		if (listReceived.size() > 0) {							// received
-			BOOST_FOREACH(const PAIRTYPE(CTxDestination, int64)& r, listReceived) {
-				CFMutableDictionaryRef	walletTX = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
-				int						walletCategory = eCoinWalletCategory_Receive;
-				int64_t					amount = r.second;
-				std::string				receiveAccountStr;
-				
-				if (pwalletMain->mapAddressBook.count(r.first))
-					receiveAccountStr = pwalletMain->mapAddressBook[r.first];
-			
-				CFDictionaryAddValue(walletTX, CFSTR("account"), CFStringCreateWithCString(kCFAllocatorDefault, receiveAccountStr.c_str(), kCFStringEncodingASCII));
-				CFDictionaryAddValue(walletTX, CFSTR("address"), CFStringCreateWithCString(kCFAllocatorDefault, CBitcoinAddress(r.first).ToString().c_str(), kCFStringEncodingASCII));
-				CFDictionaryAddValue(walletTX, CFSTR("category"), CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &walletCategory));
-				CFDictionaryAddValue(walletTX, CFSTR("amount"), CFNumberCreate(kCFAllocatorDefault, kCFNumberLongLongType, &amount));
-				CFDictionaryAddValue(walletTX, CFSTR("txid"), CFStringCreateWithCString(kCFAllocatorDefault, walletTXHash.c_str(), kCFStringEncodingASCII));
-				CFDictionaryAddValue(walletTX, CFSTR("time"), CFNumberCreate(kCFAllocatorDefault, kCFNumberLongLongType, &walletTXTime));
-				CFDictionaryAddValue(walletTX, CFSTR("confirmed"), CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &confirmed));
-				CFArrayAppendValue(walletTXList, walletTX);
-			}
-		}
+		bridge_populateWalletTXListWithWalletTX(walletTXList, wtx);
     }
 	
 	return walletTXList;

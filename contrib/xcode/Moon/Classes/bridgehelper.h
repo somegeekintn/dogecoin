@@ -22,7 +22,9 @@ CFStringRef				bridge_getBlockHashAtHeight(
 							int32_t				inHeight);
 CFDictionaryRef			bridge_getBlockWithHash(
 							const char			*inHash);
-CFArrayRef				bridge_getWalletTransactions();
+CFArrayRef				bridge_getWalletTransactionsWithHash(
+							const char			*inHash);
+CFArrayRef				bridge_getWalletTransactions();		// will add filtering at some point
 CFDictionaryRef			bridge_getMiscInfo();
 
 #endif

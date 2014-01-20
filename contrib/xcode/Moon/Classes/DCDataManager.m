@@ -294,7 +294,6 @@ static DCDataManager		*sSharedManager = nil;
 
 - (void) clientInitializationComplete
 {
-	[[DCBridge sharedBridge] runTests];
 	[self updateBlockInfo: 1000];		// validate the last N blocks upon connect
 	[self reconcileWallet];
 }
@@ -402,9 +401,25 @@ NSLog(@"update %ld (best %ld)", blockInfoCount, [[DCBridge sharedBridge] getBloc
 
 - (void) reconcileWallet
 {
+	NSArray			*walletTransactions = [[DCBridge sharedBridge] getWalletTransactions];
+	
 	[self.defaultContext performBlock:^{
-		[self.defaultWallet reconcile];
+		[self.defaultWallet reconcileWalletTransactions: walletTransactions];
 	}];
+}
+
+- (void) updateWalletTrasactionWithHash: (NSString *) inWalletTxHash
+{
+	NSArray			*walletTransactions = [[DCBridge sharedBridge] getWalletTransactionsWithHash: inWalletTxHash];
+
+	[self.defaultContext performBlock:^{
+		[self.defaultWallet reconcileWalletTransactions: walletTransactions];
+	}];
+}
+
+- (void) deleteWalletTrasactionWithHash: (NSString *) inWalletTxHash
+{
+	NSLog(@"");
 }
 
 - (void) updateMiscInfo

@@ -19,6 +19,8 @@
 - (BOOL)				prepareToQuit: (NSApplication *) inSender;
 - (void)				clientInitializationComplete;
 - (void)				updateBlockInfo: (NSInteger) inReconcileDepth;
+- (void)				updateWalletTrasactionWithHash: (NSString *) inWalletTxHash;
+- (void)				deleteWalletTrasactionWithHash: (NSString *) inWalletTxHash;
 - (void)				setConnectionCount: (NSInteger) inNumConnections;
 
 @property (nonatomic, readonly) NSManagedObjectContext		*defaultContext;

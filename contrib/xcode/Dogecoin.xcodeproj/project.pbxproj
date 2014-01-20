@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C93DA057188D531D006B0534 /* DCBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = C99B95E61884127F001DB181 /* DCBridge.m */; };
 		C99B953518832956001DB181 /* addrman.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C99B952318832956001DB181 /* addrman.cpp */; };
 		C99B953618832956001DB181 /* bitcoinrpc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C99B952818832956001DB181 /* bitcoinrpc.cpp */; };
 		C99B953718832956001DB181 /* checkpoints.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C99B952A18832956001DB181 /* checkpoints.cpp */; };
@@ -77,7 +78,6 @@
 		C99B95E118840C34001DB181 /* libboost_thread-mt.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C99B957518832B93001DB181 /* libboost_thread-mt.a */; };
 		C99B95E218840C34001DB181 /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C99B957618832B93001DB181 /* libcrypto.a */; };
 		C99B95E318840C34001DB181 /* libssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C99B957718832B93001DB181 /* libssl.a */; };
-		C99B95E71884127F001DB181 /* DCBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = C99B95E61884127F001DB181 /* DCBridge.m */; };
 		C9B6E57E188ADC390044F1E1 /* DCAddress.m in Sources */ = {isa = PBXBuildFile; fileRef = C9B6E57D188ADC390044F1E1 /* DCAddress.m */; };
 		C9B6E581188ADFC70044F1E1 /* DCWalletTX.m in Sources */ = {isa = PBXBuildFile; fileRef = C9B6E580188ADFC70044F1E1 /* DCWalletTX.m */; };
 		C9B6E584188B30740044F1E1 /* DCWallet.m in Sources */ = {isa = PBXBuildFile; fileRef = C9B6E583188B30740044F1E1 /* DCWallet.m */; };
@@ -560,6 +560,7 @@
 				C9BC00C5188555D100356D7F /* DCInfo.m in Sources */,
 				C99B95AA188408B9001DB181 /* Moon.xcdatamodeld in Sources */,
 				C99B95C518840AB3001DB181 /* addrman.cpp in Sources */,
+				C93DA057188D531D006B0534 /* DCBridge.m in Sources */,
 				C9BC00C218854BF200356D7F /* DCDataManager.m in Sources */,
 				C9BC00C9188565FB00356D7F /* DCBlockInfo.m in Sources */,
 				C99B95C618840AB3001DB181 /* bitcoinrpc.cpp in Sources */,
@@ -579,7 +580,6 @@
 				C99B95D018840AB3001DB181 /* netbase.cpp in Sources */,
 				C99B95D118840AB3001DB181 /* noui.cpp in Sources */,
 				C99B95D218840AB3001DB181 /* protocol.cpp in Sources */,
-				C99B95E71884127F001DB181 /* DCBridge.m in Sources */,
 				C99B95D318840AB3001DB181 /* rpcdump.cpp in Sources */,
 				C99B95D418840AB3001DB181 /* rpcnet.cpp in Sources */,
 				C9C76335188C136D006A5673 /* DCBackgroundView.m in Sources */,

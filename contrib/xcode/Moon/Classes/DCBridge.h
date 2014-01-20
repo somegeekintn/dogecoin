@@ -15,12 +15,11 @@
 - (void)				connect;
 - (void)				disconnect;
 
-- (void)				runTests;
-
 - (NSInteger)			getBlockHeight;
 - (NSString *)			getBlockHashAtHeight: (NSInteger) inHeight;
 - (NSDictionary *)		getBlockWithHash: (NSString *) inHash;
 - (NSArray *)			getWalletTransactions;
+- (NSArray *)			getWalletTransactionsWithHash: (NSString *) inHash;
 - (NSDictionary *)		getMiscInfo;
 
 @end

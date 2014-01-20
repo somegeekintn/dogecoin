@@ -5,7 +5,12 @@
 //  Created by Casey Fleser on 1/13/14.
 //  Copyright (c) 2014 Casey Fleser / @somegeekintn. All rights reserved.
 //
-
+//	Note: This "class" may appear to be an unecessary extra step of indirection
+//	between DCDataManger and bridge_helper, but it's mostly so we don't have
+//	compile DCDataManager as an Obj-C++ file. This could in turn lead to other
+//	files needing to be compiled this way (at least from past experience). So
+//	DCBridge is a dividing line between Obj-C and Obj-C++ while bridgehelper
+//	is a diving line between the client and the core code.
 
 #import "DCBridge.h"
 #import "DCDataManager.h"
@@ -20,23 +25,6 @@
 
 @end
 
-
-void bridge_sig_BlocksChanged()
-{
-	[[DCDataManager sharedManager] updateBlockInfo: 0];
-}
-
-void bridge_sig_NumConnectionsChanged(
-	int		inNewNumConnections)
-{
-	[[DCDataManager sharedManager] setConnectionCount: inNewNumConnections];
-}
-
-void bridge_sig_InitMessage(
-	const char			*inMessage)
-{
-	NSLog(@"Init: %s", inMessage);
-}
 
 @implementation DCBridge
 
@@ -78,10 +66,6 @@ void bridge_sig_InitMessage(
 	bridge_Shutdown();
 }
 
-- (void) runTests
-{
-}
-
 - (NSInteger) getBlockHeight
 {
 	return bridge_getBlockHeight();
@@ -102,10 +86,54 @@ void bridge_sig_InitMessage(
 	return (__bridge_transfer NSArray *)bridge_getWalletTransactions();
 }
 
+- (NSArray *) getWalletTransactionsWithHash:(NSString *)inHash
+{
+	return (__bridge_transfer NSArray *)bridge_getWalletTransactionsWithHash([inHash UTF8String]);
+}
+
 - (NSDictionary *) getMiscInfo
 {
 	return (__bridge_transfer NSDictionary *)bridge_getMiscInfo();
 }
 
-
 @end
+
+#pragma mark - Notication callbacks
+
+void bridge_sig_WalletTransactionChanged(
+	CFStringRef			inWalletTxHash)
+{
+	@autoreleasepool {
+		NSString		*walletTXHash = (__bridge_transfer NSString *)inWalletTxHash;
+	
+		[[DCDataManager sharedManager] updateWalletTrasactionWithHash: walletTXHash];
+	}
+}
+
+void bridge_sig_WalletTransactionDeleted(
+	CFStringRef			inWalletTxHash)
+{
+	@autoreleasepool {
+		NSString		*walletTXHash = (__bridge_transfer NSString *)inWalletTxHash;
+	
+		[[DCDataManager sharedManager] deleteWalletTrasactionWithHash: walletTXHash];
+	}
+}
+
+void bridge_sig_BlocksChanged()
+{
+	[[DCDataManager sharedManager] updateBlockInfo: 0];
+}
+
+void bridge_sig_NumConnectionsChanged(
+	int		inNewNumConnections)
+{
+	[[DCDataManager sharedManager] setConnectionCount: inNewNumConnections];
+}
+
+void bridge_sig_InitMessage(
+	const char			*inMessage)
+{
+	NSLog(@"Init: %s", inMessage);
+}
+
