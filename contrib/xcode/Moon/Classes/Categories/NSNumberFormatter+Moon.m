@@ -14,8 +14,10 @@
 {
 	NSNumberFormatter	*coinFormatter = [[NSNumberFormatter alloc] init];
 
-	[coinFormatter setFormat: @"Ɖ#,##0.00;Ɖ-#,##0.00"];
-	
+	[coinFormatter setFormat: @"Ɖ#,##0.00######;Ɖ-#,##0.00######"];
+	[coinFormatter setMinimumFractionDigits: 2];
+	[coinFormatter setMaximumFractionDigits: 8];
+
 	return coinFormatter;
 }
 
