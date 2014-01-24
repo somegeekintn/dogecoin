@@ -22,7 +22,7 @@
 
 #undef printf
 
-extern void		bridge_sig_WalletTransactionChanged(CFStringRef inWalletTxHash);
+extern void		bridge_sig_WalletTransactionChanged(CFStringRef inWalletTxHash, bool inNotify);
 extern void		bridge_sig_WalletTransactionDeleted(CFStringRef inWalletTxHash);
 extern void		bridge_sig_AddressChanged(CFDictionaryRef inRawAddress);
 extern void		bridge_sig_AddressDeleted(CFDictionaryRef inRawAddress);
@@ -46,7 +46,7 @@ static void NotifyTransactionChanged(
 	CFStringRef		walletTxHash = CFStringCreateWithCString(kCFAllocatorDefault, inHash.GetHex().c_str(), kCFStringEncodingASCII);
 	
 	if (inStatus != CT_DELETED)
-		bridge_sig_WalletTransactionChanged(walletTxHash);
+		bridge_sig_WalletTransactionChanged(walletTxHash, inStatus == CT_NEW ? true : false);
 	else		// does this actually happen?
 		bridge_sig_WalletTransactionDeleted(walletTxHash);
 }

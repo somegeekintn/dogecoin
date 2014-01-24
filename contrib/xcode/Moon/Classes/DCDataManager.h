@@ -19,7 +19,8 @@
 - (BOOL)				prepareToQuit: (NSApplication *) inSender;
 - (void)				clientInitializationComplete;
 - (void)				updateBlockInfo: (NSInteger) inReconcileDepth;
-- (void)				updateWalletTrasactionWithHash: (NSString *) inWalletTxHash;
+- (void)				updateWalletTrasactionWithHash: (NSString *) inWalletTxHash
+							notify: (BOOL) inNotify;
 - (void)				deleteWalletTrasactionWithHash: (NSString *) inWalletTxHash;
 - (void)				updateAddressEntry: (NSDictionary *) inRawAddress;
 - (void)				deleteAddressEntry: (NSDictionary *) inRawAddress;

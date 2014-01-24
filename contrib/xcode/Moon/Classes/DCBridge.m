@@ -193,12 +193,13 @@ void bridge_sig_AddressDeleted(CFDictionaryRef inRawAddress)
 }
 
 void bridge_sig_WalletTransactionChanged(
-	CFStringRef			inWalletTxHash)
+	CFStringRef			inWalletTxHash,
+	bool				inNotify)
 {
 	@autoreleasepool {
 		NSString		*walletTXHash = (__bridge_transfer NSString *)inWalletTxHash;
 	
-		[[DCDataManager sharedManager] updateWalletTrasactionWithHash: walletTXHash];
+		[[DCDataManager sharedManager] updateWalletTrasactionWithHash: walletTXHash notify: inNotify];
 	}
 }
 

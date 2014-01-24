@@ -12,6 +12,8 @@
 #import "DCBridge.h"
 #import "DCClient.h"
 #import "DCWallet.h"
+#import "DCConsts.h"
+#import "NSNumberFormatter+Moon.h"
 
 
 static DCDataManager		*sSharedManager = nil;
@@ -415,11 +417,36 @@ NSLog(@"update %ld (best %ld)", blockInfoCount, [[DCBridge sharedBridge] getBloc
 }
 
 - (void) updateWalletTrasactionWithHash: (NSString *) inWalletTxHash
+	notify: (BOOL) inNotify
 {
 	NSArray			*walletTransactions = [[DCBridge sharedBridge] getWalletTransactionsWithHash: inWalletTxHash];
 
 	[self.defaultContext performBlock: ^{
 		[self.client.activeWallet reconcileWalletTransactions: walletTransactions];
+
+		if (inNotify) {
+			NSUserNotification			*notification = [[NSUserNotification alloc] init];
+			NSDictionary				*rawWalletTX = [walletTransactions lastObject];
+			NSNumber					*timeStamp = rawWalletTX[@"time"];
+			NSString					*displayAddress = rawWalletTX[@"address"];
+			NSNumber					*amount = rawWalletTX[@"amount"];
+			NSNumber					*category = rawWalletTX[@"category"];
+			NSDecimalNumber				*decimalAmount;
+			NSDate						*txDate;
+			DCAddress					*address = [self.client addressWithCoinAddress: displayAddress];
+			BOOL						wasSent = [category integerValue] == eCoinWalletCategory_Send ? YES : NO;
+			
+			txDate = timeStamp != nil ? [NSDate dateWithTimeIntervalSince1970: [timeStamp longLongValue]] : [NSDate date];
+			if (address != nil)
+				displayAddress = [address tokenizedAddress];
+			decimalAmount = [NSDecimalNumber decimalNumberWithMantissa: [amount longLongValue] exponent: kCoinExp isNegative: NO];
+			notification.title = wasSent ? @"DOGE Sent" : @"DOGE Received";
+			notification.informativeText = [NSString stringWithFormat: @"%@ %@ %@ %@",
+												wasSent ? @"Sent" : @"Received", [[NSNumberFormatter coinFormatter] stringFromNumber: decimalAmount],
+												wasSent ? @"to" : @"from", displayAddress];
+			notification.deliveryDate = txDate;
+			[[NSUserNotificationCenter defaultUserNotificationCenter] deliverNotification: notification];
+		}
 	}];
 }
 
