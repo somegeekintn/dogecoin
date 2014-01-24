@@ -12,6 +12,7 @@
 #import <CoreData/CoreData.h>
 
 
+@class DCClient;
 @class DCWalletTX;
 
 @interface DCWallet : NSManagedObject
@@ -24,6 +25,8 @@
 
 @property (nonatomic, strong) NSString				*name;
 @property (nonatomic, strong) NSSet					*transactions;
+@property (nonatomic, strong) DCClient				*client;
+
 @property (nonatomic, readonly) NSDecimalNumber		*balance;
 
 @end

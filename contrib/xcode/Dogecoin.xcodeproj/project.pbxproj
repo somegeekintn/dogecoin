@@ -82,12 +82,16 @@
 		C9B6E581188ADFC70044F1E1 /* DCWalletTX.m in Sources */ = {isa = PBXBuildFile; fileRef = C9B6E580188ADFC70044F1E1 /* DCWalletTX.m */; };
 		C9B6E584188B30740044F1E1 /* DCWallet.m in Sources */ = {isa = PBXBuildFile; fileRef = C9B6E583188B30740044F1E1 /* DCWallet.m */; };
 		C9BC00C218854BF200356D7F /* DCDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = C9BC00C118854BF200356D7F /* DCDataManager.m */; };
-		C9BC00C5188555D100356D7F /* DCInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = C9BC00C4188555D100356D7F /* DCInfo.m */; };
+		C9BC00C5188555D100356D7F /* DCClient.m in Sources */ = {isa = PBXBuildFile; fileRef = C9BC00C4188555D100356D7F /* DCClient.m */; };
 		C9BC00C9188565FB00356D7F /* DCBlockInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = C9BC00C8188565FB00356D7F /* DCBlockInfo.m */; };
+		C9C5089E1890553F00ECD640 /* NSString+Moon.m in Sources */ = {isa = PBXBuildFile; fileRef = C9C5089D1890553F00ECD640 /* NSString+Moon.m */; };
+		C9C57F01189275C5009D9140 /* NSAlert+Moon.m in Sources */ = {isa = PBXBuildFile; fileRef = C9C57F00189275C5009D9140 /* NSAlert+Moon.m */; };
+		C9C57F0418927BAD009D9140 /* NSNumberFormatter+Moon.m in Sources */ = {isa = PBXBuildFile; fileRef = C9C57F0318927BAD009D9140 /* NSNumberFormatter+Moon.m */; };
 		C9C7632C188C028B006A5673 /* DCTransformer_NumberToColor.m in Sources */ = {isa = PBXBuildFile; fileRef = C9C7632B188C028B006A5673 /* DCTransformer_NumberToColor.m */; };
 		C9C76331188C09FF006A5673 /* DCWalletTXController.m in Sources */ = {isa = PBXBuildFile; fileRef = C9C76330188C09FF006A5673 /* DCWalletTXController.m */; };
 		C9C76335188C136D006A5673 /* DCBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = C9C76334188C136D006A5673 /* DCBackgroundView.m */; };
 		C9C9D31F1884A059008A2FBD /* bridgehelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C9C9D31E1884A059008A2FBD /* bridgehelper.cpp */; };
+		C9CB2A67188FDF1E008101F8 /* DCTXSender.m in Sources */ = {isa = PBXBuildFile; fileRef = C9CB2A66188FDF1E008101F8 /* DCTXSender.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -191,10 +195,16 @@
 		C9B6E583188B30740044F1E1 /* DCWallet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DCWallet.m; sourceTree = "<group>"; };
 		C9BC00C018854BF200356D7F /* DCDataManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DCDataManager.h; sourceTree = "<group>"; };
 		C9BC00C118854BF200356D7F /* DCDataManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DCDataManager.m; sourceTree = "<group>"; };
-		C9BC00C3188555D100356D7F /* DCInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DCInfo.h; sourceTree = "<group>"; };
-		C9BC00C4188555D100356D7F /* DCInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DCInfo.m; sourceTree = "<group>"; };
+		C9BC00C3188555D100356D7F /* DCClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DCClient.h; sourceTree = "<group>"; };
+		C9BC00C4188555D100356D7F /* DCClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DCClient.m; sourceTree = "<group>"; };
 		C9BC00C7188565FB00356D7F /* DCBlockInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DCBlockInfo.h; sourceTree = "<group>"; };
 		C9BC00C8188565FB00356D7F /* DCBlockInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DCBlockInfo.m; sourceTree = "<group>"; };
+		C9C5089C1890553F00ECD640 /* NSString+Moon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Moon.h"; sourceTree = "<group>"; };
+		C9C5089D1890553F00ECD640 /* NSString+Moon.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Moon.m"; sourceTree = "<group>"; };
+		C9C57EFF189275C5009D9140 /* NSAlert+Moon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSAlert+Moon.h"; sourceTree = "<group>"; };
+		C9C57F00189275C5009D9140 /* NSAlert+Moon.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSAlert+Moon.m"; sourceTree = "<group>"; };
+		C9C57F0218927BAD009D9140 /* NSNumberFormatter+Moon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSNumberFormatter+Moon.h"; sourceTree = "<group>"; };
+		C9C57F0318927BAD009D9140 /* NSNumberFormatter+Moon.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSNumberFormatter+Moon.m"; sourceTree = "<group>"; };
 		C9C7632A188C028B006A5673 /* DCTransformer_NumberToColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DCTransformer_NumberToColor.h; sourceTree = "<group>"; };
 		C9C7632B188C028B006A5673 /* DCTransformer_NumberToColor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DCTransformer_NumberToColor.m; sourceTree = "<group>"; };
 		C9C7632F188C09FF006A5673 /* DCWalletTXController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DCWalletTXController.h; sourceTree = "<group>"; };
@@ -204,6 +214,8 @@
 		C9C76336188C2EC6006A5673 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
 		C9C9D31E1884A059008A2FBD /* bridgehelper.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; path = bridgehelper.cpp; sourceTree = "<group>"; wrapsLines = 0; };
 		C9C9D3201884A0A6008A2FBD /* bridgehelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = bridgehelper.h; sourceTree = "<group>"; };
+		C9CB2A65188FDF1E008101F8 /* DCTXSender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DCTXSender.h; sourceTree = "<group>"; };
+		C9CB2A66188FDF1E008101F8 /* DCTXSender.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DCTXSender.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -386,6 +398,7 @@
 		C99B95E418841253001DB181 /* classes */ = {
 			isa = PBXGroup;
 			children = (
+				C9C5089B189054FF00ECD640 /* categories */,
 				C9C7632E188C09B1006A5673 /* controllers */,
 				C9C76329188C0208006A5673 /* transformers */,
 				C9C76332188C1346006A5673 /* ui */,
@@ -395,12 +408,12 @@
 				C9B6E57D188ADC390044F1E1 /* DCAddress.m */,
 				C99B95E51884127F001DB181 /* DCBridge.h */,
 				C99B95E61884127F001DB181 /* DCBridge.m */,
-				C9BC00C018854BF200356D7F /* DCDataManager.h */,
-				C9BC00C118854BF200356D7F /* DCDataManager.m */,
 				C9BC00C7188565FB00356D7F /* DCBlockInfo.h */,
 				C9BC00C8188565FB00356D7F /* DCBlockInfo.m */,
-				C9BC00C3188555D100356D7F /* DCInfo.h */,
-				C9BC00C4188555D100356D7F /* DCInfo.m */,
+				C9BC00C3188555D100356D7F /* DCClient.h */,
+				C9BC00C4188555D100356D7F /* DCClient.m */,
+				C9BC00C018854BF200356D7F /* DCDataManager.h */,
+				C9BC00C118854BF200356D7F /* DCDataManager.m */,
 				C9B6E582188B30740044F1E1 /* DCWallet.h */,
 				C9B6E583188B30740044F1E1 /* DCWallet.m */,
 				C9B6E57F188ADFC70044F1E1 /* DCWalletTX.h */,
@@ -408,6 +421,20 @@
 			);
 			name = classes;
 			path = Classes;
+			sourceTree = "<group>";
+		};
+		C9C5089B189054FF00ECD640 /* categories */ = {
+			isa = PBXGroup;
+			children = (
+				C9C57EFF189275C5009D9140 /* NSAlert+Moon.h */,
+				C9C57F00189275C5009D9140 /* NSAlert+Moon.m */,
+				C9C57F0218927BAD009D9140 /* NSNumberFormatter+Moon.h */,
+				C9C57F0318927BAD009D9140 /* NSNumberFormatter+Moon.m */,
+				C9C5089C1890553F00ECD640 /* NSString+Moon.h */,
+				C9C5089D1890553F00ECD640 /* NSString+Moon.m */,
+			);
+			name = categories;
+			path = Categories;
 			sourceTree = "<group>";
 		};
 		C9C76329188C0208006A5673 /* transformers */ = {
@@ -423,6 +450,8 @@
 		C9C7632E188C09B1006A5673 /* controllers */ = {
 			isa = PBXGroup;
 			children = (
+				C9CB2A65188FDF1E008101F8 /* DCTXSender.h */,
+				C9CB2A66188FDF1E008101F8 /* DCTXSender.m */,
 				C9C7632F188C09FF006A5673 /* DCWalletTXController.h */,
 				C9C76330188C09FF006A5673 /* DCWalletTXController.m */,
 			);
@@ -557,13 +586,15 @@
 			files = (
 				C99B959D188408B8001DB181 /* main.m in Sources */,
 				C99B95A4188408B8001DB181 /* DCAppDelegate.m in Sources */,
-				C9BC00C5188555D100356D7F /* DCInfo.m in Sources */,
+				C9BC00C5188555D100356D7F /* DCClient.m in Sources */,
 				C99B95AA188408B9001DB181 /* Moon.xcdatamodeld in Sources */,
 				C99B95C518840AB3001DB181 /* addrman.cpp in Sources */,
+				C9CB2A67188FDF1E008101F8 /* DCTXSender.m in Sources */,
 				C93DA057188D531D006B0534 /* DCBridge.m in Sources */,
 				C9BC00C218854BF200356D7F /* DCDataManager.m in Sources */,
 				C9BC00C9188565FB00356D7F /* DCBlockInfo.m in Sources */,
 				C99B95C618840AB3001DB181 /* bitcoinrpc.cpp in Sources */,
+				C9C57F01189275C5009D9140 /* NSAlert+Moon.m in Sources */,
 				C9C9D31F1884A059008A2FBD /* bridgehelper.cpp in Sources */,
 				C99B95C718840AB3001DB181 /* checkpoints.cpp in Sources */,
 				C99B95C818840AB3001DB181 /* crypter.cpp in Sources */,
@@ -576,6 +607,7 @@
 				C9B6E581188ADFC70044F1E1 /* DCWalletTX.m in Sources */,
 				C99B95CE18840AB3001DB181 /* main.cpp in Sources */,
 				C99B95CF18840AB3001DB181 /* net.cpp in Sources */,
+				C9C5089E1890553F00ECD640 /* NSString+Moon.m in Sources */,
 				C9B6E584188B30740044F1E1 /* DCWallet.m in Sources */,
 				C99B95D018840AB3001DB181 /* netbase.cpp in Sources */,
 				C99B95D118840AB3001DB181 /* noui.cpp in Sources */,
@@ -583,6 +615,7 @@
 				C99B95D318840AB3001DB181 /* rpcdump.cpp in Sources */,
 				C99B95D418840AB3001DB181 /* rpcnet.cpp in Sources */,
 				C9C76335188C136D006A5673 /* DCBackgroundView.m in Sources */,
+				C9C57F0418927BAD009D9140 /* NSNumberFormatter+Moon.m in Sources */,
 				C9B6E57E188ADC390044F1E1 /* DCAddress.m in Sources */,
 				C99B95D518840AB3001DB181 /* rpcrawtransaction.cpp in Sources */,
 				C99B95D618840AB3001DB181 /* script.cpp in Sources */,

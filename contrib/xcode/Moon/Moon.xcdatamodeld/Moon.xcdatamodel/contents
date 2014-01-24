@@ -4,6 +4,7 @@
         <attribute name="address" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="isMine" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="label" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="client" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Client" inverseName="addresses" inverseEntity="Client" syncable="YES"/>
     </entity>
     <entity name="BlockInfo" representedClassName="DCBlockInfo" syncable="YES">
         <attribute name="blockHash" optional="YES" attributeType="String" syncable="YES"/>
@@ -16,9 +17,9 @@
         <attribute name="size" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
         <attribute name="time" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="txCount" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
-        <relationship name="info" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Info" inverseName="blockInfo" inverseEntity="Info" syncable="YES"/>
+        <relationship name="client" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Client" inverseName="blockInfo" inverseEntity="Client" syncable="YES"/>
     </entity>
-    <entity name="Info" representedClassName="DCInfo" syncable="YES">
+    <entity name="Client" representedClassName="DCClient" syncable="YES">
         <attribute name="difficulty" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
         <attribute name="lastBlockTime" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="networkMHS" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
@@ -26,10 +27,13 @@
         <attribute name="totalMinted" optional="YES" attributeType="Decimal" defaultValueString="0" syncable="YES"/>
         <attribute name="totalTransactions" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
         <attribute name="warnings" optional="YES" attributeType="String" syncable="YES"/>
-        <relationship name="blockInfo" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="BlockInfo" inverseName="info" inverseEntity="BlockInfo" syncable="YES"/>
+        <relationship name="addresses" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Address" inverseName="client" inverseEntity="Address" syncable="YES"/>
+        <relationship name="blockInfo" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="BlockInfo" inverseName="client" inverseEntity="BlockInfo" syncable="YES"/>
+        <relationship name="wallets" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Wallet" inverseName="client" inverseEntity="Wallet" syncable="YES"/>
     </entity>
     <entity name="Wallet" representedClassName="DCWallet" syncable="YES">
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="client" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Client" inverseName="wallets" inverseEntity="Client" syncable="YES"/>
         <relationship name="transactions" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="WalletTX" inverseName="wallet" inverseEntity="WalletTX" syncable="YES"/>
     </entity>
     <entity name="WalletTX" representedClassName="DCWalletTX" syncable="YES">
@@ -45,7 +49,7 @@
     <elements>
         <element name="Address" positionX="0" positionY="0" width="0" height="0"/>
         <element name="BlockInfo" positionX="0" positionY="0" width="0" height="0"/>
-        <element name="Info" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="Client" positionX="0" positionY="0" width="0" height="0"/>
         <element name="Wallet" positionX="0" positionY="0" width="0" height="0"/>
         <element name="WalletTX" positionX="0" positionY="0" width="0" height="0"/>
     </elements>

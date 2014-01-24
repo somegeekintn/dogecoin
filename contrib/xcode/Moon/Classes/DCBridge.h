@@ -20,6 +20,10 @@
 - (NSDictionary *)		getBlockWithHash: (NSString *) inHash;
 - (NSArray *)			getWalletTransactions;
 - (NSArray *)			getWalletTransactionsWithHash: (NSString *) inHash;
+- (BOOL)				sendCoins: (double) inAmount
+							to: (NSArray *) inRecipients;
+- (NSArray *)			getAddressBook;
+- (BOOL)				validateAddress: (NSString *) inAddress;
 - (NSDictionary *)		getMiscInfo;
 
 @end

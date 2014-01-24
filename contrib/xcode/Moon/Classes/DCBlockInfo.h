@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
-@class DCInfo;
+@class DCClient;
 
 @interface DCBlockInfo : NSManagedObject
 
@@ -30,6 +30,6 @@
 @property (nonatomic, strong) NSDate			*time;
 @property (nonatomic, strong) NSNumber			*txCount;
 
-@property (nonatomic, strong) DCInfo			*info;
+@property (nonatomic, strong) DCClient			*info;
 
 @end

@@ -15,4 +15,47 @@
 @dynamic isMine;
 @dynamic label;
 
++ (DCAddress *) updatedAddressFromRawEntry: (NSDictionary *) inRawAddress
+	inContext: (NSManagedObjectContext *) inContext
+{
+	NSFetchRequest			*request = [NSFetchRequest fetchRequestWithEntityName: @"Address"];
+	NSString				*coinAddress = inRawAddress[@"address"];
+	NSString				*label = inRawAddress[@"label"];
+	NSArray					*results = nil;
+	DCAddress				*address = nil;
+	
+	request.predicate = [NSPredicate predicateWithFormat: @"address == %@", coinAddress];
+	request.fetchLimit = 1;
+	results = [inContext executeFetchRequest: request error: nil];
+	address = [results lastObject];
+	if (address == nil) {
+		NSNumber		*isMine = inRawAddress[@"isMine"];
+		
+		address = [NSEntityDescription insertNewObjectForEntityForName: @"Address" inManagedObjectContext: inContext];
+		address.address = coinAddress;
+		address.label = label;
+		address.isMine = isMine;
+	}
+	else {
+		if (address.label == nil || ![address.label isEqualToString: label])
+			address.label = label;
+	}
+	
+	return address;
+}
+
+- (NSString *) tokenizedAddress
+{
+	NSString		*tokenizedAddress;
+	
+	if (self.label != nil && [self.label length]) {
+		tokenizedAddress = [NSString stringWithFormat: @"%@ <%@>", self.label, self.address];
+	}
+	else {
+		tokenizedAddress = self.address;
+	}
+	
+	return tokenizedAddress;
+}
+
 @end

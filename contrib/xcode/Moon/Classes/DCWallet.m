@@ -15,6 +15,7 @@
 
 @dynamic name;
 @dynamic transactions;
+@dynamic client;
 
 + (DCWallet *) walletNamed: (NSString *) inName
 	inContext: (NSManagedObjectContext *) inContext

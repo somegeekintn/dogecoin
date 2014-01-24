@@ -8,7 +8,7 @@
 
 #import "DCBlockInfo.h"
 #import "DCBridge.h"
-#import "DCInfo.h"
+#import "DCClient.h"
 #import "DCConsts.h"
 
 @implementation DCBlockInfo

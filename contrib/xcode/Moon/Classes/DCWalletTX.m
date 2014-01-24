@@ -7,6 +7,9 @@
 //
 
 #import "DCWalletTX.h"
+#import "DCAddress.h"
+#import "DCClient.h"
+#import "DCWallet.h"
 #import "DCConsts.h"
 
 
@@ -86,7 +89,28 @@
 
 - (NSString *) label
 {
-	return self.address;
+	NSString		*label = nil;
+	
+	switch ([self.category integerValue]) {
+		case eCoinWalletCategory_Send:
+		case eCoinWalletCategory_Receive: {
+				DCAddress		*bookAddress;
+				
+				label = self.address;
+				bookAddress = [self.wallet.client addressWithCoinAddress: label];
+				if (bookAddress != nil)
+					label = bookAddress.label;
+			}
+			break;
+			
+		case eCoinWalletCategory_Generated:		label = @"Mined";			break;
+		case eCoinWalletCategory_Immature:		label = @"Immature";		break;
+		case eCoinWalletCategory_Orphan:		label = @"Orphaned";		break;
+		case eCoinWalletCategory_Move:			label = @"Moved";			break;
+		default:								label = @"Unknown";			break;
+	}
+
+	return label;
 }
 
 @end

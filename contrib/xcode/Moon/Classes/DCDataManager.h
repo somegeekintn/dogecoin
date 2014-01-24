@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class DCInfo;
+@class DCClient;
 @class DCWallet;
 
 @interface DCDataManager : NSObject
@@ -21,11 +21,12 @@
 - (void)				updateBlockInfo: (NSInteger) inReconcileDepth;
 - (void)				updateWalletTrasactionWithHash: (NSString *) inWalletTxHash;
 - (void)				deleteWalletTrasactionWithHash: (NSString *) inWalletTxHash;
+- (void)				updateAddressEntry: (NSDictionary *) inRawAddress;
+- (void)				deleteAddressEntry: (NSDictionary *) inRawAddress;
 - (void)				setConnectionCount: (NSInteger) inNumConnections;
 
 @property (nonatomic, readonly) NSManagedObjectContext		*defaultContext;
 @property (nonatomic, readonly) NSManagedObjectContext		*editContext;
-@property (nonatomic, readonly) DCInfo						*info;
-@property (nonatomic, readonly) DCWallet					*defaultWallet;
+@property (nonatomic, readonly) DCClient					*client;
 
 @end

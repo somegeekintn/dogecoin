@@ -12,6 +12,11 @@
 
 @interface DCAddress : NSManagedObject
 
++ (DCAddress *)			updatedAddressFromRawEntry: (NSDictionary *) inRawAddress
+							inContext: (NSManagedObjectContext *) inContext;
+
+- (NSString *)			tokenizedAddress;	// for use with NSTokenField
+
 @property (nonatomic, strong) NSString		*address;
 @property (nonatomic, strong) NSNumber		*isMine;
 @property (nonatomic, strong) NSString		*label;

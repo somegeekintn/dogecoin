@@ -7,9 +7,10 @@
 //
 
 #import "DCDataManager.h"
+#import "DCAddress.h"
 #import "DCBlockInfo.h"
 #import "DCBridge.h"
-#import "DCInfo.h"
+#import "DCClient.h"
 #import "DCWallet.h"
 
 
@@ -32,28 +33,19 @@ static DCDataManager		*sSharedManager = nil;
 
 @synthesize defaultContext = _defaultContext;
 @synthesize editContext = _editContext;
-@synthesize info = _info;
-@synthesize defaultWallet = _defaultWallet;
+@synthesize client = _client;
 
 + (DCDataManager *) sharedManager
 {
 	return sSharedManager;
 }
 
-- (DCInfo *) info
+- (DCClient *) client
 {
-	if (_info == nil)
-		_info = [DCInfo infoInContext: self.defaultContext];
+	if (_client == nil)
+		_client = [DCClient clientInContext: self.defaultContext];
 
-    return _info;
-}
-
-- (DCWallet *) defaultWallet
-{
-	if (_defaultWallet == nil)
-		_defaultWallet = [DCWallet walletNamed: @"default" inContext: self.defaultContext];
-
-    return _defaultWallet;
+    return _client;
 }
 
 - (void) startMonitor
@@ -72,16 +64,27 @@ static DCDataManager		*sSharedManager = nil;
 		NSPersistentStoreCoordinator	*coordinator = self.persistentStoreCoordinator;
 		
 		if (coordinator != nil) {
-			self.rootContext = [[NSManagedObjectContext alloc] initWithConcurrencyType: NSPrivateQueueConcurrencyType];
-			self.rootContext.persistentStoreCoordinator = coordinator;
-			[self.rootContext setUndoManager: nil];
+			dispatch_block_t		contextInitBlock;
 			
-			_defaultContext = [[NSManagedObjectContext alloc] initWithConcurrencyType: NSMainQueueConcurrencyType];
-			_defaultContext.parentContext = self.rootContext;
-			[_defaultContext setUndoManager: nil];
+			contextInitBlock = ^{
+				self.rootContext = [[NSManagedObjectContext alloc] initWithConcurrencyType: NSPrivateQueueConcurrencyType];
+				self.rootContext.persistentStoreCoordinator = coordinator;
+				[self.rootContext setUndoManager: nil];
+				
+				_defaultContext = [[NSManagedObjectContext alloc] initWithConcurrencyType: NSMainQueueConcurrencyType];
+				_defaultContext.parentContext = self.rootContext;
+				[_defaultContext setUndoManager: nil];
+				
+				_editContext = [[NSManagedObjectContext alloc] initWithConcurrencyType: NSMainQueueConcurrencyType];
+				_editContext.parentContext = _defaultContext;
+			};
 			
-			_editContext = [[NSManagedObjectContext alloc] initWithConcurrencyType: NSMainQueueConcurrencyType];
-			_editContext.parentContext = _defaultContext;
+			if ([NSThread isMainThread]) {
+				contextInitBlock();
+			}
+			else {
+				dispatch_sync(dispatch_get_main_queue(), contextInitBlock);
+			}
 		}
 	}
 
@@ -294,8 +297,11 @@ static DCDataManager		*sSharedManager = nil;
 
 - (void) clientInitializationComplete
 {
-	[self updateBlockInfo: 1000];		// validate the last N blocks upon connect
-	[self reconcileWallet];
+	dispatch_async(dispatch_get_main_queue(), ^{
+		[self updateBlockInfo: 1000];		// validate the last N blocks upon connect
+		[self reconcileAddressBook];
+		[self reconcileWallet];
+	});
 }
 
 - (void) reconcileBlockInfoWithDepth: (NSInteger) inReconcileDepth
@@ -306,7 +312,7 @@ static DCDataManager		*sSharedManager = nil;
 	reconcileContext.parentContext = self.defaultContext;
 	[reconcileContext setUndoManager: nil];
 	[reconcileContext performBlockAndWait: ^{
-		DCInfo				*info = (DCInfo *)[reconcileContext objectWithID: inInfoObjectID];
+		DCClient				*info = (DCClient *)[reconcileContext objectWithID: inInfoObjectID];
 		DCBlockInfo			*blockInfo;
 		NSInteger			curBlockHeight = [info.blockInfo count] - 1;
 		NSInteger			testHeight = curBlockHeight;
@@ -344,7 +350,7 @@ static DCDataManager		*sSharedManager = nil;
 	updateContext.parentContext = self.defaultContext;
 	[updateContext setUndoManager: nil];
 	[updateContext performBlockAndWait: ^{
-		DCInfo				*info = (DCInfo *)[updateContext objectWithID: inInfoObjectID];
+		DCClient				*info = (DCClient *)[updateContext objectWithID: inInfoObjectID];
 		DCBlockInfo			*blockInfo;
 		NSDate				*endTime;
 		
@@ -375,8 +381,8 @@ static DCDataManager		*sSharedManager = nil;
 	@synchronized(self) {
 		if (!self.blocksUpdating) {
 			@autoreleasepool {
-				NSManagedObjectID		*infoID = [self.info objectID];
-				NSInteger				startBlockInfoCount = [self.info.blockInfo count];
+				NSManagedObjectID		*infoID = [self.client objectID];
+				NSInteger				startBlockInfoCount = [self.client.blockInfo count];
 
 				self.blocksUpdating = YES;
 				dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
@@ -403,8 +409,8 @@ NSLog(@"update %ld (best %ld)", blockInfoCount, [[DCBridge sharedBridge] getBloc
 {
 	NSArray			*walletTransactions = [[DCBridge sharedBridge] getWalletTransactions];
 	
-	[self.defaultContext performBlock:^{
-		[self.defaultWallet reconcileWalletTransactions: walletTransactions];
+	[self.defaultContext performBlock: ^{
+		[self.client.activeWallet reconcileWalletTransactions: walletTransactions];
 	}];
 }
 
@@ -412,14 +418,50 @@ NSLog(@"update %ld (best %ld)", blockInfoCount, [[DCBridge sharedBridge] getBloc
 {
 	NSArray			*walletTransactions = [[DCBridge sharedBridge] getWalletTransactionsWithHash: inWalletTxHash];
 
-	[self.defaultContext performBlock:^{
-		[self.defaultWallet reconcileWalletTransactions: walletTransactions];
+	[self.defaultContext performBlock: ^{
+		[self.client.activeWallet reconcileWalletTransactions: walletTransactions];
 	}];
 }
 
 - (void) deleteWalletTrasactionWithHash: (NSString *) inWalletTxHash
 {
-	NSLog(@"");
+	NSLog(@"%s", __PRETTY_FUNCTION__);
+}
+
+- (void) reconcileAddressBook
+{
+	NSArray			*addressList = [[DCBridge sharedBridge] getAddressBook];
+	
+	[self.defaultContext performBlock: ^{
+		DCAddress		*address;
+#warning "todo: remove missing?"
+// need to remove any addresses that are no longer found in the address
+// book. since this should just be called at launch should we just nuke
+// and reset the address book? bleh.
+		for (NSDictionary *rawAddress in addressList) {
+			address = [DCAddress updatedAddressFromRawEntry: rawAddress inContext: self.defaultContext];
+			[self.client addAddressesObject: address];
+		}
+	}];
+}
+
+- (void) updateAddressEntry: (NSDictionary *) inRawAddress
+{
+	[self.defaultContext performBlock: ^{
+		DCAddress		*address;
+		
+		address = [DCAddress updatedAddressFromRawEntry: inRawAddress inContext: self.defaultContext];
+		[self.client addAddressesObject: address];
+	}];
+}
+
+- (void) deleteAddressEntry: (NSDictionary *) inRawAddress
+{
+	[self.defaultContext performBlock: ^{
+		DCAddress		*address = [DCAddress updatedAddressFromRawEntry: inRawAddress inContext: self.defaultContext];
+		
+		[self.defaultContext deleteObject: address];
+	}];
 }
 
 - (void) updateMiscInfo
@@ -432,15 +474,15 @@ NSLog(@"update %ld (best %ld)", blockInfoCount, [[DCBridge sharedBridge] getBloc
 		warnings = @"- none -";
 	
 	[self.defaultContext performBlock:^{
-		self.info.networkMHS = @([networkHPS doubleValue] / 1000000.0);
-		self.info.warnings = warnings;
+		self.client.networkMHS = @([networkHPS doubleValue] / 1000000.0);
+		self.client.warnings = warnings;
 	}];
 }
 
 - (void) setConnectionCount: (NSInteger) inNumConnections
 {
 	[self.defaultContext performBlock:^{
-		self.info.numConnections = @(inNumConnections);
+		self.client.numConnections = @(inNumConnections);
 	}];
 }
 

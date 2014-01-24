@@ -9,6 +9,7 @@
 //	code like YES, NO, etc. This collection of functions mostly just
 //	forwards function calls on their counterparts in the client
 
+#include "bridgehelper.h"
 #include "bitcoinrpc.h"
 #include "base58.h"
 #include "init.h"
@@ -18,14 +19,16 @@
 #include <map>
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/random/uniform_int_distribution.hpp>
-#include <CoreFoundation/CoreFoundation.h>
 
 #undef printf
 
 extern void		bridge_sig_WalletTransactionChanged(CFStringRef inWalletTxHash);
 extern void		bridge_sig_WalletTransactionDeleted(CFStringRef inWalletTxHash);
+extern void		bridge_sig_AddressChanged(CFDictionaryRef inRawAddress);
+extern void		bridge_sig_AddressDeleted(CFDictionaryRef inRawAddress);
 extern void		bridge_sig_BlocksChanged();
 extern void		bridge_sig_NumConnectionsChanged(int inNewNumConnections);
+extern bool		bridge_sig_AskFee(int64 inFee);
 extern void		bridge_sig_InitMessage(const char *inMessage);
 
 void bridge_EstablishPrimaryConnections();
@@ -42,12 +45,10 @@ static void NotifyTransactionChanged(
 {
 	CFStringRef		walletTxHash = CFStringCreateWithCString(kCFAllocatorDefault, inHash.GetHex().c_str(), kCFStringEncodingASCII);
 	
-	if (inStatus != CT_DELETED) {
+	if (inStatus != CT_DELETED)
 		bridge_sig_WalletTransactionChanged(walletTxHash);
-	}
-	else {		// does this actually happen?
+	else		// does this actually happen?
 		bridge_sig_WalletTransactionDeleted(walletTxHash);
-	}
 }
 
 static void NotifyAddressBookChanged(
@@ -57,7 +58,19 @@ static void NotifyAddressBookChanged(
 	bool					inIsMine,
 	ChangeType				inStatus)
 {
-//    OutputDebugStringF("NotifyAddressBookChanged %s %s isMine=%i status=%i\n", CBitcoinAddress(address).ToString().c_str(), label.c_str(), isMine, status);
+	CFMutableDictionaryRef	addressEntry = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
+	CBitcoinAddress			address;
+	int						isMine = inIsMine;
+	
+	address.Set(inAddress);
+	CFDictionaryAddValue(addressEntry, CFSTR("label"), CFStringCreateWithCString(kCFAllocatorDefault, inLabel.c_str(), kCFStringEncodingASCII));
+	CFDictionaryAddValue(addressEntry, CFSTR("address"), CFStringCreateWithCString(kCFAllocatorDefault, address.ToString().c_str(), kCFStringEncodingASCII));
+	CFDictionaryAddValue(addressEntry, CFSTR("isMine"), CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &isMine));
+
+	if (inStatus != CT_DELETED)
+		bridge_sig_AddressChanged(addressEntry);
+	else
+		bridge_sig_AddressDeleted(addressEntry);
 }
 
 // NotifyKeyStoreStatusChanged: Called when wallet is locked / unlocked
@@ -97,7 +110,14 @@ static bool ThreadSafeAskFee(
 	int64					inFeeRequired,
 	const std::string		&inStrCaption)
 {
-	return false;
+	bool	allowFee = false;
+	
+    if (inFeeRequired < MIN_TX_FEE || inFeeRequired <= nTransactionFee || fDaemon)
+		allowFee = true;
+	else
+		allowFee = bridge_sig_AskFee(inFeeRequired);
+
+	return allowFee;
 }
 
 static void ThreadSafeHandleURI(
@@ -359,20 +379,6 @@ void bridge_populateWalletTXListWithWalletTX(
 
 #pragma mark - Bridge functions
 
-#if 0	// grab addresses
-void bridge_testAddrBook()
-{
-	CBitcoinAddress		address;
-	
-    BOOST_FOREACH(const PAIRTYPE(CTxDestination, std::string)& entry, pwalletMain->mapAddressBook) {
-		address.Set(entry.first);
-printf("%s - %s: %s\n", entry.second.c_str(), address.ToString().c_str(), IsMine(*pwalletMain, entry.first)  ? "mine" : "theirs");
-//        if (IsMine(*pwalletMain, entry.first)) // This address belongs to me
-//            mapAccountBalances[entry.second] = 0;
-    }
-}
-#endif
-
 int32_t bridge_getBlockHeight()
 {
 	return nBestHeight;
@@ -444,6 +450,19 @@ CFDictionaryRef bridge_getBlockWithHash(
 	return blockInfo;
 }
 
+CFArrayRef bridge_getWalletTransactions()	// See ListTransactions
+{
+	CFMutableArrayRef		walletTXList = CFArrayCreateMutable(kCFAllocatorDefault, 0, NULL);
+
+    for (std::map<uint256, CWalletTx>::iterator it = pwalletMain->mapWallet.begin(); it != pwalletMain->mapWallet.end(); ++it) {
+		const CWalletTx									&wtx = (*it).second;
+
+		bridge_populateWalletTXListWithWalletTX(walletTXList, wtx);
+    }
+	
+	return walletTXList;
+}
+
 CFArrayRef bridge_getWalletTransactionsWithHash(
 	const char				*inTransactionHash)
 {
@@ -456,17 +475,113 @@ CFArrayRef bridge_getWalletTransactionsWithHash(
 	return walletTXList;
 }
 
-CFArrayRef bridge_getWalletTransactions()	// See ListTransactions
+CFDictionaryRef bridge_sendCoins(
+	CFArrayRef				inRecipients,
+	double					amount)
 {
-	CFMutableArrayRef		walletTXList = CFArrayCreateMutable(kCFAllocatorDefault, 0, NULL);
-
-    for (std::map<uint256, CWalletTx>::iterator it = pwalletMain->mapWallet.begin(); it != pwalletMain->mapWallet.end(); ++it) {
-		const CWalletTx									&wtx = (*it).second;
-
-		bridge_populateWalletTXListWithWalletTX(walletTXList, wtx);
-    }
+	CFMutableDictionaryRef						response = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
+	CFStringRef									rxAddressRef;
+	CFIndex										rxCount = CFArrayGetCount(inRecipients);
+	int64_t										fixedPointAmount = amount * COIN;
+	int64_t										totalAmount = 0;
+	std::vector<std::pair<CScript, int64> >		vecSend;
+	char										addrBuffer[64];
+	int											result = eCoinSendResponse_Error_Unknown;
 	
-	return walletTXList;
+	for (CFIndex rxIdx=0; rxIdx<rxCount; rxIdx++) {
+		rxAddressRef = (CFStringRef)CFArrayGetValueAtIndex(inRecipients, rxIdx);
+		if (CFStringGetCString(rxAddressRef, addrBuffer, 64, kCFStringEncodingASCII)) {
+			if (bridge_validateAddress(addrBuffer)) {
+				CScript				scriptPubKey;
+				CBitcoinAddress		coinAddress;
+				
+				coinAddress.SetString(addrBuffer);
+				scriptPubKey.SetDestination(coinAddress.Get());
+				vecSend.push_back(make_pair(scriptPubKey, fixedPointAmount));
+				totalAmount += fixedPointAmount;
+			}
+		}
+	}
+
+	if (totalAmount >= 0) {
+		int64		walletBalance = pwalletMain->GetBalance();
+		
+		if (totalAmount <= walletBalance) {
+			if (totalAmount + nTransactionFee <= walletBalance) {
+				LOCK2(cs_main, pwalletMain->cs_wallet);
+
+				CWalletTx		wtx;
+				CReserveKey		keyChange(pwalletMain);
+				int64			nFeeRequired = 0;
+				bool			fCreated = pwalletMain->CreateTransaction(vecSend, wtx, keyChange, nFeeRequired);
+				
+				if (fCreated) {
+					if (ThreadSafeAskFee(nFeeRequired, std::string("Sending..."))) {
+						if (pwalletMain->CommitTransaction(wtx, keyChange)) {
+							result = eCoinSendResponse_Success;
+						}
+						else {
+							result = eCoinSendResponse_Error_TransactionCommitFailed;
+						}
+					}
+					else {
+						result = eCoinSendResponse_Canceled;
+					}
+				}
+				else {
+					if (totalAmount + nFeeRequired > walletBalance) {
+						CFDictionaryAddValue(response, CFSTR("fee"), CFNumberCreate(kCFAllocatorDefault, kCFNumberLongLongType, &nFeeRequired));
+						result = eCoinSendResponse_Error_NSF_WithFees;
+					}
+					else {
+						result = eCoinSendResponse_Error_TransactionCreateFailed;
+					}
+				}
+			}
+			else {
+				CFDictionaryAddValue(response, CFSTR("fee"), CFNumberCreate(kCFAllocatorDefault, kCFNumberLongLongType, &nTransactionFee));
+				result = eCoinSendResponse_Error_NSF_WithFees;
+			}
+		}
+		else {
+			result = eCoinSendResponse_Error_NSF;
+		}
+	}
+	else {
+		result = eCoinSendResponse_Error_InvalidAmount;
+	}
+	
+	CFDictionaryAddValue(response, CFSTR("result"), CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &result));
+
+	return response;
+}
+
+CFArrayRef bridge_getAddressBook()
+{
+	CFMutableArrayRef		addressList = CFArrayCreateMutable(kCFAllocatorDefault, 0, NULL);
+	CBitcoinAddress			address;
+	int						isMine;
+
+    BOOST_FOREACH(const PAIRTYPE(CTxDestination, std::string)& entry, pwalletMain->mapAddressBook) {
+		CFMutableDictionaryRef	addressEntry = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
+		
+		address.Set(entry.first);
+		isMine = IsMine(*pwalletMain, entry.first);
+		CFDictionaryAddValue(addressEntry, CFSTR("label"), CFStringCreateWithCString(kCFAllocatorDefault, entry.second.c_str(), kCFStringEncodingASCII));
+		CFDictionaryAddValue(addressEntry, CFSTR("address"), CFStringCreateWithCString(kCFAllocatorDefault, address.ToString().c_str(), kCFStringEncodingASCII));
+		CFDictionaryAddValue(addressEntry, CFSTR("isMine"), CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &isMine));
+		CFArrayAppendValue(addressList, addressEntry);
+   }
+
+	return addressList;
+}
+
+bool bridge_validateAddress(
+	const char			*inAddress)
+{
+    CBitcoinAddress		address(inAddress);
+
+	return address.IsValid();
 }
 
 CFDictionaryRef bridge_getMiscInfo()

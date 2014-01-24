@@ -1,16 +1,17 @@
 //
-//  DCInfo.m
+//  DCClient.m
 //  Dogecoin
 //
 //  Created by Casey Fleser on 1/14/14.
 //  Copyright (c) 2014 Casey Fleser / @somegeekintn. All rights reserved.
 //
 
-#import "DCInfo.h"
+#import "DCClient.h"
 #import "DCBlockInfo.h"
+#import "DCWallet.h"
 
 
-@implementation DCInfo
+@implementation DCClient
 
 @dynamic difficulty;
 @dynamic lastBlockTime;
@@ -20,21 +21,27 @@
 @dynamic totalTransactions;
 @dynamic warnings;
 
+@dynamic addresses;
 @dynamic blockInfo;
+@dynamic wallets;
 
-+ (DCInfo *) infoInContext: (NSManagedObjectContext *) inContext
++ (DCClient *) clientInContext: (NSManagedObjectContext *) inContext
 {
-	NSFetchRequest		*request = [NSFetchRequest fetchRequestWithEntityName: @"Info"];
+	NSFetchRequest		*request = [NSFetchRequest fetchRequestWithEntityName: @"Client"];
 	NSArray				*results;
-	DCInfo				*info = nil;
+	DCClient			*client = nil;
 	
 	if ((results = [inContext executeFetchRequest: request error: nil]) != nil)
-		info = [results lastObject];
+		client = [results lastObject];
 	
-	if (info == nil)
-		info = [NSEntityDescription insertNewObjectForEntityForName: @"Info" inManagedObjectContext: inContext];
+	if (client == nil) {
+		DCWallet		*defaultWallet = [DCWallet walletNamed: @"default" inContext: inContext];
+
+		client = [NSEntityDescription insertNewObjectForEntityForName: @"Client" inManagedObjectContext: inContext];
+		[client addWalletsObject: defaultWallet];
+	}
 	
-	return info;
+	return client;
 }
 
 - (void) recalcCumulatives
@@ -85,6 +92,37 @@
 	results = [self.managedObjectContext executeFetchRequest: blockInfoRequest error: nil];
 	
 	return [results lastObject];
+}
+
+- (DCAddress *) addressWithCoinAddress: (NSString *) inCoinAddress
+{
+	NSPredicate		*predicate = [NSPredicate predicateWithFormat: @"address == %@", inCoinAddress];
+	NSSet			*matchingAddresses = [self.addresses filteredSetUsingPredicate: predicate];
+	
+	return [matchingAddresses anyObject];
+}
+
+- (DCAddress *) addressWithCoinAddressOrLabel: (NSString *) inFragment
+{
+	NSPredicate		*predicate = [NSPredicate predicateWithFormat: @"address like[cd] %@ || label like[cd] %@", inFragment, inFragment];
+	
+	return [[self.addresses filteredSetUsingPredicate: predicate] anyObject];
+}
+
+- (NSSet *) addressesContaining: (NSString *) inAddressFragment
+{
+	NSPredicate		*predicate = [NSPredicate predicateWithFormat: @"address contains[cd] %@ || label contains[cd] %@", inAddressFragment, inAddressFragment];
+	
+	return [self.addresses filteredSetUsingPredicate: predicate];
+}
+
+#pragma mark - Setters / Getters
+
+- (DCWallet *) activeWallet
+{
+	// for the time being there is only one wallet
+	
+	return [self.wallets anyObject];
 }
 
 @end
