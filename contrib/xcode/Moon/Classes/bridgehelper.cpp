@@ -379,6 +379,72 @@ void bridge_populateWalletTXListWithWalletTX(
 
 #pragma mark - Bridge functions
 
+int64_t bridge_getActualMintedValue(
+	CBlock				&inBlock)
+{
+	CTxDB				txdb("r");
+	int64_t				mintedValue = 0;
+	int64_t				txFees = 0;
+	
+    BOOST_FOREACH(CTransaction &transaction, inBlock.vtx) {
+		int64_t		valueOut = transaction.GetValueOut();
+		
+		if (transaction.IsCoinBase()) {
+			mintedValue = valueOut;
+		}
+		else {
+			MapPrevTx					mapInputs;
+			std::map<uint256, CTxIndex>	mapUnused;
+			bool						fInvalid = false;
+
+			if (transaction.FetchInputs(txdb, mapUnused, false, false, mapInputs, fInvalid)) {
+				txFees += transaction.GetValueIn(mapInputs) - valueOut;
+			}
+		}
+	}
+
+	mintedValue -= txFees;
+
+	return mintedValue;
+}
+
+void bridge_testBlockValues()
+{
+	CBlockIndex		*blockIndex = pindexGenesisBlock;
+    CBlock			block;
+	uint256			prevHash = 0;
+	int64_t			expectedMintValue, actualMintValue;
+	int32_t			blockCount = 0;
+	int32_t			badBlockCount = 0;
+	
+	printf("--->>>Begin block value test\n");
+	
+	do {
+		if (blockIndex->pprev)
+			prevHash = blockIndex->pprev->GetBlockHash();
+			
+		block.ReadFromDisk(blockIndex, true);
+		expectedMintValue = bridge_getBlockMintedValue(blockIndex->nHeight, prevHash);
+		actualMintValue = bridge_getActualMintedValue(block);
+		blockCount++;
+		
+		if (expectedMintValue == actualMintValue) {
+			if (!(blockIndex->nHeight % 1000))
+				printf("%d okay\n", blockIndex->nHeight);
+		}
+		else {
+			printf("%d expected %lld actual %lld - %s\n", blockIndex->nHeight, expectedMintValue, actualMintValue, blockIndex->phashBlock->GetHex().c_str());
+			badBlockCount++;
+		}
+		blockIndex = blockIndex->pnext;
+	} while (blockIndex != NULL);
+
+	printf("--->>>End block value test\n");
+	printf("--->>>Tested %d blocks\n", blockCount);
+	printf("--->>>%d blocks incorrect\n", badBlockCount);
+}
+
+
 int32_t bridge_getBlockHeight()
 {
 	return nBestHeight;
@@ -408,7 +474,6 @@ CFDictionaryRef bridge_getBlockWithHash(
 {
 	CFMutableDictionaryRef	blockInfo = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
 	CFMutableArrayRef		txList = CFArrayCreateMutable(kCFAllocatorDefault, 0, NULL);
-	CTxDB					txdb("r");
     std::string				strHash = inHash;
     uint256					blockHash(strHash);
     CBlock					block;

@@ -13,10 +13,10 @@
 #include <string>
 #include <list>
 
+void					bridge_testBlockValues();
+
 bool					bridge_Initialize();
 void					bridge_Shutdown();
-
-void					bridge_testAddrBook();
 
 int32_t					bridge_getBlockHeight();
 CFStringRef				bridge_getBlockHashAtHeight(
