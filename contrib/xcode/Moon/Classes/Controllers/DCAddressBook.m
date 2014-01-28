@@ -119,9 +119,7 @@
 		[self.managedObjectContext performBlock: ^{
 			DCAddress		*newAddress = [NSEntityDescription insertNewObjectForEntityForName: @"Address" inManagedObjectContext: self.managedObjectContext];
 			
-			newAddress.label = @"";
 			newAddress.isMine = @(NO);
-			newAddress.address = @"- missing -";
 			[self addObject: newAddress];
 		}];
 	}
@@ -146,7 +144,13 @@
 				NSString			*newAddress = [obj valueForKey: @"address"];
 				
 				if (oldAddress == nil || ![oldAddress length]) {
-NSLog(@"create a new address: %@", newAddress);
+					if (newAddress != nil && [[DCBridge sharedBridge] validateAddress: newAddress]) {
+NSLog(@"valid address: %@", newAddress);
+					}
+					else {
+						// invalid, reset
+						[obj setValue: oldAddress forKey: @"address"];
+					}
 				}
 				else {
 NSLog(@"change %@ to %@", oldAddress, newAddress);

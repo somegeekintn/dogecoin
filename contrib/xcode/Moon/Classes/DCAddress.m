@@ -7,6 +7,8 @@
 //
 
 #import "DCAddress.h"
+#import "DCBridge.h"
+#import "DCConsts.h"
 
 
 @implementation DCAddress
@@ -56,6 +58,25 @@
 	}
 	
 	return tokenizedAddress;
+}
+
+- (BOOL) validateValue: (id *) ioValue
+	forKey: (NSString *) inKey
+	error: (NSError **) ioError
+{
+	BOOL		valid = [super validateValue: ioValue forKey: @"key" error: ioError];
+
+	if (valid && [inKey isEqualToString: @"address"]) {
+		if (![[DCBridge sharedBridge] validateAddress: *ioValue]) {
+			NSString		*errorDescription = [NSString stringWithFormat: @"%@ is not a valid %@ address", *ioValue, DCCoinName];
+            NSDictionary	*userInfoDict = @{ NSLocalizedDescriptionKey : errorDescription };
+			
+			*ioError = [NSError errorWithDomain: DCError_Domain code: eErrorCode_InvalidAddress userInfo: userInfoDict];
+			valid = NO;
+		}
+	}
+
+	return valid;
 }
 
 @end

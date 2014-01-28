@@ -643,7 +643,11 @@
                                             </textFieldCell>
                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                             <connections>
-                                                <binding destination="bg8-BQ-fuX" name="value" keyPath="arrangedObjects.label" id="EBP-gz-gEp"/>
+                                                <binding destination="bg8-BQ-fuX" name="value" keyPath="arrangedObjects.label" id="kry-H2-TOB">
+                                                    <dictionary key="options">
+                                                        <string key="NSNullPlaceholder">&lt;no label></string>
+                                                    </dictionary>
+                                                </binding>
                                             </connections>
                                         </tableColumn>
                                         <tableColumn width="268" minWidth="40" maxWidth="1000" id="MwA-Fc-omS">
@@ -662,10 +666,15 @@
                                             </textFieldCell>
                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                             <connections>
-                                                <binding destination="bg8-BQ-fuX" name="value" keyPath="arrangedObjects.address" id="zyV-WP-f01"/>
                                                 <binding destination="bg8-BQ-fuX" name="editable" keyPath="arrangedObjects.isMine" id="obq-6E-28z">
                                                     <dictionary key="options">
                                                         <string key="NSValueTransformerName">NSNegateBoolean</string>
+                                                    </dictionary>
+                                                </binding>
+                                                <binding destination="bg8-BQ-fuX" name="value" keyPath="arrangedObjects.address" id="soc-nk-Fdj">
+                                                    <dictionary key="options">
+                                                        <string key="NSNullPlaceholder">&lt;no address></string>
+                                                        <bool key="NSValidatesImmediately" value="YES"/>
                                                     </dictionary>
                                                 </binding>
                                             </connections>

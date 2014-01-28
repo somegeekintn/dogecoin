@@ -33,10 +33,19 @@ enum {
 	eCoinSendResponse_Error_Unknown,
 };
 
+enum {
+	eErrorCode_Unknown = -1,
+	eErrorCode_NoError = 0,
+	eErrorCode_InvalidAddress = 1
+};
 
 #ifdef __OBJC__
+extern NSString * const		DCCoinName;
+
 extern NSString * const		DCNotification_InitMessage;
 extern NSString * const		DCNotification_InitComplete;
+
+extern NSString * const		DCError_Domain;
 #endif
 
 
