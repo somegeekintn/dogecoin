@@ -15,7 +15,7 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="0.0" y="500" width="800" height="500"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1418"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1058"/>
             <value key="minSize" type="size" width="600" height="300"/>
             <view key="contentView" id="372">
                 <rect key="frame" x="0.0" y="0.0" width="800" height="500"/>
@@ -541,6 +541,22 @@
                             <action selector="showAddressBook:" target="bg8-BQ-fuX" id="NTj-e1-DKf"/>
                         </connections>
                     </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="AC9E4913-538B-484C-BA46-0BF9FA37E563" label="Console" paletteLabel="Console" image="tb_console" id="Pvs-Qa-9gr">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="42" height="25"/>
+                        <size key="maxSize" width="42" height="25"/>
+                        <button key="view" verticalHuggingPriority="750" id="DRd-sa-oI8">
+                            <rect key="frame" x="4" y="14" width="42" height="25"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <buttonCell key="cell" type="roundTextured" title="Round Textured" bezelStyle="texturedRounded" image="tb_console" imagePosition="only" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="ecx-1q-Scc">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="system"/>
+                            </buttonCell>
+                        </button>
+                        <connections>
+                            <action selector="showConsole:" target="ASv-Yk-wyW" id="jWT-Oq-Ika"/>
+                        </connections>
+                    </toolbarItem>
                     <toolbarItem implicitItemIdentifier="67D425F5-8731-432F-9111-01B99CDC4180" label="Send" paletteLabel="Send" image="tb_send" id="fgi-Oc-aU8">
                         <nil key="toolTip"/>
                         <size key="minSize" width="42" height="25"/>
@@ -561,10 +577,12 @@
                     <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="xcu-et-Dnc"/>
                 </allowedToolbarItems>
                 <defaultToolbarItems>
-                    <toolbarItem reference="xcu-et-Dnc"/>
-                    <toolbarItem reference="RYy-jO-DoO"/>
                     <toolbarItem reference="VUf-Sy-FTq"/>
                     <toolbarItem reference="fgi-Oc-aU8"/>
+                    <toolbarItem reference="VUf-Sy-FTq"/>
+                    <toolbarItem reference="RYy-jO-DoO"/>
+                    <toolbarItem reference="xcu-et-Dnc"/>
+                    <toolbarItem reference="Pvs-Qa-9gr"/>
                     <toolbarItem reference="VUf-Sy-FTq"/>
                 </defaultToolbarItems>
             </toolbar>
@@ -574,7 +592,7 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="820" y="500" width="400" height="500"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1418"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1058"/>
             <value key="minSize" type="size" width="240" height="320"/>
             <view key="contentView" id="36V-Zd-dyq">
                 <rect key="frame" x="0.0" y="0.0" width="400" height="500"/>
@@ -1358,14 +1376,11 @@
         </customObject>
         <customObject id="420" customClass="NSFontManager"/>
         <customObject id="w5m-oW-Moo" customClass="DCDataManager"/>
-        <customObject id="oun-xB-G1z" userLabel="TX Sender" customClass="DCTXSender">
+        <customObject id="ASv-Yk-wyW" customClass="DCConsoleController">
             <connections>
-                <outlet property="addressField" destination="OfY-wH-HWa" id="pDS-xm-33z"/>
-                <outlet property="amountField" destination="jBG-xf-Wja" id="6Wg-HW-5P8"/>
-                <outlet property="mainWindow" destination="371" id="NId-Tj-WMO"/>
-                <outlet property="qrButton" destination="YuV-98-en4" id="O2W-zj-hjE"/>
-                <outlet property="qrViewController" destination="ZtF-KA-wYI" id="EeR-ag-W4l"/>
-                <outlet property="sendWindow" destination="joZ-PS-Hy6" id="R4a-3W-9bI"/>
+                <outlet property="commandField" destination="8Rs-W2-LJX" id="wh2-BC-6bx"/>
+                <outlet property="consoleWindow" destination="sOo-QA-Tka" id="pOr-s7-KXA"/>
+                <outlet property="outputView" destination="Gag-gD-wuu" id="yBd-iw-gan"/>
             </connections>
         </customObject>
         <customObject id="Axj-km-TVP" customClass="DCPresenter">
@@ -1378,10 +1393,20 @@
                 <outlet property="toolbar" destination="iak-YK-v4g" id="g96-ZE-s8k"/>
             </connections>
         </customObject>
+        <customObject id="oun-xB-G1z" userLabel="TX Sender" customClass="DCTXSender">
+            <connections>
+                <outlet property="addressField" destination="OfY-wH-HWa" id="pDS-xm-33z"/>
+                <outlet property="amountField" destination="jBG-xf-Wja" id="6Wg-HW-5P8"/>
+                <outlet property="mainWindow" destination="371" id="NId-Tj-WMO"/>
+                <outlet property="qrButton" destination="YuV-98-en4" id="O2W-zj-hjE"/>
+                <outlet property="qrViewController" destination="ZtF-KA-wYI" id="EeR-ag-W4l"/>
+                <outlet property="sendWindow" destination="joZ-PS-Hy6" id="R4a-3W-9bI"/>
+            </connections>
+        </customObject>
         <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="joZ-PS-Hy6" userLabel="Send Window">
             <windowStyleMask key="styleMask" titled="YES" resizable="YES"/>
             <rect key="contentRect" x="196" y="207" width="600" height="200"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1418"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1058"/>
             <value key="minSize" type="size" width="600" height="200"/>
             <view key="contentView" id="eqJ-AY-8cO">
                 <rect key="frame" x="0.0" y="0.0" width="600" height="200"/>
@@ -1529,11 +1554,89 @@
             </view>
         </window>
         <viewController nibName="QRView" id="ZtF-KA-wYI" userLabel="QR View Controller" customClass="DCQRViewController"/>
+        <window title="Console" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="console_window" animationBehavior="default" id="sOo-QA-Tka" userLabel="Console">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="820" y="500" width="480" height="240"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1058"/>
+            <value key="minSize" type="size" width="480" height="240"/>
+            <view key="contentView" id="Qv5-Xy-UqC">
+                <rect key="frame" x="0.0" y="0.0" width="480" height="240"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <scrollView horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vsx-Lb-ubA">
+                        <rect key="frame" x="-1" y="33" width="482" height="208"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <clipView key="contentView" id="xoY-bg-Lsk">
+                            <rect key="frame" x="1" y="1" width="465" height="206"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            <subviews>
+                                <textView editable="NO" importsGraphics="NO" richText="NO" findStyle="panel" continuousSpellChecking="YES" usesFontPanel="YES" verticallyResizable="YES" allowsNonContiguousLayout="YES" quoteSubstitution="YES" dashSubstitution="YES" smartInsertDelete="YES" id="Gag-gD-wuu">
+                                    <rect key="frame" x="0.0" y="0.0" width="465" height="206"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <color key="textColor" red="0.0" green="1" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                    <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                    <size key="minSize" width="465" height="206"/>
+                                    <size key="maxSize" width="465" height="10000000"/>
+                                    <color key="insertionPointColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                    <size key="minSize" width="465" height="206"/>
+                                    <size key="maxSize" width="465" height="10000000"/>
+                                </textView>
+                            </subviews>
+                            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        </clipView>
+                        <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="YES" id="41q-dJ-MG1">
+                            <rect key="frame" x="-100" y="-100" width="87" height="18"/>
+                            <autoresizingMask key="autoresizingMask"/>
+                        </scroller>
+                        <scroller key="verticalScroller" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="qkw-Gh-sKI">
+                            <rect key="frame" x="466" y="1" width="15" height="206"/>
+                            <autoresizingMask key="autoresizingMask"/>
+                        </scroller>
+                    </scrollView>
+                    <textField focusRingType="none" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="8Rs-W2-LJX">
+                        <rect key="frame" x="4" y="4" width="426" height="25"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" state="on" borderStyle="bezel" focusRingType="none" placeholderString="enter command" drawsBackground="YES" id="oeO-ER-HI4">
+                            <font key="font" size="12" name="AvenirNext-Regular"/>
+                            <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                        <connections>
+                            <action selector="processCommand:" target="ASv-Yk-wyW" id="pi4-I0-1GC"/>
+                        </connections>
+                    </textField>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="emB-IS-QRl">
+                        <rect key="frame" x="438" y="4" width="38" height="25"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="squareTextured" title="Clear" bezelStyle="texturedSquare" imagePosition="overlaps" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Pza-Bw-qXW">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" size="12" name="AvenirNext-Regular"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="clearOutput:" target="ASv-Yk-wyW" id="2a4-bb-NLa"/>
+                        </connections>
+                    </button>
+                </subviews>
+                <constraints>
+                    <constraint firstAttribute="trailing" secondItem="vsx-Lb-ubA" secondAttribute="trailing" constant="-1" id="Gdj-dg-yUg"/>
+                    <constraint firstItem="8Rs-W2-LJX" firstAttribute="top" secondItem="vsx-Lb-ubA" secondAttribute="bottom" constant="4" id="NPW-kb-Oel"/>
+                    <constraint firstAttribute="bottom" secondItem="8Rs-W2-LJX" secondAttribute="bottom" constant="4" id="Q1G-J2-h7S"/>
+                    <constraint firstItem="emB-IS-QRl" firstAttribute="leading" secondItem="8Rs-W2-LJX" secondAttribute="trailing" constant="8" symbolic="YES" id="aDR-Ka-VgW"/>
+                    <constraint firstItem="vsx-Lb-ubA" firstAttribute="leading" secondItem="Qv5-Xy-UqC" secondAttribute="leading" constant="-1" id="efG-8b-nPa"/>
+                    <constraint firstItem="vsx-Lb-ubA" firstAttribute="top" secondItem="Qv5-Xy-UqC" secondAttribute="top" constant="-1" id="lqw-AI-bts"/>
+                    <constraint firstItem="emB-IS-QRl" firstAttribute="centerY" secondItem="8Rs-W2-LJX" secondAttribute="centerY" id="lz8-J7-8GQ"/>
+                    <constraint firstAttribute="trailing" secondItem="emB-IS-QRl" secondAttribute="trailing" constant="4" id="oX0-WH-ZKT"/>
+                    <constraint firstItem="8Rs-W2-LJX" firstAttribute="leading" secondItem="Qv5-Xy-UqC" secondAttribute="leading" constant="4" id="ysB-LD-F2w"/>
+                </constraints>
+            </view>
+        </window>
     </objects>
     <resources>
         <image name="qr_icon" width="14" height="14"/>
         <image name="splash_moon" width="256" height="256"/>
         <image name="tb_addr" width="14" height="14"/>
+        <image name="tb_console" width="15" height="14"/>
         <image name="tb_send" width="22" height="14"/>
     </resources>
 </document>

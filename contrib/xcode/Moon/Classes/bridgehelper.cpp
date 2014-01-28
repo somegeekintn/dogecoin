@@ -9,6 +9,8 @@
 //	code like YES, NO, etc. This collection of functions mostly just
 //	forwards function calls on their counterparts in the client
 
+#include "bridgehelper.h"
+#include "bitcoinrpc.h"
 #include "base58.h"
 #include "init.h"
 #include "main.h"
@@ -17,7 +19,6 @@
 #include <map>
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/random/uniform_int_distribution.hpp>
-#include "bridgehelper.h"
 
 #undef printf
 
@@ -680,4 +681,127 @@ CFDictionaryRef bridge_getMiscInfo()
 	CFDictionaryAddValue(miscInfo, CFSTR("networkhps"), CFNumberCreate(kCFAllocatorDefault, kCFNumberDoubleType, &networkHPS));
 
 	return miscInfo;
+}
+
+#pragma mark - RPC related
+
+bool bridge_parseCommandLine(
+	std::vector<std::string>	&outArgs,
+	const std::string			&inStrCommand)
+{
+    enum CmdParseState
+    {
+        STATE_EATING_SPACES,
+        STATE_ARGUMENT,
+        STATE_SINGLEQUOTED,
+        STATE_DOUBLEQUOTED,
+        STATE_ESCAPE_OUTER,
+        STATE_ESCAPE_DOUBLEQUOTED
+    } state = STATE_EATING_SPACES;
+    std::string curarg;
+    BOOST_FOREACH(char ch, inStrCommand)
+    {
+        switch(state)
+        {
+        case STATE_ARGUMENT: // In or after argument
+        case STATE_EATING_SPACES: // Handle runs of whitespace
+            switch(ch)
+            {
+            case '"': state = STATE_DOUBLEQUOTED; break;
+            case '\'': state = STATE_SINGLEQUOTED; break;
+            case '\\': state = STATE_ESCAPE_OUTER; break;
+            case ' ': case '\n': case '\t':
+                if(state == STATE_ARGUMENT) // Space ends argument
+                {
+                    outArgs.push_back(curarg);
+                    curarg.clear();
+                }
+                state = STATE_EATING_SPACES;
+                break;
+            default: curarg += ch; state = STATE_ARGUMENT;
+            }
+            break;
+        case STATE_SINGLEQUOTED: // Single-quoted string
+            switch(ch)
+            {
+            case '\'': state = STATE_ARGUMENT; break;
+            default: curarg += ch;
+            }
+            break;
+        case STATE_DOUBLEQUOTED: // Double-quoted string
+            switch(ch)
+            {
+            case '"': state = STATE_ARGUMENT; break;
+            case '\\': state = STATE_ESCAPE_DOUBLEQUOTED; break;
+            default: curarg += ch;
+            }
+            break;
+        case STATE_ESCAPE_OUTER: // '\' outside quotes
+            curarg += ch; state = STATE_ARGUMENT;
+            break;
+        case STATE_ESCAPE_DOUBLEQUOTED: // '\' in double-quoted text
+            if(ch != '"' && ch != '\\') curarg += '\\'; // keep '\' for everything but the quote and '\' itself
+            curarg += ch; state = STATE_DOUBLEQUOTED;
+            break;
+        }
+    }
+    switch(state) // final state
+    {
+    case STATE_EATING_SPACES:
+        return true;
+    case STATE_ARGUMENT:
+        outArgs.push_back(curarg);
+        return true;
+    default: // ERROR to end in one of the other states
+        return false;
+    }
+}
+
+void bridge_executeRPCRequest(
+	const char				*inRawCommand,
+	bridge_RPCCompletion	inCompletion)
+{
+	std::string					commandString(inRawCommand);
+    std::vector<std::string>	args;
+	
+    if (bridge_parseCommandLine(args, commandString)) {
+        json_spirit::Value		result;
+        std::string				strPrint;
+		
+		try {
+			result = tableRPC.execute(args[0], RPCConvertValues(args[0], std::vector<std::string>(args.begin() + 1, args.end())));
+
+			if (result.type() == json_spirit::null_type)
+				strPrint = "";
+			else if (result.type() == json_spirit::str_type)
+				strPrint = result.get_str();
+			else
+				strPrint = write_string(result, true);
+
+			inCompletion(strPrint.c_str(), true);
+		}
+		catch (json_spirit::Object& objError) {
+			try {	// Nice formatting for standard-format error
+				int			code = find_value(objError, "code").get_int();
+				std::string	message = find_value(objError, "message").get_str();
+				char		errorBuf[1024];
+				
+				sprintf(errorBuf, "%s (code %d)", message.c_str(), code);
+				inCompletion(errorBuf, false);
+			}
+			catch(std::runtime_error &) { // raised when converting to invalid type, i.e. missing code or message
+				// Show raw JSON object
+				inCompletion(write_string(json_spirit::Value(objError), false).c_str(), false);
+			}
+		}
+		catch (std::exception& e) {
+			char		errorBuf[1024];
+
+			sprintf(errorBuf, "Error: %s", e.what());
+			inCompletion(errorBuf, false);
+		}
+	}
+	else {
+		inCompletion("Parse error: unbalanced ' or \"", false);
+	}
 }

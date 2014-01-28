@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		C904949A1897AAC300761264 /* json_spirit_value.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C90494931897AAC300761264 /* json_spirit_value.cpp */; };
+		C90494A51897BF5D00761264 /* DCConsoleController.m in Sources */ = {isa = PBXBuildFile; fileRef = C90494A41897BF5D00761264 /* DCConsoleController.m */; };
 		C93DA057188D531D006B0534 /* DCBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = C99B95E61884127F001DB181 /* DCBridge.m */; };
 		C95413DF189528CB003E2CCE /* QRView.xib in Resources */ = {isa = PBXBuildFile; fileRef = C95413DE189528CB003E2CCE /* QRView.xib */; };
 		C95413E2189529C3003E2CCE /* DCQRViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C95413E1189529C3003E2CCE /* DCQRViewController.m */; };
@@ -214,6 +215,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		C90494AA1897C42400761264 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C95413E518952DB4003E2CCE /* ZXingObjC.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 2540439D166ABA0A00E13304;
+			remoteInfo = "OS X Framework";
+		};
 		C95413ED18952DBA003E2CCE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = C95413E518952DB4003E2CCE /* ZXingObjC.xcodeproj */;
@@ -247,13 +255,6 @@
 			containerPortal = C95413E518952DB4003E2CCE /* ZXingObjC.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 2540439E166ABA0A00E13304;
-			remoteInfo = "OS X Framework";
-		};
-		C95413FD1895303B003E2CCE /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = C95413E518952DB4003E2CCE /* ZXingObjC.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 2540439D166ABA0A00E13304;
 			remoteInfo = "OS X Framework";
 		};
 		C9CEC44918943645005C2BD5 /* PBXContainerItemProxy */ = {
@@ -321,6 +322,8 @@
 		C90494951897AAC300761264 /* json_spirit_writer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = json_spirit_writer.cpp; sourceTree = "<group>"; };
 		C90494961897AAC300761264 /* json_spirit_writer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = json_spirit_writer.h; sourceTree = "<group>"; };
 		C90494971897AAC300761264 /* json_spirit_writer_template.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = json_spirit_writer_template.h; sourceTree = "<group>"; };
+		C90494A31897BF5D00761264 /* DCConsoleController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DCConsoleController.h; sourceTree = "<group>"; };
+		C90494A41897BF5D00761264 /* DCConsoleController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DCConsoleController.m; sourceTree = "<group>"; };
 		C92312E51889A04200D6F9BC /* DCConsts.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DCConsts.h; sourceTree = "<group>"; };
 		C95413DE189528CB003E2CCE /* QRView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = QRView.xib; sourceTree = "<group>"; };
 		C95413E0189529C3003E2CCE /* DCQRViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DCQRViewController.h; sourceTree = "<group>"; };
@@ -861,6 +864,8 @@
 			children = (
 				C9CB6E901895BCB3002AA009 /* DCAddressBook.h */,
 				C9CB6E911895BCB3002AA009 /* DCAddressBook.m */,
+				C90494A31897BF5D00761264 /* DCConsoleController.h */,
+				C90494A41897BF5D00761264 /* DCConsoleController.m */,
 				C9CEC45C189462EF005C2BD5 /* DCPresenter.h */,
 				C9CEC45D189462EF005C2BD5 /* DCPresenter.m */,
 				C95413E0189529C3003E2CCE /* DCQRViewController.h */,
@@ -1143,7 +1148,7 @@
 			dependencies = (
 				C9CEC44F1894396B005C2BD5 /* PBXTargetDependency */,
 				C9CEC4511894396B005C2BD5 /* PBXTargetDependency */,
-				C95413FE1895303B003E2CCE /* PBXTargetDependency */,
+				C90494AB1897C42400761264 /* PBXTargetDependency */,
 			);
 			name = Moon;
 			productName = Moon;
@@ -1336,6 +1341,7 @@
 				C99B95C918840AB3001DB181 /* db.cpp in Sources */,
 				C99B95CA18840AB3001DB181 /* init.cpp in Sources */,
 				C9C76331188C09FF006A5673 /* DCWalletTXController.m in Sources */,
+				C90494A51897BF5D00761264 /* DCConsoleController.m in Sources */,
 				C99B95CB18840AB3001DB181 /* irc.cpp in Sources */,
 				C9CB6E921895BCB3002AA009 /* DCAddressBook.m in Sources */,
 				C99B95CC18840AB3001DB181 /* key.cpp in Sources */,
@@ -1433,10 +1439,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		C95413FE1895303B003E2CCE /* PBXTargetDependency */ = {
+		C90494AB1897C42400761264 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = "OS X Framework";
-			targetProxy = C95413FD1895303B003E2CCE /* PBXContainerItemProxy */;
+			targetProxy = C90494AA1897C42400761264 /* PBXContainerItemProxy */;
 		};
 		C9CEC44A18943645005C2BD5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

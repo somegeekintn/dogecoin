@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+typedef void (^RPCCompletion)(NSString *response, BOOL succeeded);
+
 @interface DCBridge : NSObject
 
 + (DCBridge *)			sharedBridge;
@@ -28,5 +30,6 @@
 - (BOOL)				setLabel: (NSString *) inLabel
 							forAddress: (NSString *) inAddress;
 - (NSDictionary *)		getMiscInfo;
-
+- (void)				executeRPCRequest: (NSString *) inRequest
+							completion: (RPCCompletion) inCompletion;
 @end

@@ -13,6 +13,8 @@
 #include <string>
 #include <list>
 
+typedef void (^bridge_RPCCompletion)(const char *response, bool succeeded);
+
 void					bridge_testBlockValues();
 
 bool					bridge_Initialize();
@@ -20,23 +22,26 @@ void					bridge_Shutdown();
 
 int32_t					bridge_getBlockHeight();
 CFStringRef				bridge_getBlockHashAtHeight(
-							int32_t				inHeight);
+							int32_t					inHeight);
 CFDictionaryRef			bridge_getBlockWithHash(
-							const char			*inHash);
+							const char				*inHash);
 CFArrayRef				bridge_getWalletTransactions();		// will add filtering at some point
 CFArrayRef				bridge_getWalletTransactionsWithHash(
-							const char			*inHash);
+							const char				*inHash);
 CFDictionaryRef			bridge_sendCoins(
 							CFArrayRef				inRecipients,
 							double					amount);
 CFArrayRef				bridge_getAddressBook();
 bool					bridge_validateAddress(
-							const char			*inAddress);
+							const char				*inAddress);
 CFStringRef				bridge_createNewAddress(
-							const char			*inLabel);
+							const char				*inLabel);
 bool					bridge_setLabelForAddress(
-							const char			*inLabel,
-							const char			*inAddress);
+							const char				*inLabel,
+							const char				*inAddress);
 CFDictionaryRef			bridge_getMiscInfo();
 
+void					bridge_executeRPCRequest(
+							const char				*inRawCommand,
+							bridge_RPCCompletion	inCompletion);
 #endif

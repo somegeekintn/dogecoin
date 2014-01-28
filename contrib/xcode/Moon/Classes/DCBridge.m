@@ -185,6 +185,20 @@ NSLog(@"response %@", response);
 	return (__bridge_transfer NSDictionary *)bridge_getMiscInfo();
 }
 
+- (void) executeRPCRequest: (NSString *) inRequest
+	completion: (RPCCompletion) inCompletion
+{
+	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+		bridge_executeRPCRequest([inRequest UTF8String], ^(const char *inResponse, bool inSucceeded) {
+			NSString		*response = [NSString stringWithUTF8String: inResponse];
+			
+			dispatch_async(dispatch_get_main_queue(), ^{
+				inCompletion(response, inSucceeded);
+			});
+		});
+	});
+}
+
 @end
 
 #pragma mark - Notication callbacks
