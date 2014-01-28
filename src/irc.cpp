@@ -1,21 +1,22 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2012 The Bitcoin developers
 // Copyright (c) 2011-2012 Litecoin Developers
-// Copyright (c) 2013 DogeCoin Developers
+// Copyright (c) 2013-2014 Dogecoin Developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include "irc.h"
 #include "net.h"
-#include "strlcpy.h"
 #include "base58.h"
+
+#include <boost/algorithm/string/predicate.hpp> // for startswith() and endswith()
 
 using namespace std;
 using namespace boost;
 
 int nGotIRCAddresses = 0;
 
-void ThreadIRCSeed2(void* parg);
+void ThreadIRCSeed2();
 
 
 
@@ -84,8 +85,7 @@ bool RecvLineIRC(SOCKET hSocket, string& strLine)
         bool fRet = RecvLine(hSocket, strLine);
         if (fRet)
         {
-            if (fShutdown)
-                return false;
+            boost::this_thread::interruption_point();
             vector<string> vWords;
             ParseString(strLine, ' ', vWords);
             if (vWords.size() >= 1 && vWords[0] == "PING")
@@ -122,14 +122,12 @@ int RecvUntil(SOCKET hSocket, const char* psz1, const char* psz2=NULL, const cha
 
 bool Wait(int nSeconds)
 {
-    if (fShutdown)
-        return false;
+    boost::this_thread::interruption_point();
     printf("IRC waiting %d seconds to reconnect\n", nSeconds);
     for (int i = 0; i < nSeconds; i++)
     {
-        if (fShutdown)
-            return false;
-        Sleep(1000);
+        boost::this_thread::interruption_point();
+        MilliSleep(1000);
     }
     return true;
 }
@@ -188,16 +186,17 @@ bool GetIPFromIRC(SOCKET hSocket, string strMyName, CNetAddr& ipRet)
 
 
 
-void ThreadIRCSeed(void* parg)
+void ThreadIRCSeed()
 {
-    IMPLEMENT_RANDOMIZE_STACK(ThreadIRCSeed(parg));
-
     // Make this thread recognisable as the IRC seeding thread
-    RenameThread("bitcoin-ircseed");
+    RenameThread("dogecoin-ircseed");
 
     try
     {
-        ThreadIRCSeed2(parg);
+        ThreadIRCSeed2();
+    }
+    catch (boost::thread_interrupted) {
+        throw;
     }
     catch (std::exception& e) {
         PrintExceptionContinue(&e, "ThreadIRCSeed()");
@@ -207,7 +206,7 @@ void ThreadIRCSeed(void* parg)
     printf("ThreadIRCSeed exited\n");
 }
 
-void ThreadIRCSeed2(void* parg)
+void ThreadIRCSeed2()
 {
     /* Dont advertise on IRC if we don't allow incoming connections */
     if (mapArgs.count("-connect") || fNoListen)
@@ -220,7 +219,7 @@ void ThreadIRCSeed2(void* parg)
     int nErrorWait = 10;
     int nRetryWait = 10;
 
-    while (!fShutdown)
+    while (true)
     {
         CService addrConnect("92.243.23.21", 6667); // irc.lfnet.org
 
@@ -256,7 +255,7 @@ void ThreadIRCSeed2(void* parg)
         if (GetLocal(addrLocal, &addrIPv4))
             strMyName = EncodeAddress(GetLocalAddress(&addrConnect));
         if (strMyName == "")
-            strMyName = strprintf("x%u", GetRand(1000000000));
+            strMyName = strprintf("x%u", (uint32_t)GetRand(1000000000));
 
         Send(hSocket, strprintf("NICK %s\r", strMyName.c_str()).c_str());
         Send(hSocket, strprintf("USER %s 8 * : %s\r", strMyName.c_str(), strMyName.c_str()).c_str());
@@ -278,7 +277,7 @@ void ThreadIRCSeed2(void* parg)
             else
                 return;
         }
-        Sleep(500);
+        MilliSleep(500);
 
         // Get our external IP from the IRC server and re-nick before joining the channel
         CNetAddr addrFromIRC;
@@ -301,7 +300,7 @@ void ThreadIRCSeed2(void* parg)
             // randomly join #dogecoin00-#dogecoin99
             // network is now over 3k peers , get them to join 50 random channels!
             //            channel_number = 0; 
-            int channel_number = GetRandInt(50);
+            int channel_number = 0; //GetRandInt(50);
 
             Send(hSocket, strprintf("JOIN #dogecoin%02d\r", channel_number).c_str());
             Send(hSocket, strprintf("WHO #dogecoin%02d\r", channel_number).c_str());
@@ -310,8 +309,9 @@ void ThreadIRCSeed2(void* parg)
         int64 nStart = GetTime();
         string strLine;
         strLine.reserve(10000);
-        while (!fShutdown && RecvLineIRC(hSocket, strLine))
+        while (RecvLineIRC(hSocket, strLine))
         {
+            boost::this_thread::interruption_point();
             if (strLine.empty() || strLine.size() > 900 || strLine[0] != ':')
                 continue;
 
@@ -320,30 +320,27 @@ void ThreadIRCSeed2(void* parg)
             if (vWords.size() < 2)
                 continue;
 
-            char pszName[10000];
-            pszName[0] = '\0';
+            std::string strName;
 
             if (vWords[1] == "352" && vWords.size() >= 8)
             {
                 // index 7 is limited to 16 characters
                 // could get full length name at index 10, but would be different from join messages
-                strlcpy(pszName, vWords[7].c_str(), sizeof(pszName));
+                strName = vWords[7].c_str();
                 printf("IRC got who\n");
             }
 
             if (vWords[1] == "JOIN" && vWords[0].size() > 1)
             {
                 // :username!username@50000007.F000000B.90000002.IP JOIN :#channelname
-                strlcpy(pszName, vWords[0].c_str() + 1, sizeof(pszName));
-                if (strchr(pszName, '!'))
-                    *strchr(pszName, '!') = '\0';
+                strName = vWords[0].substr(1, vWords[0].find('!', 1) - 1);
                 printf("IRC got join\n");
             }
 
-            if (pszName[0] == 'u')
+            if (boost::algorithm::starts_with(strName, "u"))
             {
                 CAddress addr;
-                if (DecodeAddress(pszName, addr))
+                if (DecodeAddress(strName, addr))
                 {
                     addr.nTime = GetAdjustedTime();
                     if (addrman.Add(addr, addrConnect, 51 * 60))
