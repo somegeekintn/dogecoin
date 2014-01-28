@@ -1,6 +1,6 @@
 //
 //  DCDataManager.m
-//  Dogecoin
+//  Moon
 //
 //  Created by Casey Fleser on 1/14/14.
 //  Copyright (c) 2014 Casey Fleser / @somegeekintn. All rights reserved.
@@ -314,7 +314,7 @@ static DCDataManager		*sSharedManager = nil;
 	reconcileContext.parentContext = self.defaultContext;
 	[reconcileContext setUndoManager: nil];
 	[reconcileContext performBlockAndWait: ^{
-		DCClient				*info = (DCClient *)[reconcileContext objectWithID: inInfoObjectID];
+		DCClient			*info = (DCClient *)[reconcileContext objectWithID: inInfoObjectID];
 		DCBlockInfo			*blockInfo;
 		NSInteger			curBlockHeight = [info.blockInfo count] - 1;
 		NSInteger			testHeight = curBlockHeight;
@@ -326,7 +326,8 @@ static DCDataManager		*sSharedManager = nil;
 		}
 		
 		if (testHeight < curBlockHeight) {		// a fork or something like it. update as needed
-			for (;testHeight<=curBlockHeight; curBlockHeight++) {
+			for (;testHeight<=curBlockHeight; testHeight++) {
+				blockInfo = [info blockInfoAtHeight: testHeight];
 				[blockInfo updateWithHeight];
 			}
 

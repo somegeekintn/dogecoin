@@ -1,6 +1,6 @@
 //
 //  DCBridge.h
-//  Dogecoin
+//  Moon
 //
 //  Created by Casey Fleser on 1/13/14.
 //  Copyright (c) 2014 Casey Fleser / @somegeekintn. All rights reserved.
@@ -24,6 +24,9 @@
 							to: (NSArray *) inRecipients;
 - (NSArray *)			getAddressBook;
 - (BOOL)				validateAddress: (NSString *) inAddress;
+- (NSString *)			createNewAddress: (NSString *) inLabel;
+- (BOOL)				setLabel: (NSString *) inLabel
+							forAddress: (NSString *) inAddress;
 - (NSDictionary *)		getMiscInfo;
 
 @end

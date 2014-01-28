@@ -1,6 +1,6 @@
 //
 //  bridgehelper.h
-//  Dogecoin
+//  Moon
 //
 //  Created by Casey Fleser on 1/13/14.
 //  Copyright (c) 2014 Casey Fleser / @somegeekintn. All rights reserved.
@@ -31,6 +31,11 @@ CFDictionaryRef			bridge_sendCoins(
 							double					amount);
 CFArrayRef				bridge_getAddressBook();
 bool					bridge_validateAddress(
+							const char			*inAddress);
+CFStringRef				bridge_createNewAddress(
+							const char			*inLabel);
+bool					bridge_setLabelForAddress(
+							const char			*inLabel,
 							const char			*inAddress);
 CFDictionaryRef			bridge_getMiscInfo();
 

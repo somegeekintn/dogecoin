@@ -1,6 +1,6 @@
 //
 //  DCClient.m
-//  Dogecoin
+//  Moon
 //
 //  Created by Casey Fleser on 1/14/14.
 //  Copyright (c) 2014 Casey Fleser / @somegeekintn. All rights reserved.
@@ -46,7 +46,7 @@
 
 - (void) recalcCumulatives
 {
-	NSDecimalNumber		*totalMinted = [[NSDecimalNumber alloc] init];
+	NSDecimalNumber		*totalMinted = [NSDecimalNumber zero];
 	int64_t				totalTransactions = 0;
 	DCBlockInfo			*lastBlock;
 
@@ -110,8 +110,9 @@
 }
 
 - (NSSet *) addressesContaining: (NSString *) inAddressFragment
+	mine: (BOOL) inMine
 {
-	NSPredicate		*predicate = [NSPredicate predicateWithFormat: @"address contains[cd] %@ || label contains[cd] %@", inAddressFragment, inAddressFragment];
+	NSPredicate		*predicate = [NSPredicate predicateWithFormat: @"(address contains[cd] %@ || label contains[cd] %@) && isMine == %@", inAddressFragment, inAddressFragment, @(inMine)];
 	
 	return [self.addresses filteredSetUsingPredicate: predicate];
 }

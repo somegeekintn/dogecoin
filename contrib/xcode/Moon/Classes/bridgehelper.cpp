@@ -1,6 +1,6 @@
 //
 //  bridgehelper.cpp
-//  Dogecoin
+//  Moon
 //
 //  Created by Casey Fleser on 1/13/14.
 //  Copyright (c) 2014 Casey Fleser / @somegeekintn. All rights reserved.
@@ -9,8 +9,6 @@
 //	code like YES, NO, etc. This collection of functions mostly just
 //	forwards function calls on their counterparts in the client
 
-#include "bridgehelper.h"
-#include "bitcoinrpc.h"
 #include "base58.h"
 #include "init.h"
 #include "main.h"
@@ -19,8 +17,11 @@
 #include <map>
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/random/uniform_int_distribution.hpp>
+#include "bridgehelper.h"
 
 #undef printf
+
+boost::thread_group		gThreadGroup;
 
 extern void		bridge_sig_WalletTransactionChanged(CFStringRef inWalletTxHash, bool inNotify);
 extern void		bridge_sig_WalletTransactionDeleted(CFStringRef inWalletTxHash);
@@ -98,21 +99,22 @@ static void NotifyAlertChanged(
 {
 }
 
-static void ThreadSafeMessageBox(
+static bool ThreadSafeMessageBox(
 	const std::string		&inMessage,
 	const std::string		&inCaption,
-	int						inStyle)
+	unsigned int			inStyle)
 {
 	printf("%s: %s\n", inCaption.c_str(), inMessage.c_str());
+	
+	return false;
 }
 
 static bool ThreadSafeAskFee(
-	int64					inFeeRequired,
-	const std::string		&inStrCaption)
+	int64					inFeeRequired)
 {
 	bool	allowFee = false;
 	
-    if (inFeeRequired < MIN_TX_FEE || inFeeRequired <= nTransactionFee || fDaemon)
+    if (inFeeRequired < CTransaction::nMinTxFee || inFeeRequired <= nTransactionFee || fDaemon)
 		allowFee = true;
 	else
 		allowFee = bridge_sig_AskFee(inFeeRequired);
@@ -131,18 +133,14 @@ static void InitMessage(
 	bridge_sig_InitMessage(inMessage.c_str());
 }
 
-static void QueueShutdown()
-{
-}
-
 #pragma mark - Client Lifecycle
 
 bool bridge_Initialize()
 {
-	bool	didInit;
+	bool					didInit;
 	
 	bridge_EstablishPrimaryConnections();
-	didInit = AppInit2();
+	didInit = AppInit2(gThreadGroup);
 	if (didInit)
 		bridge_EstablishSecondaryConnections();
 
@@ -153,7 +151,9 @@ void bridge_Shutdown()
 {
 	bridge_DestroyConnections();
 	
-	Shutdown(NULL);
+	gThreadGroup.interrupt_all();
+	gThreadGroup.join_all();
+	Shutdown();
 }
 
 void bridge_EstablishPrimaryConnections()
@@ -161,15 +161,14 @@ void bridge_EstablishPrimaryConnections()
 	// connect to all boost::signals2::signal
 
     uiInterface.NotifyBlocksChanged.connect(boost::bind(NotifyBlocksChanged));
-    uiInterface.NotifyNumConnectionsChanged.connect(boost::bind(NotifyNumConnectionsChanged, _1));
-    uiInterface.NotifyAlertChanged.connect(boost::bind(NotifyAlertChanged, _1, _2));
+	uiInterface.NotifyNumConnectionsChanged.connect(boost::bind(NotifyNumConnectionsChanged, _1));
+	uiInterface.NotifyAlertChanged.connect(boost::bind(NotifyAlertChanged, _1, _2));
 	
-    uiInterface.ThreadSafeMessageBox.connect(ThreadSafeMessageBox);
+	uiInterface.ThreadSafeMessageBox.connect(ThreadSafeMessageBox);
     uiInterface.ThreadSafeAskFee.connect(ThreadSafeAskFee);
     uiInterface.ThreadSafeHandleURI.connect(ThreadSafeHandleURI);
     uiInterface.InitMessage.connect(InitMessage);
-    uiInterface.QueueShutdown.connect(QueueShutdown);
-//    uiInterface.Translate.connect(Translate);
+//	uiInterface.Translate.connect(Translate);
 }
 
 void bridge_EstablishSecondaryConnections()
@@ -185,7 +184,6 @@ void bridge_DestroyConnections()
     uiInterface.ThreadSafeAskFee.disconnect(ThreadSafeAskFee);
     uiInterface.ThreadSafeHandleURI.disconnect(ThreadSafeHandleURI);
     uiInterface.InitMessage.disconnect(InitMessage);
-    uiInterface.QueueShutdown.disconnect(QueueShutdown);
 
     uiInterface.NotifyBlocksChanged.disconnect(boost::bind(NotifyBlocksChanged));
     uiInterface.NotifyNumConnectionsChanged.disconnect(boost::bind(NotifyNumConnectionsChanged, _1));
@@ -307,37 +305,15 @@ void bridge_populateWalletTXListWithWalletTX(
 {
 	std::string										walletTXHash = inWalletTX.GetHash().GetHex();
 	int64_t											walletTXTime = inWalletTX.GetTxTime();
-	int64_t											nGeneratedImmature, nGeneratedMature, nFee;
+	int64_t											nFee;
 	std::string										sentAccountStr;
 	std::list<std::pair<CTxDestination, int64> >	listReceived;
 	std::list<std::pair<CTxDestination, int64> >	listSent;
 	int												confirmed = inWalletTX.IsConfirmed();
 
-	inWalletTX.GetAmounts(nGeneratedImmature, nGeneratedMature, listReceived, listSent, nFee, sentAccountStr);
-	
-	if ((nGeneratedMature + nGeneratedImmature) != 0) {		// generated
-		CFMutableDictionaryRef	walletTX = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
-		int						walletCategory;
-		int64_t					amount;
-		
-		
-		if (nGeneratedImmature) {
-			walletCategory = inWalletTX.GetDepthInMainChain() ? eCoinWalletCategory_Immature : eCoinWalletCategory_Orphan;
-			amount = nGeneratedImmature;
-		}
-		else {
-			walletCategory = eCoinWalletCategory_Generated;
-			amount = nGeneratedMature;
-		}
+	inWalletTX.GetAmounts(listReceived, listSent, nFee, sentAccountStr);
 
-		CFDictionaryAddValue(walletTX, CFSTR("account"), CFSTR(""));
-		CFDictionaryAddValue(walletTX, CFSTR("category"), CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &walletCategory));
-		CFDictionaryAddValue(walletTX, CFSTR("amount"), CFNumberCreate(kCFAllocatorDefault, kCFNumberLongLongType, &amount));
-		CFDictionaryAddValue(walletTX, CFSTR("txid"), CFStringCreateWithCString(kCFAllocatorDefault, walletTXHash.c_str(), kCFStringEncodingASCII));
-		CFDictionaryAddValue(walletTX, CFSTR("time"), CFNumberCreate(kCFAllocatorDefault, kCFNumberLongLongType, &walletTXTime));
-		CFDictionaryAddValue(walletTX, CFSTR("confirmed"), CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &confirmed));
-		CFArrayAppendValue(ioWalletTXList, walletTX);
-	}
+    // Sent
 	if (!listSent.empty() || nFee != 0) {					// sent
 		BOOST_FOREACH(const PAIRTYPE(CTxDestination, int64)& s, listSent) {
 			CFMutableDictionaryRef	walletTX = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
@@ -355,6 +331,7 @@ void bridge_populateWalletTXListWithWalletTX(
 			CFArrayAppendValue(ioWalletTXList, walletTX);
 		}
 	}
+
 	if (listReceived.size() > 0) {							// received
 		BOOST_FOREACH(const PAIRTYPE(CTxDestination, int64)& r, listReceived) {
 			CFMutableDictionaryRef	walletTX = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
@@ -365,6 +342,15 @@ void bridge_populateWalletTXListWithWalletTX(
 			if (pwalletMain->mapAddressBook.count(r.first))
 				receiveAccountStr = pwalletMain->mapAddressBook[r.first];
 		
+			if (inWalletTX.IsCoinBase()) {
+				if (inWalletTX.GetDepthInMainChain() < 1)
+					walletCategory = eCoinWalletCategory_Orphan;
+				else if (inWalletTX.GetBlocksToMaturity() > 0)
+					walletCategory = eCoinWalletCategory_Immature;
+				else
+					walletCategory = eCoinWalletCategory_Generated;
+			}
+
 			CFDictionaryAddValue(walletTX, CFSTR("account"), CFStringCreateWithCString(kCFAllocatorDefault, receiveAccountStr.c_str(), kCFStringEncodingASCII));
 			CFDictionaryAddValue(walletTX, CFSTR("address"), CFStringCreateWithCString(kCFAllocatorDefault, CBitcoinAddress(r.first).ToString().c_str(), kCFStringEncodingASCII));
 			CFDictionaryAddValue(walletTX, CFSTR("category"), CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &walletCategory));
@@ -379,69 +365,69 @@ void bridge_populateWalletTXListWithWalletTX(
 
 #pragma mark - Bridge functions
 
-int64_t bridge_getActualMintedValue(
-	CBlock				&inBlock)
-{
-	CTxDB				txdb("r");
-	int64_t				mintedValue = 0;
-	int64_t				txFees = 0;
-	
-    BOOST_FOREACH(CTransaction &transaction, inBlock.vtx) {
-		int64_t		valueOut = transaction.GetValueOut();
-		
-		if (transaction.IsCoinBase()) {
-			mintedValue = valueOut;
-		}
-		else {
-			MapPrevTx					mapInputs;
-			std::map<uint256, CTxIndex>	mapUnused;
-			bool						fInvalid = false;
-
-			if (transaction.FetchInputs(txdb, mapUnused, false, false, mapInputs, fInvalid)) {
-				txFees += transaction.GetValueIn(mapInputs) - valueOut;
-			}
-		}
-	}
-
-	mintedValue -= txFees;
-
-	return mintedValue;
-}
+//int64_t bridge_getActualMintedValue(
+//	CBlock				&inBlock)
+//{
+//	CTxDB				txdb("r");
+//	int64_t				mintedValue = 0;
+//	int64_t				txFees = 0;
+//	
+//    BOOST_FOREACH(CTransaction &transaction, inBlock.vtx) {
+//		int64_t		valueOut = transaction.GetValueOut();
+//		
+//		if (transaction.IsCoinBase()) {
+//			mintedValue = valueOut;
+//		}
+//		else {
+//			MapPrevTx					mapInputs;
+//			std::map<uint256, CTxIndex>	mapUnused;
+//			bool						fInvalid = false;
+//
+//			if (transaction.FetchInputs(txdb, mapUnused, false, false, mapInputs, fInvalid)) {
+//				txFees += transaction.GetValueIn(mapInputs) - valueOut;
+//			}
+//		}
+//	}
+//
+//	mintedValue -= txFees;
+//
+//	return mintedValue;
+//}
 
 void bridge_testBlockValues()
 {
-	CBlockIndex		*blockIndex = pindexGenesisBlock;
-    CBlock			block;
-	uint256			prevHash = 0;
-	int64_t			expectedMintValue, actualMintValue;
-	int32_t			blockCount = 0;
-	int32_t			badBlockCount = 0;
-	
-	printf("--->>>Begin block value test\n");
-	
-	do {
-		if (blockIndex->pprev)
-			prevHash = blockIndex->pprev->GetBlockHash();
-			
-		block.ReadFromDisk(blockIndex, true);
-		expectedMintValue = bridge_getBlockMintedValue(blockIndex->nHeight, prevHash);
-		actualMintValue = bridge_getActualMintedValue(block);
-		blockCount++;
-		
-		if (expectedMintValue == actualMintValue) {
-			if (!(blockIndex->nHeight % 1000))
-				printf("%d okay\n", blockIndex->nHeight);
-		}
-		else {
-			printf("%d expected %lld actual %lld - %s\n", blockIndex->nHeight, expectedMintValue, actualMintValue, blockIndex->phashBlock->GetHex().c_str());
-			badBlockCount++;
-		}
-		blockIndex = blockIndex->pnext;
-	} while (blockIndex != NULL);
-
-	printf("--->>>End block value test\n");
-	printf("--->>>Tested %d blocks\n", blockCount);
-	printf("--->>>%d blocks incorrect\n", badBlockCount);
+//	CBlockIndex		*blockIndex = pindexGenesisBlock;
+//    CBlock			block;
+//	uint256			prevHash = 0;
+//	int64_t			expectedMintValue, actualMintValue;
+//	int32_t			blockCount = 0;
+//	int32_t			badBlockCount = 0;
+//	
+//	printf("--->>>Begin block value test\n");
+//	
+//	do {
+//		if (blockIndex->pprev)
+//			prevHash = blockIndex->pprev->GetBlockHash();
+//			
+//		block.ReadFromDisk(blockIndex, true);
+//		expectedMintValue = bridge_getBlockMintedValue(blockIndex->nHeight, prevHash);
+//		actualMintValue = bridge_getActualMintedValue(block);
+//		blockCount++;
+//		
+//		if (expectedMintValue == actualMintValue) {
+//			if (!(blockIndex->nHeight % 1000))
+//				printf("%d okay\n", blockIndex->nHeight);
+//		}
+//		else {
+//			printf("%d expected %lld actual %lld - %s\n", blockIndex->nHeight, expectedMintValue, actualMintValue, blockIndex->phashBlock->GetHex().c_str());
+//			badBlockCount++;
+//		}
+//		blockIndex = blockIndex->pnext;
+//	} while (blockIndex != NULL);
+//
+//	printf("--->>>End block value test\n");
+//	printf("--->>>Tested %d blocks\n", blockCount);
+//	printf("--->>>%d blocks incorrect\n", badBlockCount);
 }
 
 
@@ -486,7 +472,7 @@ CFDictionaryRef bridge_getBlockWithHash(
 	// --- similar to getblock in bitcoinrpc.cpp
 	
 	blockIndex = mapBlockIndex[blockHash];
-	block.ReadFromDisk(blockIndex, true);
+	block.ReadFromDisk(blockIndex);
 
 	if (blockIndex->pprev)
 		prevHash = blockIndex->pprev->GetBlockHash();
@@ -568,7 +554,7 @@ CFDictionaryRef bridge_sendCoins(
 		}
 	}
 
-	if (totalAmount >= 0) {
+	if (totalAmount > 0) {
 		int64		walletBalance = pwalletMain->GetBalance();
 		
 		if (totalAmount <= walletBalance) {
@@ -578,10 +564,11 @@ CFDictionaryRef bridge_sendCoins(
 				CWalletTx		wtx;
 				CReserveKey		keyChange(pwalletMain);
 				int64			nFeeRequired = 0;
-				bool			fCreated = pwalletMain->CreateTransaction(vecSend, wtx, keyChange, nFeeRequired);
+				std::string		strFailReason;
+				bool			fCreated = pwalletMain->CreateTransaction(vecSend, wtx, keyChange, nFeeRequired, strFailReason);
 				
 				if (fCreated) {
-					if (ThreadSafeAskFee(nFeeRequired, std::string("Sending..."))) {
+					if (ThreadSafeAskFee(nFeeRequired)) {
 						if (pwalletMain->CommitTransaction(wtx, keyChange)) {
 							result = eCoinSendResponse_Success;
 						}
@@ -649,6 +636,40 @@ bool bridge_validateAddress(
 	return address.IsValid();
 }
 
+CFStringRef bridge_createNewAddress(
+	const char			*inLabel)
+{
+	CFStringRef		address = NULL;
+    CPubKey			newKey;
+
+    if (!pwalletMain->IsLocked())
+        pwalletMain->TopUpKeyPool();
+
+	if (pwalletMain->GetKeyFromPool(newKey, false)) {
+		CKeyID			keyID = newKey.GetID();
+		std::string		strAccount(inLabel == NULL ? "" : inLabel);
+		
+		pwalletMain->SetAddressBookName(keyID, strAccount);
+		address = CFStringCreateWithCString(kCFAllocatorDefault, CBitcoinAddress(keyID).ToString().c_str(), kCFStringEncodingASCII);
+	}
+
+    return address;
+}
+
+bool bridge_setLabelForAddress(
+	const char			*inLabel,
+	const char			*inAddress)
+{
+	CBitcoinAddress		address(inAddress);
+	bool				didChange = false;
+	
+    if (pwalletMain->mapAddressBook.count(address.Get())) {
+		didChange = pwalletMain->SetAddressBookName(address.Get(), inLabel);
+	}
+	
+	return didChange;
+}
+
 CFDictionaryRef bridge_getMiscInfo()
 {
 	CFMutableDictionaryRef	miscInfo = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
@@ -660,5 +681,3 @@ CFDictionaryRef bridge_getMiscInfo()
 
 	return miscInfo;
 }
-
-

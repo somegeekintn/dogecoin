@@ -1,6 +1,6 @@
 //
 //  DCClient.h
-//  Dogecoin
+//  Moon
 //
 //  Created by Casey Fleser on 1/14/14.
 //  Copyright (c) 2014 Casey Fleser / @somegeekintn. All rights reserved.
@@ -23,7 +23,8 @@
 - (DCBlockInfo *)		lastBlockInfo;
 - (DCAddress *)			addressWithCoinAddress: (NSString *) inCoinAddress;
 - (DCAddress *)			addressWithCoinAddressOrLabel: (NSString *) inFragment;
-- (NSSet *)				addressesContaining: (NSString *) inAddressFragment;
+- (NSSet *)				addressesContaining: (NSString *) inAddressFragment
+							mine: (BOOL) inMine;
 
 @property (nonatomic, strong) NSNumber			*difficulty;
 @property (nonatomic, strong) NSDate			*lastBlockTime;

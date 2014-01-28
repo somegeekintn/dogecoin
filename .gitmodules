@@ -1,0 +1,3 @@
+[submodule "contrib/xcode/Moon/external/ZXingObjC"]
+	path = contrib/xcode/Moon/external/ZXingObjC
+	url = git@github.com:TheLevelUp/ZXingObjC.git

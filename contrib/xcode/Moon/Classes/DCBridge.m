@@ -1,6 +1,6 @@
 //
 //  DCBridge.m
-//  Dogecoin
+//  Moon
 //
 //  Created by Casey Fleser on 1/13/14.
 //  Copyright (c) 2014 Casey Fleser / @somegeekintn. All rights reserved.
@@ -54,21 +54,24 @@
 				self.connected = YES;
 
 				[[DCDataManager sharedManager] clientInitializationComplete];
+				[[NSNotificationCenter defaultCenter] postNotificationName: DCNotification_InitComplete object: nil];
 			}
 			else {
-				NSLog(@"Error: Failed to initialize client");
+				[[NSNotificationCenter defaultCenter] postNotificationName: DCNotification_InitMessage object: nil userInfo: @{ @"message" : @"Error: Failed to initialize client"}];
 			}
 		});
 	}
 	else {
-        NSLog(@"Error: Specified directory does not exist");
+		[[NSNotificationCenter defaultCenter] postNotificationName: DCNotification_InitMessage object: nil userInfo: @{ @"message" : @"Error: Data directory does not exist"}];
 	}
 }
 
 - (void) disconnect
 {
-	self.connected = NO;
-	bridge_Shutdown();
+	if (self.connected) {
+		self.connected = NO;
+		bridge_Shutdown();
+	}
 }
 
 - (NSInteger) getBlockHeight
@@ -105,6 +108,7 @@
 	
 	didSend = response != nil && [response integerValue] == eCoinSendResponse_Success;
 
+NSLog(@"response %@", response);
 //    WalletModel::SendCoinsReturn sendstatus = model->sendCoins(recipients);
 //    switch(sendstatus.status)
 //    {
@@ -163,6 +167,17 @@
 - (BOOL) validateAddress: (NSString *) inAddress
 {
 	return bridge_validateAddress([inAddress UTF8String]);
+}
+
+- (NSString *) createNewAddress: (NSString *) inLabel
+{
+	return (__bridge_transfer NSString *)bridge_createNewAddress(inLabel != nil ? [inLabel UTF8String] : NULL);
+}
+
+- (BOOL) setLabel: (NSString *) inLabel
+	forAddress: (NSString *) inAddress
+{
+	return bridge_setLabelForAddress([inLabel UTF8String], [inAddress UTF8String]);
 }
 
 - (NSDictionary *) getMiscInfo
@@ -244,6 +259,6 @@ bool bridge_sig_AskFee(
 void bridge_sig_InitMessage(
 	const char			*inMessage)
 {
-	NSLog(@"Init: %s", inMessage);
+	[[NSNotificationCenter defaultCenter] postNotificationName: DCNotification_InitMessage object: nil userInfo: @{ @"message" : [NSString stringWithUTF8String: inMessage]}];
 }
 

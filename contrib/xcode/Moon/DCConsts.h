@@ -1,6 +1,6 @@
 //
 //  DCConsts.h
-//  Dogecoin
+//  Moon
 //
 //  Created by Casey Fleser on 1/17/14.
 //  Copyright (c) 2014 Casey Fleser / @somegeekintn. All rights reserved.
@@ -32,5 +32,12 @@ enum {
 	eCoinSendResponse_Error_TransactionCommitFailed,
 	eCoinSendResponse_Error_Unknown,
 };
+
+
+#ifdef __OBJC__
+extern NSString * const		DCNotification_InitMessage;
+extern NSString * const		DCNotification_InitComplete;
+#endif
+
 
 #endif

@@ -1,6 +1,6 @@
 //
 //  DCTXSender.m
-//  Dogecoin
+//  Moon
 //
 //  Created by Casey Fleser on 1/22/14.
 //  Copyright (c) 2014 Casey Fleser / @somegeekintn. All rights reserved.
@@ -11,6 +11,7 @@
 #import "DCBridge.h"
 #import "DCClient.h"
 #import "DCDataManager.h"
+#import "DCQRViewController.h"
 #import "DCConsts.h"
 #import "NSAlert+Moon.h"
 #import "NSNumberFormatter+Moon.h"
@@ -61,7 +62,7 @@
 	indexOfToken: (NSInteger) inTokenIndex
 	indexOfSelectedItem: (NSInteger *) inSelectedIndex
 {
-	NSMutableSet	*matches = [[[DCDataManager sharedManager].client addressesContaining: inSubstring] mutableCopy];
+	NSMutableSet	*matches = [[[DCDataManager sharedManager].client addressesContaining: inSubstring mine: NO] mutableCopy];
 	NSSet			*refinedMatches;
 	NSMutableArray	*sortedMatches = [NSMutableArray array];
 	NSMutableArray	*tokenizedMatches = [NSMutableArray array];
@@ -144,6 +145,28 @@
 	}
 }
 
+#pragma mark - Sheet Delegate
+
+- (void) didEndSheet: (NSWindow *) inWindow
+	returnCode: (NSInteger) inReturnCode
+	contextInfo: (void *) inContextInfo
+{
+	[inWindow orderOut: nil];
+}
+
+#pragma mark - DCQRDelegate
+
+- (void) didReadCode: (NSString *) inQRCode
+	withQRCodeController: (DCQRViewController *) inController
+{
+	NSMutableArray			*tokens = [[self.addressField objectValue] mutableCopy];
+	
+	[self.qrViewController dismissPopover: self];
+
+	[tokens addObject: inQRCode];
+	[self.addressField setObjectValue: tokens];
+}
+
 #pragma mark - Handlers
 
 - (void) handleSendButton: (id) inSender
@@ -174,8 +197,24 @@
 		if (alertResult == NSAlertSecondButtonReturn) {
 			[[DCBridge sharedBridge] sendCoins: amount to: [recipients allObjects]];
 			[self clearFields];
+			[NSApp endSheet: self.sendWindow];
 		}
 	}
+}
+
+- (void) handleCancelSendButton: (id) inSender
+{
+	[NSApp endSheet: self.sendWindow];
+}
+
+- (void) handleActivateSendButton: (id) inSender
+{
+	[NSApp beginSheet: self.sendWindow modalForWindow: self.mainWindow modalDelegate: self didEndSelector: @selector(didEndSheet:returnCode:contextInfo:) contextInfo: nil];
+}
+
+- (void) handleQRButtonButton: (id) inSender
+{
+	[self.qrViewController presentPopoverFrom: self.qrButton withQRDelegate: self];
 }
 
 @end
