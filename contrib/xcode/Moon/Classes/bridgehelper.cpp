@@ -10,8 +10,8 @@
 //	forwards function calls on their counterparts in the client
 
 #include "bridgehelper.h"
-#include "bitcoinrpc.h"
 #include "base58.h"
+#include "bitcoinrpc.h"
 #include "init.h"
 #include "main.h"
 #include "ui_interface.h"
@@ -637,7 +637,7 @@ bool bridge_validateAddress(
 	return address.IsValid();
 }
 
-CFStringRef bridge_createNewAddress(
+CFStringRef bridge_createNewRxAddress(
 	const char			*inLabel)
 {
 	CFStringRef		address = NULL;
@@ -648,13 +648,32 @@ CFStringRef bridge_createNewAddress(
 
 	if (pwalletMain->GetKeyFromPool(newKey, false)) {
 		CKeyID			keyID = newKey.GetID();
-		std::string		strAccount(inLabel == NULL ? "" : inLabel);
-		
+		std::string		strAccount(inLabel != NULL ? inLabel : "");
+
 		pwalletMain->SetAddressBookName(keyID, strAccount);
 		address = CFStringCreateWithCString(kCFAllocatorDefault, CBitcoinAddress(keyID).ToString().c_str(), kCFStringEncodingASCII);
 	}
 
     return address;
+}
+
+bool bridge_createNewTxAddress(
+	const char			*inAddress,
+	const char			*inLabel)
+{
+	bool			didCreate = false;
+	
+	if (inAddress != NULL) {
+		CBitcoinAddress	address(inAddress);
+
+		if (address.IsValid()) {
+			std::string		strLabel(inLabel != NULL ? inLabel : "");
+
+			didCreate = pwalletMain->SetAddressBookName(address.Get(), strLabel);
+		}
+	}
+	
+    return didCreate;
 }
 
 bool bridge_setLabelForAddress(
@@ -665,7 +684,9 @@ bool bridge_setLabelForAddress(
 	bool				didChange = false;
 	
     if (pwalletMain->mapAddressBook.count(address.Get())) {
-		didChange = pwalletMain->SetAddressBookName(address.Get(), inLabel);
+		std::string		strLabel(inLabel != NULL ? inLabel : "");
+
+		didChange = pwalletMain->SetAddressBookName(address.Get(), strLabel);
 	}
 	
 	return didChange;

@@ -46,6 +46,16 @@
 	return address;
 }
 
++ (NSArray *) addressesMatching: (NSString *) inAddress
+	inContext: (NSManagedObjectContext *) inContext
+{
+	NSFetchRequest			*request = [NSFetchRequest fetchRequestWithEntityName: @"Address"];
+	
+	request.predicate = [NSPredicate predicateWithFormat: @"address == %@", inAddress];
+
+	return [inContext executeFetchRequest: request error: nil];
+}
+
 - (NSString *) tokenizedAddress
 {
 	NSString		*tokenizedAddress;
@@ -67,12 +77,26 @@
 	BOOL		valid = [super validateValue: ioValue forKey: @"key" error: ioError];
 
 	if (valid && [inKey isEqualToString: @"address"]) {
-		if (![[DCBridge sharedBridge] validateAddress: *ioValue]) {
-			NSString		*errorDescription = [NSString stringWithFormat: @"%@ is not a valid %@ address", *ioValue, DCCoinName];
+		NSString		*address = *ioValue;
+		
+		if (![[DCBridge sharedBridge] validateAddress: address]) {
+			NSString		*errorDescription = [NSString stringWithFormat: @"%@ is not a valid %@ address", address, DCCoinName];
             NSDictionary	*userInfoDict = @{ NSLocalizedDescriptionKey : errorDescription };
 			
 			*ioError = [NSError errorWithDomain: DCError_Domain code: eErrorCode_InvalidAddress userInfo: userInfoDict];
 			valid = NO;
+		}
+		else {
+			NSMutableArray		*matchingAdresses = [[DCAddress addressesMatching: address inContext: self.managedObjectContext] mutableCopy];
+
+			[matchingAdresses removeObject: self];
+			if ([matchingAdresses count]) {
+				NSString		*errorDescription = @"This address is already in your address book";
+				NSDictionary	*userInfoDict = @{ NSLocalizedDescriptionKey : errorDescription };
+				
+				*ioError = [NSError errorWithDomain: DCError_Domain code: eErrorCode_DuplicateAddress userInfo: userInfoDict];
+				valid = NO;
+			}
 		}
 	}
 

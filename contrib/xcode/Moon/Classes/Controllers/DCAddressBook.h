@@ -11,6 +11,7 @@
 @interface DCAddressBook : NSArrayController
 
 - (void)					copySelection;
+- (void)					deleteSelection;
 
 - (IBAction)				showAddressBook: (id) inSender;
 - (IBAction)				handleAddressSegment: (id) inSender;

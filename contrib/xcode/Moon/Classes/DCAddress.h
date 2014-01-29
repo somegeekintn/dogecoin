@@ -14,6 +14,8 @@
 
 + (DCAddress *)			updatedAddressFromRawEntry: (NSDictionary *) inRawAddress
 							inContext: (NSManagedObjectContext *) inContext;
++ (NSArray *)			addressesMatching: (NSString *) inAddress
+							inContext: (NSManagedObjectContext *) inContext;
 
 - (NSString *)			tokenizedAddress;	// for use with NSTokenField
 

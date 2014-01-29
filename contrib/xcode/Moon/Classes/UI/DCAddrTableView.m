@@ -18,7 +18,7 @@
 
 - (void) delete: (id) inSender
 {
-	NSLog(@"%s", __PRETTY_FUNCTION__);
+	[self.addrBookController deleteSelection];
 }
 
 - (void) keyDown: (NSEvent *) inEvent

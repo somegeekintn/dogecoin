@@ -169,9 +169,15 @@ NSLog(@"response %@", response);
 	return bridge_validateAddress([inAddress UTF8String]);
 }
 
-- (NSString *) createNewAddress: (NSString *) inLabel
+- (NSString *) createNewRxAddress: (NSString *) inLabel
 {
-	return (__bridge_transfer NSString *)bridge_createNewAddress(inLabel != nil ? [inLabel UTF8String] : NULL);
+	return (__bridge_transfer NSString *)bridge_createNewRxAddress(inLabel != nil ? [inLabel UTF8String] : NULL);
+}
+
+- (BOOL) createNewTxAddress: (NSString *) inAddress
+	withLabel: (NSString *) inLabel
+{
+	return bridge_createNewTxAddress([inAddress UTF8String], inLabel != nil ? [inLabel UTF8String] : NULL);
 }
 
 - (BOOL) setLabel: (NSString *) inLabel

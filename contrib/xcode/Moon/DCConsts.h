@@ -36,7 +36,8 @@ enum {
 enum {
 	eErrorCode_Unknown = -1,
 	eErrorCode_NoError = 0,
-	eErrorCode_InvalidAddress = 1
+	eErrorCode_InvalidAddress,
+	eErrorCode_DuplicateAddress,
 };
 
 #ifdef __OBJC__

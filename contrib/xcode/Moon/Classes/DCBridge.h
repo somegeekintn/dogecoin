@@ -26,7 +26,9 @@ typedef void (^RPCCompletion)(NSString *response, BOOL succeeded);
 							to: (NSArray *) inRecipients;
 - (NSArray *)			getAddressBook;
 - (BOOL)				validateAddress: (NSString *) inAddress;
-- (NSString *)			createNewAddress: (NSString *) inLabel;
+- (NSString *)			createNewRxAddress: (NSString *) inLabel;
+- (BOOL)				createNewTxAddress: (NSString *) inAddress
+							withLabel: (NSString *) inLabel;
 - (BOOL)				setLabel: (NSString *) inLabel
 							forAddress: (NSString *) inAddress;
 - (NSDictionary *)		getMiscInfo;

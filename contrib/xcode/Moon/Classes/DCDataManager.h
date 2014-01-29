@@ -18,6 +18,7 @@
 - (void)				startMonitor;
 - (BOOL)				prepareToQuit: (NSApplication *) inSender;
 - (void)				clientInitializationComplete;
+- (void)				saveObjectsAsync: (BOOL) inAsync;
 - (void)				updateBlockInfo: (NSInteger) inReconcileDepth;
 - (void)				updateWalletTrasactionWithHash: (NSString *) inWalletTxHash
 							notify: (BOOL) inNotify;

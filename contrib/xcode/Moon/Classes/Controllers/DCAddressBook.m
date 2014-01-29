@@ -11,6 +11,8 @@
 #import "DCBridge.h"
 #import "DCWalletTX.h"
 
+#import "DCDataManager.h"
+
 @interface DCAddressBook ()
 
 @property (nonatomic, assign) BOOL		showMine;
@@ -61,6 +63,16 @@
 	[pasteBoard writeObjects: @[pboardAddresses]];
 }
 
+- (void) deleteSelection
+{
+	NSLog(@"%s", __PRETTY_FUNCTION__);
+//	for (DCAddress *address in self.selectedObjects) {
+//		[address.managedObjectContext deleteObject: address];
+//	}
+//
+//	[[DCDataManager sharedManager] saveObjectsAsync: NO];
+}
+
 - (void) dirtyTransactionsWithAddress: (NSString *) inAddress
 {
 	[self.managedObjectContext performBlock:^{
@@ -104,7 +116,7 @@
 - (void) handleNewAddress: (id) inSender
 {
 	if (self.showMine) {
-		[[DCBridge sharedBridge] createNewAddress: nil];
+		[[DCBridge sharedBridge] createNewRxAddress: nil];
 		
 		// need to figure out how to select new address
 //		NSMutableArray	*newAddrList;
@@ -144,13 +156,8 @@
 				NSString			*newAddress = [obj valueForKey: @"address"];
 				
 				if (oldAddress == nil || ![oldAddress length]) {
-					if (newAddress != nil && [[DCBridge sharedBridge] validateAddress: newAddress]) {
-NSLog(@"valid address: %@", newAddress);
-					}
-					else {
-						// invalid, reset
-						[obj setValue: oldAddress forKey: @"address"];
-					}
+NSLog(@"this is a new address");
+					[[DCBridge sharedBridge] createNewTxAddress: newAddress withLabel: [obj valueForKey: @"label"]];
 				}
 				else {
 NSLog(@"change %@ to %@", oldAddress, newAddress);

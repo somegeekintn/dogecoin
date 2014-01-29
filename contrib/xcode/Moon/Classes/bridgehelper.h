@@ -34,7 +34,10 @@ CFDictionaryRef			bridge_sendCoins(
 CFArrayRef				bridge_getAddressBook();
 bool					bridge_validateAddress(
 							const char				*inAddress);
-CFStringRef				bridge_createNewAddress(
+CFStringRef				bridge_createNewRxAddress(
+							const char				*inLabel);
+bool					bridge_createNewTxAddress(
+							const char				*inAddress,
 							const char				*inLabel);
 bool					bridge_setLabelForAddress(
 							const char				*inLabel,
