@@ -344,20 +344,20 @@ static DCDataManager		*sSharedManager = nil;
 	}];
 }
 
-- (NSInteger) updateBlockInfoFor: (NSTimeInterval) inUpdateTime
+- (NSInteger) updateBlockInfoAtHeight: (NSInteger) inBlockInfoCount
+	for: (NSTimeInterval) inUpdateTime
 	withInfoObjectID: (NSManagedObjectID *) inInfoObjectID
 {
 	NSManagedObjectContext	*updateContext = [[NSManagedObjectContext alloc] initWithConcurrencyType: NSPrivateQueueConcurrencyType];
-	__block NSInteger		blockInfoCount;
+	__block NSInteger		blockInfoCount = inBlockInfoCount;
 	
 	updateContext.parentContext = self.defaultContext;
 	[updateContext setUndoManager: nil];
 	[updateContext performBlockAndWait: ^{
-		DCClient				*info = (DCClient *)[updateContext objectWithID: inInfoObjectID];
+		DCClient			*info = (DCClient *)[updateContext objectWithID: inInfoObjectID];
 		DCBlockInfo			*blockInfo;
 		NSDate				*endTime;
 		
-		blockInfoCount = [info.blockInfo count];	// count should equal height + 1
 		endTime = [NSDate dateWithTimeIntervalSinceNow: inUpdateTime];
 		while ([endTime timeIntervalSinceNow] > 0.0 && blockInfoCount <= [[DCBridge sharedBridge] getBlockHeight] && self.blocksCanUpdate) {
 			blockInfo = [DCBlockInfo blockInfoAtHeight: blockInfoCount inContext: updateContext];
@@ -395,7 +395,7 @@ static DCDataManager		*sSharedManager = nil;
 						[self reconcileBlockInfoWithDepth: inReconcileDepth withInfoObjectID: infoID];
 
 					while (blockInfoCount <= [[DCBridge sharedBridge] getBlockHeight] && self.blocksCanUpdate) {
-						blockInfoCount = [self updateBlockInfoFor: 0.10 withInfoObjectID: infoID];
+						blockInfoCount = [self updateBlockInfoAtHeight: blockInfoCount for: 0.20 withInfoObjectID: infoID];
 NSLog(@"update %ld (best %ld)", blockInfoCount, [[DCBridge sharedBridge] getBlockHeight]);
 					}
 					

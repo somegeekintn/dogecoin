@@ -285,13 +285,13 @@
                                                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                                                 <color key="backgroundColor" white="0.33333298560000002" alpha="1" colorSpace="calibratedWhite"/>
                                                                             </tableHeaderCell>
-                                                                            <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" alignment="left" title="Text Cell" id="dok-YV-Wdo">
-                                                                                <font key="font" size="12" name="AvenirNext-Regular"/>
-                                                                                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                                                                <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                                                            </textFieldCell>
+                                                                            <imageCell key="dataCell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" id="mNs-rl-wQl"/>
                                                                             <connections>
-                                                                                <binding destination="Rbo-Ov-nrc" name="value" keyPath="arrangedObjects.category" id="pzb-yi-wGw"/>
+                                                                                <binding destination="Rbo-Ov-nrc" name="value" keyPath="arrangedObjects.category" id="z9L-lA-34n">
+                                                                                    <dictionary key="options">
+                                                                                        <string key="NSValueTransformerName">DCTransformer_TXCatToImage</string>
+                                                                                    </dictionary>
+                                                                                </binding>
                                                                             </connections>
                                                                         </tableColumn>
                                                                         <tableColumn editable="NO" width="128" minWidth="128" maxWidth="128" id="K0z-VH-c31">

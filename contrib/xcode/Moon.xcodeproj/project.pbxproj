@@ -14,6 +14,7 @@
 		C95413E2189529C3003E2CCE /* DCQRViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C95413E1189529C3003E2CCE /* DCQRViewController.m */; };
 		C95413FA18952F1B003E2CCE /* ZXingObjC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C95413F618952DBA003E2CCE /* ZXingObjC.framework */; };
 		C95413FC1895301E003E2CCE /* ZXingObjC.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C95413F618952DBA003E2CCE /* ZXingObjC.framework */; };
+		C97A270018A7BBBA00F3A1B7 /* DCTransformer_TXCatToImage.m in Sources */ = {isa = PBXBuildFile; fileRef = C97A26FF18A7BBBA00F3A1B7 /* DCTransformer_TXCatToImage.m */; };
 		C99B953618832956001DB181 /* bitcoinrpc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C99B952818832956001DB181 /* bitcoinrpc.cpp */; };
 		C99B953718832956001DB181 /* checkpoints.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C99B952A18832956001DB181 /* checkpoints.cpp */; };
 		C99B953818832956001DB181 /* crypter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C99B952D18832956001DB181 /* crypter.cpp */; };
@@ -327,6 +328,8 @@
 		C95413E0189529C3003E2CCE /* DCQRViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DCQRViewController.h; sourceTree = "<group>"; };
 		C95413E1189529C3003E2CCE /* DCQRViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DCQRViewController.m; sourceTree = "<group>"; };
 		C95413E518952DB4003E2CCE /* ZXingObjC.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ZXingObjC.xcodeproj; path = ZXingObjC/ZXingObjC.xcodeproj; sourceTree = "<group>"; };
+		C97A26FE18A7BBBA00F3A1B7 /* DCTransformer_TXCatToImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DCTransformer_TXCatToImage.h; sourceTree = "<group>"; };
+		C97A26FF18A7BBBA00F3A1B7 /* DCTransformer_TXCatToImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DCTransformer_TXCatToImage.m; sourceTree = "<group>"; };
 		C99B951618832890001DB181 /* dogecoind */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = dogecoind; sourceTree = BUILT_PRODUCTS_DIR; };
 		C99B952518832956001DB181 /* allocators.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = allocators.h; sourceTree = "<group>"; };
 		C99B952618832956001DB181 /* base58.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = base58.h; sourceTree = "<group>"; };
@@ -848,6 +851,8 @@
 			children = (
 				C9C7632A188C028B006A5673 /* DCTransformer_NumberToColor.h */,
 				C9C7632B188C028B006A5673 /* DCTransformer_NumberToColor.m */,
+				C97A26FE18A7BBBA00F3A1B7 /* DCTransformer_TXCatToImage.h */,
+				C97A26FF18A7BBBA00F3A1B7 /* DCTransformer_TXCatToImage.m */,
 			);
 			name = transformers;
 			path = Transformers;
@@ -1354,6 +1359,7 @@
 				C99B95D018840AB3001DB181 /* netbase.cpp in Sources */,
 				C9CEC4611894694B005C2BD5 /* DCConsts.m in Sources */,
 				C99B95D118840AB3001DB181 /* noui.cpp in Sources */,
+				C97A270018A7BBBA00F3A1B7 /* DCTransformer_TXCatToImage.m in Sources */,
 				C99B95D218840AB3001DB181 /* protocol.cpp in Sources */,
 				C99B95D318840AB3001DB181 /* rpcdump.cpp in Sources */,
 				C99B95D418840AB3001DB181 /* rpcnet.cpp in Sources */,
