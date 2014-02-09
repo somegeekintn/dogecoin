@@ -24,7 +24,6 @@
 {
 	DCWalletTX		*walletTXItem = [[self arrangedObjects] objectAtIndex: inIndex];
 	
-	NSLog(@"%s", __PRETTY_FUNCTION__);
 	if (walletTXItem != nil)
 		[self.infoPopoverController presentPopoverFrom: inView withFrame: inFrame forWalletTX: walletTXItem];
 }
