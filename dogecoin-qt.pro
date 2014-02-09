@@ -1,7 +1,7 @@
 TEMPLATE = app
 TARGET = dogecoin-qt
 macx:TARGET = "Dogecoin-Qt"
-VERSION = 1.5.0
+VERSION = 1.5.1
 INCLUDEPATH += src src/json src/qt
 QT += core gui network
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
@@ -213,7 +213,6 @@ HEADERS += src/qt/bitcoingui.h \
     src/walletdb.h \
     src/script.h \
     src/init.h \
-    src/irc.h \
     src/bloom.h \
     src/mruset.h \
     src/checkqueue.h \
@@ -291,7 +290,6 @@ SOURCES += src/qt/bitcoin.cpp \
     src/script.cpp \
     src/main.cpp \
     src/init.cpp \
-    src/irc.cpp \
     src/net.cpp \
     src/bloom.cpp \
     src/checkpoints.cpp \

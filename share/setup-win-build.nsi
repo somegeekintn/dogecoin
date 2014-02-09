@@ -5,16 +5,16 @@ SetCompressor /SOLID lzma
 
 # General Symbol Definitions
 !define REGKEY "SOFTWARE\$(^Name)"
-!define VERSION 1.5.1
-!define COMPANY "Dogecoin project"
-!define URL http://www.dogecoin.com/
+!define VERSION "1.5.1.0"
+!define COMPANY "Dogecoin"
+!define URL http://dogecoin.com
 
 # MUI Symbol Definitions
-!define MUI_ICON "../share/pixmaps/bitcoin.ico"
-!define MUI_WELCOMEFINISHPAGE_BITMAP "../share/pixmaps/nsis-wizard.bmp"
+!define MUI_ICON "pixmaps\bitcoin.ico"
+!define MUI_WELCOMEFINISHPAGE_BITMAP "pixmaps\nsis-wizard.bmp"
 !define MUI_HEADERIMAGE
 !define MUI_HEADERIMAGE_RIGHT
-!define MUI_HEADERIMAGE_BITMAP "../share/pixmaps/nsis-header.bmp"
+!define MUI_HEADERIMAGE_BITMAP "pixmaps\nsis-header.bmp"
 !define MUI_FINISHPAGE_NOAUTOCLOSE
 !define MUI_STARTMENUPAGE_REGISTRY_ROOT HKLM
 !define MUI_STARTMENUPAGE_REGISTRY_KEY ${REGKEY}
@@ -22,7 +22,7 @@ SetCompressor /SOLID lzma
 !define MUI_STARTMENUPAGE_DEFAULTFOLDER Dogecoin
 !define MUI_FINISHPAGE_RUN $INSTDIR\dogecoin-qt.exe
 !define MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\modern-uninstall.ico"
-!define MUI_UNWELCOMEFINISHPAGE_BITMAP "../share/pixmaps/nsis-wizard.bmp"
+!define MUI_UNWELCOMEFINISHPAGE_BITMAP "pixmaps\nsis-wizard.bmp"
 !define MUI_UNFINISHPAGE_NOAUTOCLOSE
 
 # Included files
@@ -45,13 +45,13 @@ Var StartMenuGroup
 !insertmacro MUI_LANGUAGE English
 
 # Installer attributes
-OutFile dogecoin-1.5.0-win32-setup.exe
+OutFile dogecoin-${VERSION}-win32-setup.exe
 InstallDir $PROGRAMFILES\Dogecoin
 CRCCheck on
 XPStyle on
-BrandingText " "
+BrandingText "Such currency"
 ShowInstDetails show
-VIProductVersion 1.5.0
+VIProductVersion  "${VERSION}"
 VIAddVersionKey ProductName Dogecoin
 VIAddVersionKey ProductVersion "${VERSION}"
 VIAddVersionKey CompanyName "${COMPANY}"
@@ -66,19 +66,16 @@ ShowUninstDetails show
 Section -Main SEC0000
     SetOutPath $INSTDIR
     SetOverwrite on
-    File ../release/dogecoin-qt.exe
-    File /oname=COPYING.txt ../COPYING
-    File /oname=readme.txt ../doc/README_windows.txt
-    SetOutPath $INSTDIR\daemon
-    File ../src/dogecoind.exe
-    SetOutPath $INSTDIR\src
-    File /r /x *.exe /x *.o ../src\*.*
+    File ..\release\dogecoin-qt.exe
+    File ..\release\libgcc_s_dw2-1.dll
+    File ..\release\libstdc++-6.dll
+    File ..\release\mingwm10.dll
+    File ..\release\QtCore4.dll
+    File ..\release\QtGui4.dll
+    File ..\release\QtNetwork4.dll
+    File /oname=readme.txt ..\doc\README_windows.txt
     SetOutPath $INSTDIR
     WriteRegStr HKCU "${REGKEY}\Components" Main 1
-
-    # Remove old wxwidgets-based-bitcoin executable and locales:
-    Delete /REBOOTOK $INSTDIR\dogecoin.exe
-    RMDir /r /REBOOTOK $INSTDIR\locale
 SectionEnd
 
 Section -post SEC0001
@@ -120,10 +117,13 @@ done${UNSECTION_ID}:
 # Uninstaller sections
 Section /o -un.Main UNSEC0000
     Delete /REBOOTOK $INSTDIR\dogecoin-qt.exe
-    Delete /REBOOTOK $INSTDIR\COPYING.txt
+    Delete /REBOOTOK $INSTDIR\libgcc_s_dw2-1.dll
+    Delete /REBOOTOK $INSTDIR\libstdc++-6.dll
+    Delete /REBOOTOK $INSTDIR\mingwm10.dll
+    Delete /REBOOTOK $INSTDIR\QtCore4.dll
+    Delete /REBOOTOK $INSTDIR\QtGui4.dll
+    Delete /REBOOTOK $INSTDIR\QtNetwork4.dll
     Delete /REBOOTOK $INSTDIR\readme.txt
-    RMDir /r /REBOOTOK $INSTDIR\daemon
-    RMDir /r /REBOOTOK $INSTDIR\src
     DeleteRegValue HKCU "${REGKEY}\Components" Main
 SectionEnd
 
