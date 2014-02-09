@@ -271,7 +271,7 @@
                                                             <rect key="frame" x="0.0" y="17" width="478" height="426"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
-                                                                <tableView focusRingType="none" verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="sequential" selectionHighlightStyle="sourceList" multipleSelection="NO" autosaveColumns="NO" rowHeight="20" headerView="KAY-SJ-3l1" id="tBZ-ed-esb">
+                                                                <tableView focusRingType="none" verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="sequential" selectionHighlightStyle="sourceList" multipleSelection="NO" autosaveColumns="NO" rowHeight="20" headerView="KAY-SJ-3l1" id="tBZ-ed-esb" customClass="DCWalletTXTableView">
                                                                     <rect key="frame" x="0.0" y="0.0" width="478" height="426"/>
                                                                     <autoresizingMask key="autoresizingMask"/>
                                                                     <size key="intercellSpacing" width="3" height="2"/>
@@ -279,7 +279,7 @@
                                                                     <tableViewGridLines key="gridStyleMask" vertical="YES"/>
                                                                     <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                                                     <tableColumns>
-                                                                        <tableColumn editable="NO" width="20" minWidth="20" maxWidth="20" id="Uki-QK-XOb">
+                                                                        <tableColumn editable="NO" width="18" minWidth="18" maxWidth="18" id="Uki-QK-XOb">
                                                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left">
                                                                                 <font key="font" size="11" name="AvenirNext-Medium"/>
                                                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -315,7 +315,7 @@
                                                                                 </binding>
                                                                             </connections>
                                                                         </tableColumn>
-                                                                        <tableColumn editable="NO" width="135" minWidth="100" maxWidth="1000" id="4dj-ac-DSH">
+                                                                        <tableColumn editable="NO" width="100" minWidth="100" maxWidth="1000" id="4dj-ac-DSH">
                                                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Address">
                                                                                 <font key="font" size="11" name="AvenirNext-Medium"/>
                                                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -366,7 +366,7 @@
                                                                                 </binding>
                                                                             </connections>
                                                                         </tableColumn>
-                                                                        <tableColumn editable="NO" width="100" minWidth="100" maxWidth="192" id="rCb-3x-nvK">
+                                                                        <tableColumn editable="NO" width="116" minWidth="100" maxWidth="192" id="rCb-3x-nvK">
                                                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Amount">
                                                                                 <font key="font" size="11" name="AvenirNext-Medium"/>
                                                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -397,13 +397,28 @@
                                                                                 </binding>
                                                                             </connections>
                                                                         </tableColumn>
+                                                                        <tableColumn identifier="info" width="18" minWidth="18" maxWidth="18" id="rDi-ql-FAk">
+                                                                            <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left">
+                                                                                <font key="font" metaFont="smallSystem"/>
+                                                                                <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
+                                                                                <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
+                                                                            </tableHeaderCell>
+                                                                            <imageCell key="dataCell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" id="iAg-Af-piJ"/>
+                                                                            <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
+                                                                            <connections>
+                                                                                <binding destination="Rbo-Ov-nrc" name="value" keyPath="self.infoImage" id="2et-cK-qIv"/>
+                                                                            </connections>
+                                                                        </tableColumn>
                                                                     </tableColumns>
+                                                                    <connections>
+                                                                        <outlet property="walletTXController" destination="Rbo-Ov-nrc" id="HRh-hg-EJc"/>
+                                                                    </connections>
                                                                 </tableView>
                                                             </subviews>
                                                             <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </clipView>
                                                         <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="Tq9-kg-9eG">
-                                                            <rect key="frame" x="1" y="384" width="476" height="15"/>
+                                                            <rect key="frame" x="0.0" y="428" width="478" height="15"/>
                                                             <autoresizingMask key="autoresizingMask"/>
                                                         </scroller>
                                                         <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="NBt-oa-flC">
@@ -1367,6 +1382,7 @@
         <arrayController mode="entity" entityName="WalletTX" editable="NO" automaticallyPreparesContent="YES" preservesSelection="NO" selectsInsertedObjects="NO" avoidsEmptySelection="NO" clearsFilterPredicateOnInsertion="NO" automaticallyRearrangesObjects="YES" id="Rbo-Ov-nrc" userLabel="WalletTX Controller" customClass="DCWalletTXController">
             <connections>
                 <binding destination="w5m-oW-Moo" name="contentSet" keyPath="client.activeWallet.transactions" id="wbk-AD-J3o"/>
+                <outlet property="infoPopoverController" destination="geQ-XN-hva" id="DTW-S8-g2L"/>
             </connections>
         </arrayController>
         <arrayController mode="entity" entityName="Address" automaticallyPreparesContent="YES" preservesSelection="NO" avoidsEmptySelection="NO" clearsFilterPredicateOnInsertion="NO" id="bg8-BQ-fuX" userLabel="Address Book Controller" customClass="DCAddressBook">
@@ -1470,7 +1486,7 @@
                                         <font key="font" metaFont="system"/>
                                     </buttonCell>
                                     <connections>
-                                        <action selector="handleQRButtonButton:" target="oun-xB-G1z" id="Beg-4w-l1D"/>
+                                        <action selector="handleQRButton:" target="oun-xB-G1z" id="Fb2-21-xr6"/>
                                     </connections>
                                 </button>
                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Jwr-Od-0TZ">
@@ -1640,6 +1656,7 @@
                 </constraints>
             </view>
         </window>
+        <viewController nibName="TXInfo" id="geQ-XN-hva" userLabel="TX Info View Controller" customClass="DCTXInfoViewControlller"/>
     </objects>
     <resources>
         <image name="qr_icon" width="14" height="14"/>

@@ -212,7 +212,7 @@
 	[NSApp beginSheet: self.sendWindow modalForWindow: self.mainWindow modalDelegate: self didEndSelector: @selector(didEndSheet:returnCode:contextInfo:) contextInfo: nil];
 }
 
-- (void) handleQRButtonButton: (id) inSender
+- (void) handleQRButton: (id) inSender
 {
 	[self.qrViewController presentPopoverFrom: self.qrButton withQRDelegate: self];
 }

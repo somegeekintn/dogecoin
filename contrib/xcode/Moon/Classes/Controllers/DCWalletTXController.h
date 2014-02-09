@@ -8,6 +8,16 @@
 
 #import <Cocoa/Cocoa.h>
 
+
+@class DCTXInfoViewControlller;
+
 @interface DCWalletTXController : NSArrayController
+
+@property (nonatomic, strong) IBOutlet DCTXInfoViewControlller	*infoPopoverController;
+@property (nonatomic, readonly) NSImage							*infoImage;
+
+- (void)			presentInfoFromView: (NSView *) inView
+						withFrame: (NSRect) inFrame
+						forArrangedItemIndex: (NSInteger) inIndex;
 
 @end

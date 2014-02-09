@@ -15,6 +15,9 @@
 		C95413FA18952F1B003E2CCE /* ZXingObjC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C95413F618952DBA003E2CCE /* ZXingObjC.framework */; };
 		C95413FC1895301E003E2CCE /* ZXingObjC.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C95413F618952DBA003E2CCE /* ZXingObjC.framework */; };
 		C97A270018A7BBBA00F3A1B7 /* DCTransformer_TXCatToImage.m in Sources */ = {isa = PBXBuildFile; fileRef = C97A26FF18A7BBBA00F3A1B7 /* DCTransformer_TXCatToImage.m */; };
+		C97A270618A7C52B00F3A1B7 /* DCWalletTXTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = C97A270518A7C52B00F3A1B7 /* DCWalletTXTableView.m */; };
+		C97A270918A7D62800F3A1B7 /* DCTXInfoViewControlller.m in Sources */ = {isa = PBXBuildFile; fileRef = C97A270818A7D62800F3A1B7 /* DCTXInfoViewControlller.m */; };
+		C97A270B18A7D88700F3A1B7 /* TXInfo.xib in Resources */ = {isa = PBXBuildFile; fileRef = C97A270A18A7D88700F3A1B7 /* TXInfo.xib */; };
 		C99B953618832956001DB181 /* bitcoinrpc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C99B952818832956001DB181 /* bitcoinrpc.cpp */; };
 		C99B953718832956001DB181 /* checkpoints.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C99B952A18832956001DB181 /* checkpoints.cpp */; };
 		C99B953818832956001DB181 /* crypter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C99B952D18832956001DB181 /* crypter.cpp */; };
@@ -330,6 +333,11 @@
 		C95413E518952DB4003E2CCE /* ZXingObjC.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ZXingObjC.xcodeproj; path = ZXingObjC/ZXingObjC.xcodeproj; sourceTree = "<group>"; };
 		C97A26FE18A7BBBA00F3A1B7 /* DCTransformer_TXCatToImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DCTransformer_TXCatToImage.h; sourceTree = "<group>"; };
 		C97A26FF18A7BBBA00F3A1B7 /* DCTransformer_TXCatToImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DCTransformer_TXCatToImage.m; sourceTree = "<group>"; };
+		C97A270418A7C52B00F3A1B7 /* DCWalletTXTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DCWalletTXTableView.h; sourceTree = "<group>"; };
+		C97A270518A7C52B00F3A1B7 /* DCWalletTXTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DCWalletTXTableView.m; sourceTree = "<group>"; };
+		C97A270718A7D62800F3A1B7 /* DCTXInfoViewControlller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DCTXInfoViewControlller.h; sourceTree = "<group>"; };
+		C97A270818A7D62800F3A1B7 /* DCTXInfoViewControlller.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DCTXInfoViewControlller.m; sourceTree = "<group>"; };
+		C97A270A18A7D88700F3A1B7 /* TXInfo.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TXInfo.xib; sourceTree = "<group>"; };
 		C99B951618832890001DB181 /* dogecoind */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = dogecoind; sourceTree = BUILT_PRODUCTS_DIR; };
 		C99B952518832956001DB181 /* allocators.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = allocators.h; sourceTree = "<group>"; };
 		C99B952618832956001DB181 /* base58.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = base58.h; sourceTree = "<group>"; };
@@ -785,6 +793,7 @@
 				C9CEC4601894694B005C2BD5 /* DCConsts.m */,
 				C9CB6E981895D1C5002AA009 /* MainMenu.xib */,
 				C95413DE189528CB003E2CCE /* QRView.xib */,
+				C97A270A18A7D88700F3A1B7 /* TXInfo.xib */,
 				C99B95AB188408B9001DB181 /* Images.xcassets */,
 				C99B95A8188408B8001DB181 /* Moon.xcdatamodeld */,
 				C99B9597188408B8001DB181 /* Supporting Files */,
@@ -869,6 +878,8 @@
 				C9CEC45D189462EF005C2BD5 /* DCPresenter.m */,
 				C95413E0189529C3003E2CCE /* DCQRViewController.h */,
 				C95413E1189529C3003E2CCE /* DCQRViewController.m */,
+				C97A270718A7D62800F3A1B7 /* DCTXInfoViewControlller.h */,
+				C97A270818A7D62800F3A1B7 /* DCTXInfoViewControlller.m */,
 				C9CB2A65188FDF1E008101F8 /* DCTXSender.h */,
 				C9CB2A66188FDF1E008101F8 /* DCTXSender.m */,
 				C9C7632F188C09FF006A5673 /* DCWalletTXController.h */,
@@ -885,6 +896,8 @@
 				C9CB6E9C18967429002AA009 /* DCAddrTableView.m */,
 				C9C76333188C136D006A5673 /* DCBackgroundView.h */,
 				C9C76334188C136D006A5673 /* DCBackgroundView.m */,
+				C97A270418A7C52B00F3A1B7 /* DCWalletTXTableView.h */,
+				C97A270518A7C52B00F3A1B7 /* DCWalletTXTableView.m */,
 			);
 			name = ui;
 			path = UI;
@@ -1270,6 +1283,7 @@
 				C95413DF189528CB003E2CCE /* QRView.xib in Resources */,
 				C9CB6E991895D1C5002AA009 /* MainMenu.xib in Resources */,
 				C99B959B188408B8001DB181 /* InfoPlist.strings in Resources */,
+				C97A270B18A7D88700F3A1B7 /* TXInfo.xib in Resources */,
 				C99B95AC188408B9001DB181 /* Images.xcassets in Resources */,
 				C99B95A1188408B8001DB181 /* Credits.rtf in Resources */,
 			);
@@ -1320,6 +1334,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C97A270618A7C52B00F3A1B7 /* DCWalletTXTableView.m in Sources */,
 				C99B959D188408B8001DB181 /* main.m in Sources */,
 				C99B95A4188408B8001DB181 /* DCAppDelegate.m in Sources */,
 				C9BC00C5188555D100356D7F /* DCClient.m in Sources */,
@@ -1348,6 +1363,7 @@
 				C99B95CD18840AB3001DB181 /* keystore.cpp in Sources */,
 				C9CEC42A1894334A005C2BD5 /* scrypt.cpp in Sources */,
 				C9CEC423189432AD005C2BD5 /* addrman.cpp in Sources */,
+				C97A270918A7D62800F3A1B7 /* DCTXInfoViewControlller.m in Sources */,
 				C9B6E581188ADFC70044F1E1 /* DCWalletTX.m in Sources */,
 				C99B95CE18840AB3001DB181 /* main.cpp in Sources */,
 				C99B95CF18840AB3001DB181 /* net.cpp in Sources */,

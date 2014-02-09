@@ -16,7 +16,7 @@
 - (IBAction)		handleSendButton: (id) inSender;
 - (IBAction)		handleCancelSendButton: (id) inSender;
 - (IBAction)		handleActivateSendButton: (id) inSender;
-- (IBAction)		handleQRButtonButton: (id) inSender;
+- (IBAction)		handleQRButton: (id) inSender;
 
 @property (nonatomic, strong) IBOutlet DCQRViewController	*qrViewController;
 @property (nonatomic, strong) IBOutlet NSWindow				*mainWindow;
