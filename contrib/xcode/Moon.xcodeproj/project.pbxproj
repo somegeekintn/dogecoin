@@ -19,7 +19,6 @@
 		C99B953818832956001DB181 /* crypter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C99B952D18832956001DB181 /* crypter.cpp */; };
 		C99B953918832956001DB181 /* db.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C99B952F18832956001DB181 /* db.cpp */; };
 		C99B953A18832956001DB181 /* init.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C99B953118832956001DB181 /* init.cpp */; };
-		C99B953B18832956001DB181 /* irc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C99B953318832956001DB181 /* irc.cpp */; };
 		C99B955F18832995001DB181 /* key.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C99B953C18832995001DB181 /* key.cpp */; };
 		C99B956018832995001DB181 /* keystore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C99B953E18832995001DB181 /* keystore.cpp */; };
 		C99B956118832995001DB181 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C99B954018832995001DB181 /* main.cpp */; };
@@ -55,7 +54,6 @@
 		C99B95C818840AB3001DB181 /* crypter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C99B952D18832956001DB181 /* crypter.cpp */; };
 		C99B95C918840AB3001DB181 /* db.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C99B952F18832956001DB181 /* db.cpp */; };
 		C99B95CA18840AB3001DB181 /* init.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C99B953118832956001DB181 /* init.cpp */; };
-		C99B95CB18840AB3001DB181 /* irc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C99B953318832956001DB181 /* irc.cpp */; };
 		C99B95CC18840AB3001DB181 /* key.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C99B953C18832995001DB181 /* key.cpp */; };
 		C99B95CD18840AB3001DB181 /* keystore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C99B953E18832995001DB181 /* keystore.cpp */; };
 		C99B95CE18840AB3001DB181 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C99B954018832995001DB181 /* main.cpp */; };
@@ -344,8 +342,6 @@
 		C99B953018832956001DB181 /* db.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = db.h; sourceTree = "<group>"; };
 		C99B953118832956001DB181 /* init.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = init.cpp; sourceTree = "<group>"; };
 		C99B953218832956001DB181 /* init.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = init.h; sourceTree = "<group>"; };
-		C99B953318832956001DB181 /* irc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = irc.cpp; sourceTree = "<group>"; };
-		C99B953418832956001DB181 /* irc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = irc.h; sourceTree = "<group>"; };
 		C99B953C18832995001DB181 /* key.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = key.cpp; sourceTree = "<group>"; };
 		C99B953D18832995001DB181 /* key.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = key.h; sourceTree = "<group>"; };
 		C99B953E18832995001DB181 /* keystore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = keystore.cpp; sourceTree = "<group>"; };
@@ -693,8 +689,6 @@
 				C9CEC42D18943390005C2BD5 /* hash.h */,
 				C99B953118832956001DB181 /* init.cpp */,
 				C99B953218832956001DB181 /* init.h */,
-				C99B953318832956001DB181 /* irc.cpp */,
-				C99B953418832956001DB181 /* irc.h */,
 				C99B953C18832995001DB181 /* key.cpp */,
 				C99B953D18832995001DB181 /* key.h */,
 				C99B953E18832995001DB181 /* keystore.cpp */,
@@ -1302,7 +1296,6 @@
 				C9CEC428189432C8005C2BD5 /* alert.cpp in Sources */,
 				C99B956818832995001DB181 /* rpcrawtransaction.cpp in Sources */,
 				C99B956518832995001DB181 /* protocol.cpp in Sources */,
-				C99B953B18832956001DB181 /* irc.cpp in Sources */,
 				C99B953618832956001DB181 /* bitcoinrpc.cpp in Sources */,
 				C9CEC44418943401005C2BD5 /* rpcblockchain.cpp in Sources */,
 				C99B956618832995001DB181 /* rpcdump.cpp in Sources */,
@@ -1342,7 +1335,6 @@
 				C99B95CA18840AB3001DB181 /* init.cpp in Sources */,
 				C9C76331188C09FF006A5673 /* DCWalletTXController.m in Sources */,
 				C90494A51897BF5D00761264 /* DCConsoleController.m in Sources */,
-				C99B95CB18840AB3001DB181 /* irc.cpp in Sources */,
 				C9CB6E921895BCB3002AA009 /* DCAddressBook.m in Sources */,
 				C99B95CC18840AB3001DB181 /* key.cpp in Sources */,
 				C9CEC432189433A4005C2BD5 /* leveldb.cpp in Sources */,
