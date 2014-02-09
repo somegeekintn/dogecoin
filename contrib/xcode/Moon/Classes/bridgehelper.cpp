@@ -311,16 +311,23 @@ void bridge_populateWalletTXListWithWalletTX(
 	std::list<std::pair<CTxDestination, int64> >	listReceived;
 	std::list<std::pair<CTxDestination, int64> >	listSent;
 	int												confirmed = inWalletTX.IsConfirmed();
+	bool											allFromMe = true;
+	bool											allToMe = true;
 
 	inWalletTX.GetAmounts(listReceived, listSent, nFee, sentAccountStr);
 
-    // Sent
-	if (!listSent.empty() || nFee != 0) {					// sent
+	// test for special case where coins are sent to self
+	BOOST_FOREACH(const CTxOut& txout, inWalletTX.vout)
+		allToMe = allToMe && pwalletMain->IsMine(txout);
+	BOOST_FOREACH(const CTxIn& txin, inWalletTX.vin)
+		allFromMe = allFromMe && pwalletMain->IsMine(txin);
+
+	if (allFromMe && allToMe) {
 		BOOST_FOREACH(const PAIRTYPE(CTxDestination, int64)& s, listSent) {
 			CFMutableDictionaryRef	walletTX = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
-			int						walletCategory = eCoinWalletCategory_Send;
-			int64_t					amount = s.second;
-
+			int						walletCategory = eCoinWalletCategory_Move;
+			int64_t					amount = 0;
+			
 			CFDictionaryAddValue(walletTX, CFSTR("account"), CFStringCreateWithCString(kCFAllocatorDefault, sentAccountStr.c_str(), kCFStringEncodingASCII));
 			CFDictionaryAddValue(walletTX, CFSTR("address"), CFStringCreateWithCString(kCFAllocatorDefault, CBitcoinAddress(s.first).ToString().c_str(), kCFStringEncodingASCII));
 			CFDictionaryAddValue(walletTX, CFSTR("category"), CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &walletCategory));
@@ -332,105 +339,59 @@ void bridge_populateWalletTXListWithWalletTX(
 			CFArrayAppendValue(ioWalletTXList, walletTX);
 		}
 	}
-
-	if (listReceived.size() > 0) {							// received
-		BOOST_FOREACH(const PAIRTYPE(CTxDestination, int64)& r, listReceived) {
-			CFMutableDictionaryRef	walletTX = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
-			int						walletCategory = eCoinWalletCategory_Receive;
-			int64_t					amount = r.second;
-			std::string				receiveAccountStr;
-			
-			if (pwalletMain->mapAddressBook.count(r.first))
-				receiveAccountStr = pwalletMain->mapAddressBook[r.first];
-		
-			if (inWalletTX.IsCoinBase()) {
-				if (inWalletTX.GetDepthInMainChain() < 1)
-					walletCategory = eCoinWalletCategory_Orphan;
-				else if (inWalletTX.GetBlocksToMaturity() > 0)
-					walletCategory = eCoinWalletCategory_Immature;
-				else
-					walletCategory = eCoinWalletCategory_Generated;
+	else {
+		// Sent
+		if (!listSent.empty() || nFee != 0) {					// sent
+			BOOST_FOREACH(const PAIRTYPE(CTxDestination, int64)& s, listSent) {
+				CFMutableDictionaryRef	walletTX = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
+				int						walletCategory = eCoinWalletCategory_Send;
+				int64_t					amount = s.second;
+				
+				CFDictionaryAddValue(walletTX, CFSTR("account"), CFStringCreateWithCString(kCFAllocatorDefault, sentAccountStr.c_str(), kCFStringEncodingASCII));
+				CFDictionaryAddValue(walletTX, CFSTR("address"), CFStringCreateWithCString(kCFAllocatorDefault, CBitcoinAddress(s.first).ToString().c_str(), kCFStringEncodingASCII));
+				CFDictionaryAddValue(walletTX, CFSTR("category"), CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &walletCategory));
+				CFDictionaryAddValue(walletTX, CFSTR("amount"), CFNumberCreate(kCFAllocatorDefault, kCFNumberLongLongType, &amount));
+				CFDictionaryAddValue(walletTX, CFSTR("fee"), CFNumberCreate(kCFAllocatorDefault, kCFNumberLongLongType, &nFee));
+				CFDictionaryAddValue(walletTX, CFSTR("txid"), CFStringCreateWithCString(kCFAllocatorDefault, walletTXHash.c_str(), kCFStringEncodingASCII));
+				CFDictionaryAddValue(walletTX, CFSTR("time"), CFNumberCreate(kCFAllocatorDefault, kCFNumberLongLongType, &walletTXTime));
+				CFDictionaryAddValue(walletTX, CFSTR("confirmed"), CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &confirmed));
+				CFArrayAppendValue(ioWalletTXList, walletTX);
 			}
+		}
 
-			CFDictionaryAddValue(walletTX, CFSTR("account"), CFStringCreateWithCString(kCFAllocatorDefault, receiveAccountStr.c_str(), kCFStringEncodingASCII));
-			CFDictionaryAddValue(walletTX, CFSTR("address"), CFStringCreateWithCString(kCFAllocatorDefault, CBitcoinAddress(r.first).ToString().c_str(), kCFStringEncodingASCII));
-			CFDictionaryAddValue(walletTX, CFSTR("category"), CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &walletCategory));
-			CFDictionaryAddValue(walletTX, CFSTR("amount"), CFNumberCreate(kCFAllocatorDefault, kCFNumberLongLongType, &amount));
-			CFDictionaryAddValue(walletTX, CFSTR("txid"), CFStringCreateWithCString(kCFAllocatorDefault, walletTXHash.c_str(), kCFStringEncodingASCII));
-			CFDictionaryAddValue(walletTX, CFSTR("time"), CFNumberCreate(kCFAllocatorDefault, kCFNumberLongLongType, &walletTXTime));
-			CFDictionaryAddValue(walletTX, CFSTR("confirmed"), CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &confirmed));
-			CFArrayAppendValue(ioWalletTXList, walletTX);
+		if (listReceived.size() > 0) {							// received
+			BOOST_FOREACH(const PAIRTYPE(CTxDestination, int64)& r, listReceived) {
+				CFMutableDictionaryRef	walletTX = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
+				int						walletCategory = eCoinWalletCategory_Receive;
+				int64_t					amount = r.second;
+				std::string				receiveAccountStr;
+				
+				if (pwalletMain->mapAddressBook.count(r.first))
+					receiveAccountStr = pwalletMain->mapAddressBook[r.first];
+			
+				if (inWalletTX.IsCoinBase()) {
+					if (inWalletTX.GetDepthInMainChain() < 1)
+						walletCategory = eCoinWalletCategory_Orphan;
+					else if (inWalletTX.GetBlocksToMaturity() > 0)
+						walletCategory = eCoinWalletCategory_Immature;
+					else
+						walletCategory = eCoinWalletCategory_Generated;
+				}
+
+				CFDictionaryAddValue(walletTX, CFSTR("account"), CFStringCreateWithCString(kCFAllocatorDefault, receiveAccountStr.c_str(), kCFStringEncodingASCII));
+				CFDictionaryAddValue(walletTX, CFSTR("address"), CFStringCreateWithCString(kCFAllocatorDefault, CBitcoinAddress(r.first).ToString().c_str(), kCFStringEncodingASCII));
+				CFDictionaryAddValue(walletTX, CFSTR("category"), CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &walletCategory));
+				CFDictionaryAddValue(walletTX, CFSTR("amount"), CFNumberCreate(kCFAllocatorDefault, kCFNumberLongLongType, &amount));
+				CFDictionaryAddValue(walletTX, CFSTR("txid"), CFStringCreateWithCString(kCFAllocatorDefault, walletTXHash.c_str(), kCFStringEncodingASCII));
+				CFDictionaryAddValue(walletTX, CFSTR("time"), CFNumberCreate(kCFAllocatorDefault, kCFNumberLongLongType, &walletTXTime));
+				CFDictionaryAddValue(walletTX, CFSTR("confirmed"), CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &confirmed));
+				CFArrayAppendValue(ioWalletTXList, walletTX);
+			}
 		}
 	}
 }
 
 #pragma mark - Bridge functions
-
-//int64_t bridge_getActualMintedValue(
-//	CBlock				&inBlock)
-//{
-//	CTxDB				txdb("r");
-//	int64_t				mintedValue = 0;
-//	int64_t				txFees = 0;
-//	
-//    BOOST_FOREACH(CTransaction &transaction, inBlock.vtx) {
-//		int64_t		valueOut = transaction.GetValueOut();
-//		
-//		if (transaction.IsCoinBase()) {
-//			mintedValue = valueOut;
-//		}
-//		else {
-//			MapPrevTx					mapInputs;
-//			std::map<uint256, CTxIndex>	mapUnused;
-//			bool						fInvalid = false;
-//
-//			if (transaction.FetchInputs(txdb, mapUnused, false, false, mapInputs, fInvalid)) {
-//				txFees += transaction.GetValueIn(mapInputs) - valueOut;
-//			}
-//		}
-//	}
-//
-//	mintedValue -= txFees;
-//
-//	return mintedValue;
-//}
-
-void bridge_testBlockValues()
-{
-//	CBlockIndex		*blockIndex = pindexGenesisBlock;
-//    CBlock			block;
-//	uint256			prevHash = 0;
-//	int64_t			expectedMintValue, actualMintValue;
-//	int32_t			blockCount = 0;
-//	int32_t			badBlockCount = 0;
-//	
-//	printf("--->>>Begin block value test\n");
-//	
-//	do {
-//		if (blockIndex->pprev)
-//			prevHash = blockIndex->pprev->GetBlockHash();
-//			
-//		block.ReadFromDisk(blockIndex, true);
-//		expectedMintValue = bridge_getBlockMintedValue(blockIndex->nHeight, prevHash);
-//		actualMintValue = bridge_getActualMintedValue(block);
-//		blockCount++;
-//		
-//		if (expectedMintValue == actualMintValue) {
-//			if (!(blockIndex->nHeight % 1000))
-//				printf("%d okay\n", blockIndex->nHeight);
-//		}
-//		else {
-//			printf("%d expected %lld actual %lld - %s\n", blockIndex->nHeight, expectedMintValue, actualMintValue, blockIndex->phashBlock->GetHex().c_str());
-//			badBlockCount++;
-//		}
-//		blockIndex = blockIndex->pnext;
-//	} while (blockIndex != NULL);
-//
-//	printf("--->>>End block value test\n");
-//	printf("--->>>Tested %d blocks\n", blockCount);
-//	printf("--->>>%d blocks incorrect\n", badBlockCount);
-}
-
 
 int32_t bridge_getBlockHeight()
 {
@@ -826,3 +787,135 @@ void bridge_executeRPCRequest(
 		inCompletion("Parse error: unbalanced ' or \"", false);
 	}
 }
+
+#pragma mark - Testing functions
+
+//int64_t bridge_getActualMintedValue(
+//	CBlock				&inBlock)
+//{
+//	CTxDB				txdb("r");
+//	int64_t				mintedValue = 0;
+//	int64_t				txFees = 0;
+//	
+//    BOOST_FOREACH(CTransaction &transaction, inBlock.vtx) {
+//		int64_t		valueOut = transaction.GetValueOut();
+//		
+//		if (transaction.IsCoinBase()) {
+//			mintedValue = valueOut;
+//		}
+//		else {
+//			MapPrevTx					mapInputs;
+//			std::map<uint256, CTxIndex>	mapUnused;
+//			bool						fInvalid = false;
+//
+//			if (transaction.FetchInputs(txdb, mapUnused, false, false, mapInputs, fInvalid)) {
+//				txFees += transaction.GetValueIn(mapInputs) - valueOut;
+//			}
+//		}
+//	}
+//
+//	mintedValue -= txFees;
+//
+//	return mintedValue;
+//}
+
+//void bridge_testBlockValues()
+//{
+//	CBlockIndex		*blockIndex = pindexGenesisBlock;
+//    CBlock			block;
+//	uint256			prevHash = 0;
+//	int64_t			expectedMintValue, actualMintValue;
+//	int32_t			blockCount = 0;
+//	int32_t			badBlockCount = 0;
+//	
+//	printf("--->>>Begin block value test\n");
+//	
+//	do {
+//		if (blockIndex->pprev)
+//			prevHash = blockIndex->pprev->GetBlockHash();
+//			
+//		block.ReadFromDisk(blockIndex, true);
+//		expectedMintValue = bridge_getBlockMintedValue(blockIndex->nHeight, prevHash);
+//		actualMintValue = bridge_getActualMintedValue(block);
+//		blockCount++;
+//		
+//		if (expectedMintValue == actualMintValue) {
+//			if (!(blockIndex->nHeight % 1000))
+//				printf("%d okay\n", blockIndex->nHeight);
+//		}
+//		else {
+//			printf("%d expected %lld actual %lld - %s\n", blockIndex->nHeight, expectedMintValue, actualMintValue, blockIndex->phashBlock->GetHex().c_str());
+//			badBlockCount++;
+//		}
+//		blockIndex = blockIndex->pnext;
+//	} while (blockIndex != NULL);
+//
+//	printf("--->>>End block value test\n");
+//	printf("--->>>Tested %d blocks\n", blockCount);
+//	printf("--->>>%d blocks incorrect\n", badBlockCount);
+//}
+
+void bridgetest_dumpBlocks()
+{
+	CBlockIndex		*blockIndex = pindexGenesisBlock;
+	uint256			prevHash = 0;
+	int64_t			expectedMintValue;
+	int32_t			blockCount = 0;
+	int32_t			badBlockCount = 0;
+	time_t			lastBlockTime, thisBlockTime;
+	int32_t			totalTime[10][10];
+	int32_t			timeCount[10][10];
+	
+	lastBlockTime = 0;
+	thisBlockTime = 0;
+	memset(totalTime, 0, sizeof(int32_t)*10*10);
+	memset(timeCount, 0, sizeof(int32_t)*10*10);
+	
+	printf("--->>>Begin block value test\n");
+	
+	do {
+		if (blockIndex->pprev) {
+			prevHash = blockIndex->pprev->GetBlockHash();
+			
+			expectedMintValue = bridge_getBlockMintedValue(blockIndex->nHeight, prevHash);
+			thisBlockTime = blockIndex->nTime;
+
+			if (lastBlockTime) {
+				time_t		timeDiff = thisBlockTime - lastBlockTime;
+				int32_t		truncVal = expectedMintValue / COIN;
+				int32_t		valSection = truncVal / 100000;
+				int32_t		blockSection = blockCount / 10000;
+				
+				if (timeDiff > 0 && timeDiff < 900) {
+					if (valSection > 10)
+						valSection = 9;
+						
+					totalTime[blockSection][valSection] += timeDiff;
+					timeCount[blockSection][valSection]++;
+				}
+				else {
+printf("time to %d: %ld\n", blockCount, timeDiff);
+				}
+			}
+			
+printf("%d\n", blockCount);
+			lastBlockTime = thisBlockTime;
+		}
+		blockCount++;
+		blockIndex = blockIndex->pnext;
+	} while (blockIndex != NULL);
+
+	for (int32_t blockSection=0; blockSection<10; blockSection++) {
+		printf("--------------------------\n");
+		printf("blocks %d - %d\n", blockSection * 10000, (blockSection * 10000) + 9999);
+		for (int32_t valSection=0; valSection<10; valSection++) {
+			printf("\tval %06d - %06d: %f secs (%d)\n", valSection * 100000, (valSection * 100000) + 99999, (double)totalTime[blockSection][valSection] / (double)timeCount[blockSection][valSection], timeCount[blockSection][valSection]);
+		}
+	}
+	
+	printf("--->>>End block value test\n");
+	printf("--->>>Tested %d blocks\n", blockCount);
+	printf("--->>>%d blocks incorrect\n", badBlockCount);
+}
+
+
