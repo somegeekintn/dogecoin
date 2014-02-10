@@ -310,6 +310,8 @@ void bridge_populateWalletTXListWithWalletTX(
 	std::string										sentAccountStr;
 	std::list<std::pair<CTxDestination, int64> >	listReceived;
 	std::list<std::pair<CTxDestination, int64> >	listSent;
+	CBlockIndex										*txBlockIndex = NULL;
+	int												depth = inWalletTX.GetDepthInMainChain(txBlockIndex);
 	int												confirmed = inWalletTX.IsConfirmed();
 	bool											allFromMe = true;
 	bool											allToMe = true;
@@ -336,6 +338,9 @@ void bridge_populateWalletTXListWithWalletTX(
 			CFDictionaryAddValue(walletTX, CFSTR("txid"), CFStringCreateWithCString(kCFAllocatorDefault, walletTXHash.c_str(), kCFStringEncodingASCII));
 			CFDictionaryAddValue(walletTX, CFSTR("time"), CFNumberCreate(kCFAllocatorDefault, kCFNumberLongLongType, &walletTXTime));
 			CFDictionaryAddValue(walletTX, CFSTR("confirmed"), CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &confirmed));
+			CFDictionaryAddValue(walletTX, CFSTR("depth"), CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &depth));
+			if (txBlockIndex != NULL)
+				CFDictionaryAddValue(walletTX, CFSTR("block"), CFStringCreateWithCString(kCFAllocatorDefault, txBlockIndex->phashBlock->GetHex().c_str(), kCFStringEncodingASCII));
 			CFArrayAppendValue(ioWalletTXList, walletTX);
 		}
 	}
@@ -355,6 +360,9 @@ void bridge_populateWalletTXListWithWalletTX(
 				CFDictionaryAddValue(walletTX, CFSTR("txid"), CFStringCreateWithCString(kCFAllocatorDefault, walletTXHash.c_str(), kCFStringEncodingASCII));
 				CFDictionaryAddValue(walletTX, CFSTR("time"), CFNumberCreate(kCFAllocatorDefault, kCFNumberLongLongType, &walletTXTime));
 				CFDictionaryAddValue(walletTX, CFSTR("confirmed"), CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &confirmed));
+				CFDictionaryAddValue(walletTX, CFSTR("depth"), CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &depth));
+				if (txBlockIndex != NULL)
+					CFDictionaryAddValue(walletTX, CFSTR("block"), CFStringCreateWithCString(kCFAllocatorDefault, txBlockIndex->phashBlock->GetHex().c_str(), kCFStringEncodingASCII));
 				CFArrayAppendValue(ioWalletTXList, walletTX);
 			}
 		}
@@ -370,7 +378,7 @@ void bridge_populateWalletTXListWithWalletTX(
 					receiveAccountStr = pwalletMain->mapAddressBook[r.first];
 			
 				if (inWalletTX.IsCoinBase()) {
-					if (inWalletTX.GetDepthInMainChain() < 1)
+					if (depth < 1)
 						walletCategory = eCoinWalletCategory_Orphan;
 					else if (inWalletTX.GetBlocksToMaturity() > 0)
 						walletCategory = eCoinWalletCategory_Immature;
@@ -385,6 +393,9 @@ void bridge_populateWalletTXListWithWalletTX(
 				CFDictionaryAddValue(walletTX, CFSTR("txid"), CFStringCreateWithCString(kCFAllocatorDefault, walletTXHash.c_str(), kCFStringEncodingASCII));
 				CFDictionaryAddValue(walletTX, CFSTR("time"), CFNumberCreate(kCFAllocatorDefault, kCFNumberLongLongType, &walletTXTime));
 				CFDictionaryAddValue(walletTX, CFSTR("confirmed"), CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &confirmed));
+				CFDictionaryAddValue(walletTX, CFSTR("depth"), CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &depth));
+				if (txBlockIndex != NULL)
+					CFDictionaryAddValue(walletTX, CFSTR("block"), CFStringCreateWithCString(kCFAllocatorDefault, txBlockIndex->phashBlock->GetHex().c_str(), kCFStringEncodingASCII));
 				CFArrayAppendValue(ioWalletTXList, walletTX);
 			}
 		}
@@ -884,7 +895,7 @@ void bridgetest_dumpBlocks()
 				time_t		timeDiff = thisBlockTime - lastBlockTime;
 				int32_t		truncVal = expectedMintValue / COIN;
 				int32_t		valSection = truncVal / 100000;
-				int32_t		blockSection = blockCount / 10000;
+				int32_t		blockSection = blockCount / 20000;
 				
 				if (timeDiff > 0 && timeDiff < 900) {
 					if (valSection > 10)
@@ -905,9 +916,9 @@ printf("%d\n", blockCount);
 		blockIndex = blockIndex->pnext;
 	} while (blockIndex != NULL);
 
-	for (int32_t blockSection=0; blockSection<10; blockSection++) {
+	for (int32_t blockSection=0; blockSection<5; blockSection++) {
 		printf("--------------------------\n");
-		printf("blocks %d - %d\n", blockSection * 10000, (blockSection * 10000) + 9999);
+		printf("blocks %d - %d\n", blockSection * 20000, (blockSection * 20000) + 19999);
 		for (int32_t valSection=0; valSection<10; valSection++) {
 			printf("\tval %06d - %06d: %f secs (%d)\n", valSection * 100000, (valSection * 100000) + 99999, (double)totalTime[blockSection][valSection] / (double)timeCount[blockSection][valSection], timeCount[blockSection][valSection]);
 		}

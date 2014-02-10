@@ -25,5 +25,7 @@
 @property (nonatomic, strong) DCWallet			*wallet;
 
 @property (nonatomic, readonly) NSString		*label;
+@property (nonatomic, readonly) NSString		*status;
+@property (nonatomic, readonly) NSString		*blockHash;
 
 @end

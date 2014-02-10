@@ -8,6 +8,7 @@
 
 #import "DCWalletTX.h"
 #import "DCAddress.h"
+#import "DCBridge.h"
 #import "DCClient.h"
 #import "DCWallet.h"
 #import "DCConsts.h"
@@ -111,6 +112,50 @@
 	}
 
 	return label;
+}
+
+- (NSString *) status
+{
+	NSString		*statusString = nil;
+	
+	if (self.txID != nil) {
+		NSArray		*walletTXList = [[DCBridge sharedBridge] getWalletTransactionsWithHash: self.txID];
+		
+		if (walletTXList != nil && [walletTXList count]) {
+			NSDictionary		*walletTXInfo = [walletTXList objectAtIndex: 0];
+			NSNumber			*confirmations = [walletTXInfo objectForKey: @"depth"];
+			
+			if (confirmations != nil && [confirmations integerValue])
+				statusString = [NSString stringWithFormat: @"%ld confirmations", [confirmations integerValue]];
+			else
+				statusString = [NSString stringWithFormat: @"unconfirmed"];
+		}
+	}
+
+	if (statusString == nil)
+		statusString = @"Unknown transaction status";
+
+	return statusString;
+}
+
+- (NSString *) blockHash
+{
+	NSString		*blockHash = nil;
+	
+	if (self.txID != nil) {
+		NSArray		*walletTXList = [[DCBridge sharedBridge] getWalletTransactionsWithHash: self.txID];
+		
+		if (walletTXList != nil && [walletTXList count]) {
+			NSDictionary		*walletTXInfo = [walletTXList objectAtIndex: 0];
+			
+			blockHash = [walletTXInfo objectForKey: @"block"];
+		}
+	}
+
+	if (blockHash == nil)
+		blockHash = @"Unknown block";
+
+	return blockHash;
 }
 
 @end
