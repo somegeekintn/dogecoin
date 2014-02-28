@@ -929,4 +929,77 @@ printf("%d\n", blockCount);
 	printf("--->>>%d blocks incorrect\n", badBlockCount);
 }
 
+void bridge_testTXScan()
+{
+#if 0	// nonstd txout finder
+	CBlockIndex		*blockIndex = pindexGenesisBlock;
+    CBlock			block;
+
+	printf("--->>>Begin scanning blocks\n");
+	
+	do {
+		if (!(blockIndex->nHeight % 1000))
+			printf("test @ %d\n", blockIndex->nHeight);
+			
+		block.ReadFromDisk(blockIndex);
+		
+		BOOST_FOREACH(const CTransaction &tx, block.vtx) {
+			for (int32_t idx=0; idx<tx.vout.size(); idx++) {
+				CTxOut		txOut = tx.vout[idx];
+				CScript		*txScript = &txOut.scriptPubKey;
+				
+				if (!::IsStandard(*txScript)) {
+					printf("nonstd txout: %s in %s\n", txOut.scriptPubKey.ToString().c_str(), tx.GetHash().ToString().c_str());
+				}
+			}
+		}
+		
+		blockIndex = blockIndex->pnext;
+	} while (blockIndex != NULL);
+#endif
+
+#if 0	// dust finder
+	CBlockIndex		*blockIndex = pindexGenesisBlock;
+    CBlock			block;
+	int32_t			totalDustCount = 0;
+	uint64_t		totalDustValue = 0;
+	bool			hadDust;
+	printf("--->>>Begin scanning blocks\n");
+	
+	do {
+		if (blockIndex->nHeight > 40000) {
+			block.ReadFromDisk(blockIndex);
+			hadDust = false;
+			
+			BOOST_FOREACH(const CTransaction &tx, block.vtx) {
+				int32_t		txDustCount = 0;
+				uint64_t	txDustValue = 0;
+				
+				for (int32_t idx=0; idx<tx.vout.size(); idx++) {
+					CTxOut		txOut = tx.vout[idx];
+					
+					if (txOut.nValue && txOut.nValue < DUST_HARD_LIMIT) {
+						txDustValue += txOut.nValue;
+						txDustCount++;
+					}
+				}
+				
+				if (txDustValue) {
+					totalDustCount += txDustCount;
+					totalDustValue += txDustValue;
+					
+					printf("txdust(%d/%d): %lld / %lld - %s\n", txDustCount, totalDustCount, txDustValue, totalDustValue, tx.GetHash().ToString().c_str());
+					hadDust = true;
+				}
+			}
+
+			if (hadDust)
+				printf("dust in block %s (%d)\n", blockIndex->GetBlockHash().ToString().c_str(), blockIndex->nHeight);
+		}
+		
+		blockIndex = blockIndex->pnext;
+	} while (blockIndex != NULL);
+#endif
+}
+
 

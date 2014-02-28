@@ -34,4 +34,8 @@ typedef void (^RPCCompletion)(NSString *response, BOOL succeeded);
 - (NSDictionary *)		getMiscInfo;
 - (void)				executeRPCRequest: (NSString *) inRequest
 							completion: (RPCCompletion) inCompletion;
+// Testing
+
+- (void)				txScanTest;
+
 @end

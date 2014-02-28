@@ -16,6 +16,7 @@
 typedef void (^bridge_RPCCompletion)(const char *response, bool succeeded);
 
 void					bridge_testBlockValues();
+void					bridge_testTXScan();
 
 bool					bridge_Initialize();
 void					bridge_Shutdown();

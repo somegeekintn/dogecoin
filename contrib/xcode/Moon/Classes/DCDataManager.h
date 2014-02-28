@@ -27,6 +27,8 @@
 - (void)				deleteAddressEntry: (NSDictionary *) inRawAddress;
 - (void)				setConnectionCount: (NSInteger) inNumConnections;
 
+- (IBAction)			performTest: (id) inSender;
+
 @property (nonatomic, readonly) NSManagedObjectContext		*defaultContext;
 @property (nonatomic, readonly) NSManagedObjectContext		*editContext;
 @property (nonatomic, readonly) DCClient					*client;

@@ -514,4 +514,11 @@ NSLog(@"update %ld (best %ld)", blockInfoCount, [[DCBridge sharedBridge] getBloc
 	}];
 }
 
+#pragma mark - Testing
+
+- (IBAction) performTest: (id) inSender
+{
+	[[DCBridge sharedBridge] txScanTest];
+}
+
 @end

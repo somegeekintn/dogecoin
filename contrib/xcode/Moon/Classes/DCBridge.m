@@ -205,6 +205,13 @@ NSLog(@"response %@", response);
 	});
 }
 
+#pragma mark - Testing
+
+- (void) txScanTest
+{
+	bridge_testTXScan();
+}
+
 @end
 
 #pragma mark - Notication callbacks
